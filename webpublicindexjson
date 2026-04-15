@@ -1,0 +1,154 @@
+[
+  {
+    "name": "generate-credit-memo",
+    "title": "Generate Credit Memo",
+    "version": "1.0.0",
+    "description": "Produces a standardised credit memo from an applicant profile and supporting documents.",
+    "summary": "Generates a structured credit memo following DBS internal templates.\nAccepts an applicant profile and risk tier; outputs a formatted memo\nready for credit committee review.\n",
+    "author": "jane.doe@dbs.com",
+    "maintainers": [],
+    "team": "Consumer Banking Ops",
+    "workflow": [
+      "credit-assessment",
+      "document-generation"
+    ],
+    "workflow_proposed": [],
+    "tags": [
+      "retail-banking",
+      "finance",
+      "templating"
+    ],
+    "language": [
+      "en"
+    ],
+    "maturity": "stable",
+    "visibility": "org-wide",
+    "claude_models": [
+      "claude-opus-4-6",
+      "claude-sonnet-4-6"
+    ],
+    "requires_tools": [],
+    "requires_mcp": [],
+    "requires_inputs": [
+      {
+        "name": "applicant_profile",
+        "type": "file",
+        "required": true
+      },
+      {
+        "name": "risk_tier",
+        "type": "enum[low, medium, high]",
+        "required": true
+      }
+    ],
+    "external_dependencies": [],
+    "data_sensitivity": "confidential",
+    "compliance_reviewed": false,
+    "license": "DBS-Internal",
+    "created": "2026-04-14",
+    "updated": "2026-04-14",
+    "slug": "generate-credit-memo",
+    "path": "skills/generate-credit-memo/SKILL.md",
+    "body": "# Generate Credit Memo\n\nGenerates a structured credit memo following DBS internal templates, suitable for credit committee review.\n\n## Usage\n\nProvide the applicant's profile document and select a risk tier. The skill outputs a formatted memo covering applicant summary, credit assessment, and a recommendation.\n\n## Inputs\n\n| Input | Type | Required | Notes |\n|-------|------|----------|-------|\n| `applicant_profile` | File (PDF or DOCX) | Yes | Standard DBS applicant profile form |\n| `risk_tier` | `low` / `medium` / `high` | Yes | Pre-assessed risk classification |\n\n## Example output\n\n```\nCREDIT MEMO — DBS Consumer Banking\n===================================\nDate: 2026-04-14\nRisk Tier: Medium\n\nAPPLICANT SUMMARY\nName: ...  |  ID: ...  |  Employment: ...  |  Income: ...\n\nCREDIT ASSESSMENT\n[Summary of credit history, risk factors, and mitigants]\n\nRECOMMENDATION\nApprove — subject to standard medium-risk conditions.\n\nNOTES FOR REVIEWER\nNo anomalies detected. Verify income figure against payslip.\n```\n\n## Caveats\n\n- Output is a draft; a credit officer must review before submission to the credit committee.\n- Data sensitivity is `confidential` — handle outputs per DBS data classification policy."
+  },
+  {
+    "name": "incident-summary",
+    "title": "Incident Summary Generator",
+    "version": "1.0.0",
+    "description": "Drafts a structured post-incident summary from raw logs, alerts, and team notes.",
+    "author": "alice.wong@dbs.com",
+    "maintainers": [],
+    "team": "Platform Engineering",
+    "workflow": [
+      "incident-response"
+    ],
+    "workflow_proposed": [],
+    "tags": [
+      "devops",
+      "platform",
+      "observability",
+      "reporting"
+    ],
+    "language": [
+      "en"
+    ],
+    "maturity": "experimental",
+    "visibility": "org-wide",
+    "claude_models": [
+      "claude-sonnet-4-6"
+    ],
+    "requires_tools": [],
+    "requires_mcp": [],
+    "requires_inputs": [
+      {
+        "name": "logs",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "team_notes",
+        "type": "text",
+        "required": false
+      }
+    ],
+    "external_dependencies": [],
+    "data_sensitivity": "internal",
+    "compliance_reviewed": false,
+    "license": "DBS-Internal",
+    "created": "2026-04-14",
+    "updated": "2026-04-14",
+    "slug": "incident-summary",
+    "path": "skills/incident-summary/SKILL.md",
+    "body": "# Incident Summary Generator\n\nTakes raw incident logs and optional team notes captured during an incident and produces a structured post-incident summary following DBS Platform Engineering's standard template.\n\n## Usage\n\nPaste the relevant log output (error logs, alert payloads, timeline entries) and any notes the on-call team captured. The skill outputs a summary covering timeline, impact, root cause, and action items.\n\n## Inputs\n\n| Input | Type | Required | Notes |\n|-------|------|----------|-------|\n| `logs` | Plain text | Yes | Raw logs, alerts, or monitoring output |\n| `team_notes` | Plain text | No | Slack thread, war-room notes, etc. |\n\n## Example output\n\n```\nPOST-INCIDENT SUMMARY\n=====================\nIncident: API gateway latency spike\nSeverity: P2\nDuration: 2026-04-10 14:32 – 15:07 SGT (35 min)\n\nTIMELINE\n14:32 — PagerDuty alert: p99 latency > 2s on /api/v2/payments\n14:38 — On-call acknowledged; identified upstream DB connection pool exhaustion\n14:55 — Connection pool limit increased; latency recovering\n15:07 — All-clear; latency back to baseline\n\nIMPACT\n~1,200 payment requests degraded; no failures; no data loss.\n\nROOT CAUSE\nDB connection pool capped at 50; traffic spike to 3x normal during promo event.\n\nACTION ITEMS\n- [ ] Raise connection pool limit to 200 (Platform, by 2026-04-17)\n- [ ] Add pool exhaustion alert before latency degrades (Observability, by 2026-04-21)\n```\n\n## Caveats\n\n- Experimental maturity — validate the timeline and root cause carefully before publishing to stakeholders.\n- Do not include customer PII in logs passed to this skill."
+  },
+  {
+    "name": "kyc-document-check",
+    "title": "KYC Document Check",
+    "version": "1.0.0",
+    "description": "Validates identity documents against KYC requirements and flags discrepancies for human review.",
+    "author": "bob.chen@dbs.com",
+    "maintainers": [],
+    "team": "Compliance",
+    "workflow": [
+      "kyc-onboarding"
+    ],
+    "workflow_proposed": [],
+    "tags": [
+      "compliance",
+      "kyc",
+      "document-verification",
+      "identity"
+    ],
+    "language": [
+      "en"
+    ],
+    "maturity": "beta",
+    "visibility": "org-wide",
+    "claude_models": [
+      "claude-opus-4-6"
+    ],
+    "requires_tools": [],
+    "requires_mcp": [],
+    "requires_inputs": [
+      {
+        "name": "identity_document",
+        "type": "file",
+        "required": true
+      },
+      {
+        "name": "customer_record",
+        "type": "file",
+        "required": true
+      }
+    ],
+    "external_dependencies": [],
+    "data_sensitivity": "restricted",
+    "compliance_reviewed": false,
+    "license": "DBS-Internal",
+    "created": "2026-04-14",
+    "updated": "2026-04-14",
+    "slug": "kyc-document-check",
+    "path": "skills/kyc-document-check/SKILL.md",
+    "body": "# KYC Document Check\n\nCompares a submitted identity document against the customer's on-file record and DBS KYC field requirements. Outputs a pass/flag verdict with a structured list of discrepancies.\n\n## Usage\n\nUpload the scanned identity document and the customer's existing record. The skill checks name, date of birth, document number, expiry date, and address fields.\n\n## Inputs\n\n| Input | Type | Required | Notes |\n|-------|------|----------|-------|\n| `identity_document` | File (image or PDF) | Yes | Passport, NRIC, or equivalent |\n| `customer_record` | File (JSON or PDF) | Yes | Existing DBS customer record |\n\n## Output\n\n```\nKYC CHECK RESULT\n================\nStatus: FLAGGED\n\nDiscrepancies:\n  - Name mismatch: document \"TAN WEI MING\", record \"Tan Wei Ming Jr.\"\n  - Expiry: document expires 2026-06-01 (< 6 months)\n\nFields verified (no issues):\n  - Date of birth\n  - Document number\n  - Address\n```\n\n## Caveats\n\n- Beta maturity — output must be reviewed by a compliance officer before any onboarding decision.\n- Restricted data sensitivity — outputs must not leave the compliance team channel."
+  }
+]
