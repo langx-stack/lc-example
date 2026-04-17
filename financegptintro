@@ -1,0 +1,222 @@
+Here are sections 1–6, written as Confluence-ready prose:
+
+---
+
+# AI Agents in DBS Finance: Guidelines for Use and Development
+
+---
+
+## 1. Introduction & Purpose
+
+Artificial intelligence agents represent a meaningful shift in how work gets done in Finance. Unlike a simple prompt or a one-shot AI query, an agent is a system that can reason over a task, take actions, use tools, and iterate toward a goal — often with minimal hand-holding from the user. For a department like DBS Finance, where workflows involve multi-system data pulls, regulatory deadlines, and high-stakes outputs, agents offer genuine leverage.
+
+This page sets out guidelines for Finance staff and developers on how to think about, select, and responsibly use AI agents in their work. It covers the landscape of tools available within DBS today and in the near future, and provides a practical framework for deciding which platform is appropriate for which use case.
+
+These guidelines apply to all Finance sub-functions — including FX operations, treasury, financial reporting, and compliance — and should be read alongside DBS's broader AI governance and data classification policies.
+
+---
+
+## 2. What Counts as an Agent
+
+Not every use of AI is an agent. It's important to be precise, because the governance requirements, risks, and appropriate platforms differ significantly depending on what you're building.
+
+**A simple prompt** is a single-turn interaction: you give the AI some input, it returns an output. No tools, no iteration, no memory. Most day-to-day use of DBS GPT falls into this category — drafting an email, summarising a document, translating a passage.
+
+**A skill or workflow** is a structured, multi-step prompt chain, typically designed in a UI and triggered by a user action. The steps are predetermined. DBS GPT's workflow builder and Copilot Studio both operate largely in this mode. There is logic and sequencing, but the AI isn't deciding what to do next — the developer has pre-scripted the path.
+
+**An agent** is qualitatively different. An agent:
+
+- Receives a goal or task, not just a single question
+- Decides autonomously which steps to take and in what order
+- Uses tools (APIs, databases, calculators, file readers) to gather information or take actions
+- Iterates — it can check its own output, correct errors, and try again
+- May involve a loop that runs until a condition is met or a human approves the result
+
+For DBS Finance, examples of genuine agent behaviour include: an FX reconciliation agent that pulls trade data, identifies breaks, investigates root causes, and drafts a resolution summary; a treasury monitoring agent that watches intraday liquidity positions and flags anomalies; or a regulatory reporting agent that retrieves data from multiple systems, runs validation checks, and prepares a draft submission for human review.
+
+The key marker is autonomous multi-step reasoning with tool use. If the AI is just following a fixed script, it's a workflow. If it's deciding how to proceed, it's an agent.
+
+---
+
+## 3. When to Use an Agent (vs. a Skill or Simple Prompt)
+
+Agents are powerful but they are not always the right tool. They introduce complexity, require more governance, and can produce unexpected behaviour if poorly designed. Before reaching for an agent, ask whether a simpler approach will do the job.
+
+**Use a simple prompt when:**
+- The task is well-defined and single-turn (summarise this, translate that, rewrite this paragraph)
+- No external data retrieval or system interaction is needed
+- The output doesn't feed into a downstream process automatically
+- The user can easily review and correct the output before acting on it
+
+**Use a skill or workflow when:**
+- The task has a known, repeatable structure (e.g. always: fetch data → format → summarise → email)
+- Every step is predictable and can be pre-scripted
+- You want consistency and auditability without dynamic decision-making
+- The user population is non-technical and needs a polished UI
+
+**Use an agent when:**
+- The task involves multiple steps whose sequence cannot be fully predetermined
+- The agent needs to use tools — querying a database, calling an API, reading a file, running a calculation
+- The task requires iteration or error correction (e.g. "try to reconcile, and if breaks remain, investigate further")
+- The goal is to reduce end-to-end human effort on a complex, recurring workflow
+- The output has enough downstream consequence that autonomous reasoning — with a human checkpoint — is justified
+
+A useful rule of thumb: if you find yourself building a workflow with more than 5–6 branching steps and you keep adding more conditions, you probably need an agent. If the task can be captured in a clean linear sequence, a workflow is safer and simpler.
+
+---
+
+## 4. Available Agent Platforms at DBS Finance
+
+DBS Finance currently has access to three platforms for building agent-like workflows, with two additional surfaces arriving in the near future. Each has a different capability profile, and choosing the right one matters.
+
+### 4.1 DBS GPT (Workflow Builder)
+
+DBS GPT is the internal AI platform available to all DBS staff. Its workflow builder allows users to chain prompts, add conditional logic, and build repeatable processes through a no-code UI.
+
+**Strengths:**
+- Accessible to non-technical users
+- Approved and available within DBS's security perimeter
+- Good for structured, linear workflows involving text generation and summarisation
+- Familiar interface similar to ChatGPT
+
+**Limitations:**
+- Limited tool integration — it is difficult to connect to external APIs or internal data systems
+- The underlying model is not best-in-class for complex reasoning tasks
+- Workflow logic is linear; genuine agent loops and dynamic decision-making are not well supported
+- Not well suited for tasks requiring high reasoning quality or nuanced financial analysis
+
+**Best used for:** Drafting, summarisation, document processing, simple multi-step text workflows where reasoning depth is not the bottleneck.
+
+### 4.2 Microsoft Copilot Studio
+
+Copilot Studio is Microsoft's platform for building AI-powered workflows and bots, integrated with the Microsoft 365 ecosystem.
+
+**Strengths:**
+- Strong native integration with Microsoft products — Teams, SharePoint, Excel, Outlook
+- Better for workflows that live inside the Microsoft ecosystem (e.g. a Teams bot that answers questions from a SharePoint knowledge base)
+- No-code/low-code builder with reasonable flexibility
+- Supports connectors to a range of enterprise systems
+
+**Limitations:**
+- Reasoning quality is moderate; complex financial logic or nuanced analysis will hit limits
+- Agent loop capability is limited — it is better thought of as a workflow engine with AI bolted on
+- Integration outside the Microsoft stack requires additional configuration effort
+- Cost and licensing considerations within DBS's enterprise agreement
+
+**Best used for:** Microsoft-native workflows — e.g. a Copilot that answers Finance policy questions from a SharePoint repository, or a Teams bot that triggers a report generation process. Strong fit when the primary integration surface is M365.
+
+### 4.3 Claude Code *(Coming Soon)*
+
+Claude Code is Anthropic's agentic coding tool, operated via the command line. It is designed for developers and technical users who want an AI that can autonomously read, write, and execute code within a project.
+
+**Strengths:**
+- Significantly higher reasoning and coding quality than DBS GPT or Copilot Studio
+- True agent behaviour — it can explore a codebase, plan a solution, write and run code, check outputs, and iterate
+- Strong fit for technical Finance workflows: building data pipelines, automating reconciliation scripts, developing and testing new tools
+- Can integrate with MCP (Model Context Protocol) servers to connect to internal systems and APIs
+- Operates in the developer's local environment with full auditability of actions taken
+
+**Limitations:**
+- Requires technical users — this is not a no-code tool
+- Command-line interface; not suitable for end-user-facing deployments
+- Governance for agentic code execution in a regulated environment needs to be defined (see Section 8)
+- Still arriving at DBS; availability timeline to be confirmed
+
+**Best used for:** Developer-led automation, building and iterating on Finance tools and scripts, technical prototyping of agent workflows before broader deployment.
+
+### 4.4 Claude Cowork *(Coming Soon)*
+
+Claude Cowork is a desktop application designed for non-developers to automate file and task management using AI. It brings agentic capability to knowledge workers without requiring coding skills.
+
+**Strengths:**
+- True agent behaviour accessible to non-technical Finance staff
+- Can operate on files, folders, and desktop workflows autonomously
+- Higher reasoning quality than DBS GPT or Copilot Studio
+- Designed for knowledge worker productivity tasks — a natural fit for Finance analysts and operations staff
+
+**Limitations:**
+- Desktop application; deployment and IT approval process at DBS to be confirmed
+- Still arriving; capability details subject to change
+- As with any agentic tool, requires clear guardrails on what the agent is permitted to do autonomously
+
+**Best used for:** Finance staff who need genuine agent capability without writing code — e.g. automating document processing, file organisation, report preparation workflows.
+
+---
+
+## 5. Platform Selection Guide
+
+Use the following framework to choose the right platform for your use case.
+
+| Criterion | DBS GPT | Copilot Studio | Claude Code | Claude Cowork |
+|---|---|---|---|---|
+| User type | All staff | All staff | Developers | All staff |
+| Reasoning quality | Moderate | Moderate | High | High |
+| True agent loops | Limited | Limited | Yes | Yes |
+| Tool / API integration | Limited | M365-native | Extensive (MCP) | Moderate |
+| No-code UI | Yes | Yes | No | Yes |
+| Available now | Yes | Yes | Soon | Soon |
+| Best fit | Simple text workflows | M365-integrated workflows | Technical automation | Knowledge worker automation |
+
+**Decision rules in plain language:**
+
+- If the task is text-based and straightforward → **DBS GPT**
+- If the task lives inside Microsoft 365 and needs Teams/SharePoint integration → **Copilot Studio**
+- If you are a developer building or automating a technical Finance process → **Claude Code** (when available)
+- If you are a Finance analyst who needs genuine agent capability without coding → **Claude Cowork** (when available)
+- If the task requires high reasoning quality and true multi-step agent behaviour today → escalate to the Finance AI team to discuss interim options
+
+When in doubt, default to the simpler tool. Agents introduce risk and complexity. If DBS GPT or a structured Copilot Studio workflow can get 80% of the way there, that is often the right answer for now.
+
+---
+
+## 6. Tool and Data Access Guidelines
+
+Agents are only as useful as the data and systems they can reach — but access brings risk. This section sets out how Finance agents should interact with tools and data.
+
+### 6.1 Data Classification
+
+Before connecting any agent to a data source, confirm the classification of that data under DBS's data governance framework. As a general rule:
+
+- **Public / internal-use data** may be used freely as agent inputs
+- **Confidential data** (e.g. internal financial positions, counterparty data) requires approval before being passed to any external AI service; verify that your chosen platform is approved for this data tier
+- **Restricted / regulated data** (e.g. MAS-reportable data, personal data under PDPA) must follow DBS's data handling policy and may not be passed to platforms that process data outside DBS's approved boundary without explicit sign-off
+
+DBS GPT and Copilot Studio operate within DBS's enterprise agreements. Claude Code and Claude Cowork should not be connected to confidential or restricted data sources until their data residency and processing terms have been reviewed and approved by DBS's data governance and infosec teams.
+
+### 6.2 Read vs. Write Access
+
+Agents should, by default, be granted **read-only access** to data sources. Write access — the ability to update records, submit transactions, send communications, or modify files — must be explicitly justified and approved.
+
+For Finance workflows specifically:
+- **No agent should have direct write access to production financial systems** (GL, treasury systems, trade booking platforms) without a mandatory human approval step
+- Agents may prepare drafts, summaries, and recommendations; a human must confirm before any write action is executed
+- Any agent with write capability must log every action taken, including the inputs that triggered it
+
+### 6.3 Approved Tool Types
+
+The following tool categories are generally appropriate for Finance agents, subject to data classification rules above:
+
+- Read access to internal data repositories and reporting databases
+- Read access to market data feeds (for reference/analysis purposes)
+- File read/write in designated agent working directories
+- Email and calendar read (for context gathering); email send only with human approval
+- Internal API calls to approved Finance systems (read-only by default)
+- Calculation and code execution in sandboxed environments
+
+The following require explicit approval before use:
+- Any API that submits, amends, or cancels financial transactions
+- External API calls to third-party services
+- Access to personal data or HR systems
+- Any tool that can send communications on behalf of a DBS employee
+
+### 6.4 Principle of Least Privilege
+
+Every agent should be granted only the minimum access required to complete its designated task. Do not give an agent broad system access "in case it needs it." Scope each tool permission to the specific data sources and actions the agent genuinely requires, and review access periodically.
+
+---
+
+*Sections 7–14 (Guardrails, Logging, Testing, Deployment, Incident Response, Versioning, Roles, Glossary) to follow.*
+
+---
+
+Want me to continue with sections 7–14, or refine any of these first?
