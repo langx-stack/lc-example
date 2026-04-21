@@ -1,0 +1,305 @@
+# How to Write a Good Prompt
+### DBS Finance AI Hub · Prompting Guide
+
+---
+
+## Why Prompting Matters
+
+Claude is a powerful AI assistant, but it is not a mind reader. The quality of its output is directly proportional to the quality of your input. A vague prompt produces a vague answer. A well-structured prompt produces a precise, usable output — the first time.
+
+This guide will show you exactly how to write prompts that work, with real examples drawn from Finance workflows.
+
+---
+
+## The CROFT Framework
+
+Use **CROFT** as your mental checklist before sending any prompt.
+
+| Letter | Stands For | What to Include |
+|--------|------------|-----------------|
+| **C** | **Context** | Who you are, what you're working on, background the AI needs |
+| **R** | **Role** | What role you want the AI to play |
+| **O** | **Output Format** | How you want the response structured (table, bullet, paragraph, JSON) |
+| **F** | **Focus / Constraints** | Boundaries, rules, what to include or exclude |
+| **T** | **Task** | The specific thing you want done |
+
+You don't need all five elements in every prompt — but the more you include, the better the result.
+
+---
+
+## Common Prompting Mistakes to Avoid
+
+**Too vague:**
+> "Summarise this."
+
+**Too assumptive** (assumes AI knows your context):
+> "What's the variance this month?"
+
+**No output format specified:**
+> "Analyse the P&L."
+
+**Asking too many things at once:**
+> "Summarise, translate, reformat, and flag anomalies in this report."
+
+---
+
+## Full-Scale Examples by Use Case
+
+---
+
+### 1. Data Extraction
+
+**Scenario:** You have received a PDF treasury report and need to pull key figures into a structured format.
+
+**Prompt:**
+
+```
+You are a finance analyst assistant at DBS. I have pasted the text of a treasury report below.
+
+Extract the following fields and present them in a markdown table:
+- Report date
+- Total assets (SGD millions)
+- Net interest income (SGD millions)
+- Cost-to-income ratio (%)
+- CET1 capital ratio (%)
+- Any footnotes or caveats mentioned alongside these figures
+
+If a field is not present, write "Not reported" in that cell.
+
+[PASTE REPORT TEXT HERE]
+```
+
+**Why this works:** The role is set ("finance analyst assistant"), the output format is specified (markdown table), missing data is handled explicitly, and the fields are unambiguous.
+
+---
+
+### 2. Document Summarisation
+
+**Scenario:** You need to brief your CFO on a 40-page regulatory consultation paper before a 9am call.
+
+**Prompt:**
+
+```
+You are a senior regulatory analyst. I will paste a MAS consultation paper below.
+
+Summarise it for a CFO briefing in the following structure:
+1. What is being proposed (2–3 sentences)
+2. Key obligations for banks (bullet points, max 6)
+3. Implementation timeline
+4. Potential financial or operational impact on DBS Finance
+5. Questions we should be asking MAS
+
+Keep the tone professional and concise. Avoid legal jargon where possible.
+
+[PASTE DOCUMENT TEXT HERE]
+```
+
+**Why this works:** The audience ("CFO") calibrates the tone and depth. The numbered structure ensures nothing is missed. The constraint on jargon avoids outputs that need further translation.
+
+---
+
+### 3. Classification
+
+**Scenario:** You have a list of 50 finance enquiries submitted to the team inbox and need to triage them by category.
+
+**Prompt:**
+
+```
+You are a finance operations analyst. Below is a list of enquiries submitted to the Finance team inbox.
+
+Classify each enquiry into exactly one of the following categories:
+- Budget & Forecast
+- Month-End Close
+- Accounts Payable
+- Accounts Receivable
+- Regulatory Reporting
+- Treasury & Cash Management
+- General Enquiry
+
+Output a table with two columns: "Enquiry" and "Category".
+If an enquiry is ambiguous, assign the most likely category and add an asterisk (*) next to it.
+
+Enquiries:
+1. "When will the October accruals journal be posted?"
+2. "Can you confirm the SGD/USD rate used for last quarter's restatement?"
+3. "We haven't received payment for invoice INV-2024-0892."
+4. "What's the deadline for submitting the MAS 610 return?"
+5. [continue list...]
+```
+
+**Why this works:** Categories are fixed and explicit — no room for the AI to invent new ones. The asterisk convention handles ambiguity without losing information.
+
+---
+
+### 4. Search & Retrieval (Reasoning Over Documents)
+
+**Scenario:** You have pasted the DBS Group Treasury Policy and need to find answers to specific questions.
+
+**Prompt:**
+
+```
+You are a treasury compliance officer. I will paste the DBS Group Treasury Policy below.
+
+Answer the following questions using only the information in the document. If the answer is not explicitly stated, say "Not specified in the policy."
+
+Questions:
+1. What is the maximum tenor allowed for intercompany loans?
+2. Which committee must approve exceptions to the FX hedging policy?
+3. Are subsidiaries required to consolidate their liquidity positions daily or weekly?
+
+For each answer, quote the relevant clause or section number from the policy.
+
+[PASTE POLICY TEXT HERE]
+```
+
+**Why this works:** Grounding the AI to only the document prevents hallucination. Asking for clause references makes the output auditable — critical in a regulated environment.
+
+---
+
+### 5. Drafting & Writing
+
+**Scenario:** You need to write a commentary for the monthly P&L pack sent to business unit heads.
+
+**Prompt:**
+
+```
+You are a Finance Business Partner writing a monthly P&L commentary for the Institutional Banking Group (IBG) business unit.
+
+Here are the key figures for October 2024:
+- Revenue: SGD 182M (budget: SGD 175M, prior month: SGD 168M)
+- Operating expenses: SGD 94M (budget: SGD 91M)
+- Cost-to-income ratio: 51.6% (budget: 52.0%)
+- Net profit: SGD 61M (budget: SGD 58M)
+- Key driver: Higher deal fees from M&A advisory mandates in Southeast Asia
+
+Write a 3-paragraph commentary in a professional, confident tone:
+1. Opening: Overall performance headline
+2. Middle: Drivers of revenue and cost variances
+3. Close: Outlook or watch items for November
+
+Do not use bullet points. Write in full prose suitable for a senior management audience.
+```
+
+**Why this works:** Numeric inputs are structured and complete. The three-paragraph format and prose-only constraint means the output is ready to paste directly into the pack.
+
+---
+
+### 6. Comparison & Analysis
+
+**Scenario:** You need to compare two vendor proposals for a new FP&A tool.
+
+**Prompt:**
+
+```
+You are a Finance technology advisor evaluating two vendor proposals for an FP&A platform.
+
+Below are the key details from each proposal:
+
+**Vendor A – Anaplan**
+- Licensing: SGD 420K per year (enterprise, 50 seats)
+- Implementation: 6 months, vendor-led
+- Integration: Pre-built connector to SAP S/4HANA
+- Key weakness mentioned by vendor: Requires dedicated admin resource
+
+**Vendor B – Workday Adaptive**
+- Licensing: SGD 385K per year (enterprise, 50 seats)
+- Implementation: 9 months, partner-led
+- Integration: Custom API required for SAP
+- Key weakness mentioned by vendor: Less flexible for ad-hoc scenario modelling
+
+Compare these two options across the following criteria and present as a table:
+1. Total cost of ownership (Year 1 and Year 3 estimate)
+2. Implementation risk
+3. SAP integration complexity
+4. Flexibility for Finance use cases
+5. Overall recommendation with rationale
+
+Assume DBS Finance has a lean IT team and prioritises speed-to-value.
+```
+
+**Why this works:** The context ("lean IT team, speed-to-value") shifts the recommendation appropriately. The criteria are explicit so the comparison is structured and fair, not arbitrary.
+
+---
+
+### 7. Anomaly Detection & Flagging
+
+**Scenario:** You want the AI to review a trial balance and flag unusual items before month-end sign-off.
+
+**Prompt:**
+
+```
+You are a financial controller reviewing a trial balance for the DBS Finance cost centre (CC: 4210) for September 2024.
+
+Below is the trial balance data [pasted as a table or CSV].
+
+Review the data and flag any of the following anomalies:
+- Line items where the actual amount exceeds budget by more than 10%
+- Any debit entries in accounts that should only have credits (and vice versa)
+- Accounts with zero activity that had significant balances in prior months
+- Any unusual account codes not typically associated with a Finance cost centre
+
+Present your findings as a numbered list. For each finding, state:
+- Account code and description
+- The issue identified
+- Suggested action
+
+If no anomalies are found, explicitly state "No anomalies detected."
+
+[PASTE TRIAL BALANCE DATA HERE]
+```
+
+**Why this works:** The anomaly rules are explicit — the AI doesn't need to guess what "unusual" means. The "no anomalies" fallback prevents false positives from being fabricated.
+
+---
+
+### 8. Translation & Localisation
+
+**Scenario:** You need to send a finance process update to the team in Hong Kong in Traditional Chinese.
+
+**Prompt:**
+
+```
+You are a bilingual finance communications specialist fluent in English and Traditional Chinese (Hong Kong usage).
+
+Translate the following internal finance announcement into Traditional Chinese. 
+
+Requirements:
+- Use formal, professional register appropriate for a banking environment
+- Retain all numbers, account codes, and system names in their original form (e.g., "SAP S/4HANA", "MAS 610")
+- Do not translate acronyms — keep them as-is (e.g., P&L, FTE, CET1)
+- After the translation, provide a brief back-translation in English so I can verify accuracy
+
+[PASTE ENGLISH TEXT HERE]
+```
+
+**Why this works:** Domain-specific carve-outs (keep codes, acronyms as-is) prevent mistranslation of technical terms. The back-translation request is a quality gate.
+
+---
+
+## Quick Reference: Prompt Patterns
+
+| Pattern | When to Use | Key Ingredient |
+|---------|-------------|----------------|
+| **Extract → Table** | Pulling structured data from unstructured text | Explicit field list + "Not reported" fallback |
+| **Summarise → Audience** | Condensing long documents | Name the audience, specify structure |
+| **Classify → Fixed Categories** | Triaging, tagging, bucketing | Define categories explicitly |
+| **Search → Cite Source** | Finding answers in pasted documents | "Use only the document; quote the clause" |
+| **Draft → Format + Tone** | Writing reports, emails, commentary | Specify format, tone, and audience |
+| **Compare → Criteria Table** | Vendor evaluation, option analysis | Fix the criteria; add context for recommendation |
+| **Flag → Rules + Fallback** | Anomaly detection, review | Define rules; add "none found" instruction |
+
+---
+
+## Tips for DBS Finance Specifically
+
+**Always include your cost centre or entity context** when the output will be used in a specific business context. Claude doesn't know whether you're in Group Finance, IBG Finance, or Treasury — tell it.
+
+**For regulated outputs** (MAS submissions, external disclosures), always have a human reviewer verify the output. Use AI to draft and accelerate, not to sign off.
+
+**Chain your prompts** for complex tasks. Don't ask Claude to extract, analyse, and write a recommendation in one prompt. Do it in steps: extract first, then analyse, then draft.
+
+**Paste data as text, not screenshots.** Claude reads text, not images of spreadsheets. Export to CSV or copy-paste from Excel for best results.
+
+---
+
+*DBS Finance AI Hub · Internal Use Only*
