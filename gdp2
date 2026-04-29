@@ -1,0 +1,153 @@
+# Analyzing GDP Data with a Microsoft Copilot Studio Agent
+
+*[Header image: A screenshot of the Copilot Studio canvas showing a multi-step workflow with connected action nodes]*
+
+---
+
+## A Quick Introduction to Copilot Studio
+
+Microsoft Copilot Studio is a low-code platform for building AI-powered agents inside the Microsoft 365 ecosystem. Unlike the Copilot button baked into Word or Excel, Copilot Studio lets you design custom agents that chain multiple steps together: reading a file, processing its contents, calling an AI model, and writing outputs back to OneDrive, Teams, or wherever you need them. It connects natively to Office apps, Power Automate, and SharePoint, which makes it a natural fit for finance and analytics workflows that already live in the Microsoft stack.
+
+*[Link: Microsoft Copilot Studio overview -- https://www.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-studio]*
+
+The strengths are real: low barrier to entry, tight M365 integration, and the ability to combine structured data processing with AI reasoning in one workflow. The limitations are also worth knowing upfront. Multi-step agents can be slow on complex workflows, the Excel connector works best with clean and well-structured tables, large files can hit context limits, and the licensing cost adds up if agents run at scale. With that said, for repeatable analytical tasks, it's a genuinely capable platform. Now let's get into a concrete example.
+
+---
+
+## The Use Case: Decomposing 2023 GDP Growth by Component
+
+The U.S. Bureau of Economic Analysis (BEA) publishes quarterly GDP data in Excel format as part of the National Income and Product Accounts (NIPA) tables. Table 1.1.2, specifically, gives you contributions to percent change in real GDP, broken down by component. Download the file covering 2023 quarterly data and you have a structured spreadsheet with GDP components as rows and quarters as columns.
+
+*[Screenshot: A snippet of the downloaded BEA Excel file showing the component rows and quarterly columns. File available at https://apps.bea.gov/iTable/]*
+
+The question we want the agent to answer: **which GDP component contributed most to overall GDP change in 2023, and by how much?**
+
+---
+
+## Understanding GDP Components and Contribution
+
+Before getting into the agent design, it helps to be clear on the underlying concept, since it shapes what the agent actually needs to do.
+
+GDP follows the familiar identity:
+
+> **GDP = C + I + G + NX**
+
+where C is Personal Consumption, I is Gross Private Investment, G is Government Expenditure, and NX is Net Exports. These are the **Level 1** components.
+
+Each of these can be broken down further. Consumption (C) splits into Goods and Services. Investment splits into Fixed Investment and Change in Inventories. These sub-items are what we call **Level 2**, and this is the level of granularity that tends to be most analytically useful: specific enough to tell a real story, without getting lost in fine detail.
+
+The contribution of any component to overall GDP growth is driven by two things:
+
+1. **Its weight** -- the dollar value of that component as a share of total GDP for the period. A component that represents 60% of the economy will move the aggregate far more than one that represents 3%, even with identical growth rates.
+
+2. **Its own rate of change** -- how much that component actually grew or contracted in the period.
+
+Contribution is roughly the product of these two: weight multiplied by percent change. Conveniently, the BEA already reports this figure directly in Table 1.1.2, so the agent does not need to derive it from scratch. But understanding the concept matters when we write the prompt and interpret the output.
+
+In this analysis, we want the agent to focus on **Level 2 components**, and for each one to report: the weight, the percent change, and the contribution to overall GDP change in 2023.
+
+---
+
+## Designing the Agent Workflow
+
+Here is how the workflow is structured in Copilot Studio:
+
+**Step 1 -- File Ingestion**
+
+The agent takes the BEA Excel file as its input, either via an upload or a OneDrive file path. A connector action reads the relevant sheet and table range.
+
+*[Screenshot: The Copilot Studio action node for "Get file content" or "List rows present in a table" pointing to the BEA Excel file in OneDrive]*
+
+**Step 2 -- Data Parsing**
+
+A Power Automate step filters the rows to isolate Level 2 components and extracts four fields for each: component name, weight (share of GDP), quarterly percent changes, and contribution figures. The BEA file uses indentation in row labels to signal hierarchy, so the parsing logic uses that to distinguish Level 1 from Level 2 rows.
+
+*[Screenshot: The Power Automate flow step showing the filter logic on BEA row labels]*
+
+**Step 3 -- AI Analysis and Ranking**
+
+The filtered table is passed to an AI step with the following prompt:
+
+> *[INSERT YOUR PROMPT HERE -- suggested template below]*
+>
+> ```
+> You are an economics analyst. You have been given a table of U.S. GDP components
+> for 2023, at Level 2 decomposition (sub-components of Consumption, Investment,
+> Government Expenditure, and Net Exports).
+>
+> For each component, you have: its name, its weight as a share of total GDP,
+> its average quarterly percent change across 2023, and its contribution to
+> overall GDP change in percentage points.
+>
+> Task 1: Produce a CSV table with the following columns:
+> Component, Level, Weight (% of GDP), Avg % Change 2023, Contribution (pp)
+> Sort by Contribution descending. Include both positive and negative contributors.
+>
+> Task 2: Write a 2-3 paragraph commentary in plain English identifying the most
+> important drivers of GDP change in 2023. Name the top two or three positive
+> contributors and any significant drags. Explain what each component represents
+> and why its contribution makes sense in the context of the 2023 economy.
+> ```
+
+*[Screenshot: The Copilot Studio "Generate text with GPT" action node showing this prompt template in the configuration panel]*
+
+**Step 4 -- CSV Output**
+
+The agent saves the structured table as a CSV to OneDrive or returns it as a downloadable file. The expected output looks like this:
+
+| Component | Level | Weight (% of GDP) | Avg % Change 2023 | Contribution (pp) |
+|---|---|---|---|---|
+| Services | 2 | 45.1% | 2.8% | 1.26 |
+| Goods | 2 | 21.4% | 1.2% | 0.26 |
+| Residential Fixed Investment | 2 | 4.2% | -9.5% | -0.40 |
+| ... | | | | |
+
+*[Screenshot: The agent's actual CSV output opened in Excel, with real values from the 2023 BEA data]*
+
+**Step 5 -- Natural Language Commentary**
+
+The same AI response also contains the written commentary. This is what the agent actually produces as its second output:
+
+*[Screenshot: The agent's commentary output as displayed in the Copilot Studio test panel or chat interface -- paste the actual reply from the agent here]*
+
+A good output at this step should read roughly like this (replace with the actual agent output):
+
+> *"The single largest contributor to U.S. GDP growth in 2023 was Services consumption, adding approximately 1.3 percentage points to the overall change. This reflects continued normalization in consumer-facing service sectors following the post-pandemic period. Goods consumption contributed a further 0.26 percentage points, though its growth rate was more modest given the earlier goods spending surge in 2021-2022. On the negative side, Residential Fixed Investment subtracted meaningfully from growth as elevated mortgage rates continued to suppress housing activity throughout the year..."*
+
+---
+
+## What the Agent Delivers
+
+Two outputs, separated cleanly:
+
+**Output 1: The CSV table.** A machine-readable file of Level 2 GDP components ranked by contribution, with weight and percent change columns included. You can feed this directly into Excel for charting, drop it into a dashboard, or use it as a data source for further analysis.
+
+**Output 2: The commentary.** A human-readable narrative that a finance professional could drop into a report or briefing with minimal editing. The agent synthesizes the key story from the numbers so the reader does not have to reconstruct it from a table.
+
+---
+
+## When Is This Actually Worth Building?
+
+For a one-off analysis, doing this manually in Excel is probably faster. A Copilot Studio agent starts to earn its keep when:
+
+- You run the same analysis **every quarter** and want it automated
+- **Multiple people** on the team need to run it without knowing how the BEA file is structured
+- You want to **extend the workflow** downstream: generating a PowerPoint summary slide, routing the output to a Teams channel, or triggering the run automatically when a new BEA release is published
+
+That last point is where the platform compounds. Once the workflow exists, you can bolt on a PowerPoint step that takes the CSV and populates a pre-formatted slide template. You can add a Teams notification when the run completes. Each step on its own is modest; the value is in having them chained, tested, and repeatable.
+
+*[Link: Power Automate connector library for readers exploring what integrations are available -- https://learn.microsoft.com/en-us/connectors/connector-reference/]*
+
+---
+
+## Final Thoughts
+
+The GDP decomposition example is a good stress test for Copilot Studio because it involves real-world data that is not perfectly clean, requires some understanding of what to calculate and why, and produces two meaningfully different output types. Getting it to work reliably takes some iteration on the parsing logic and the prompt, but it is achievable in a few days of work.
+
+If you are evaluating Copilot Studio for your team, starting with a workflow like this one is a reasonable approach: concrete enough to matter, complex enough to surface the real limitations, and bounded enough to build and test quickly.
+
+*[Closing image: A simple flowchart or screenshot of the full Copilot Studio canvas showing the complete workflow from file input through to CSV and commentary outputs]*
+
+---
+
+*Have you built a Copilot Studio agent for financial analysis? [Link to contact or comments section]*
