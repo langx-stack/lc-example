@@ -1,0 +1,169 @@
+# Getting to Know BPMN — Why Our Finance AI Guild Is Mapping with It
+
+> **📸 [EDITOR NOTE: Consider adding a banner image here — a clean BPMN diagram screenshot, or a stylised flowchart graphic that evokes "process mapping". Something professional but not stock-photo generic.]**
+
+---
+
+## What Is BPMN?
+
+BPMN stands for **Business Process Model and Notation**. It is an open international standard — maintained by the Object Management Group (OMG) — for drawing business process diagrams in a way that is consistent, structured, and readable across teams and tools.
+
+Think of it as a shared visual language for describing *how work gets done*. Instead of each team inventing their own flowchart conventions, BPMN gives everyone a common grammar: agreed shapes, symbols, and rules that mean the same thing regardless of who drew the diagram or which tool they used to open it.
+
+The current version, **BPMN 2.0**, has been the standard since 2011 and is widely adopted across industries — from banking to healthcare to manufacturing.
+
+> 🔗 **[EDITOR NOTE: Link here to the OMG BPMN spec page: https://www.omg.org/spec/BPMN/2.0/]**
+
+---
+
+## The Building Blocks You'll Encounter
+
+You don't need to memorise the entire spec. For the kind of process mapping we're doing, the following constructs will cover the vast majority of what you'll come across.
+
+### Events
+
+Events are things that *happen* — they trigger a process, occur in the middle of it, or signal its end. They are represented as **circles** and come in three flavours:
+
+- **Start Event** — kicks off the process (thin circle border)
+- **Intermediate Event** — something that happens mid-flow, like receiving a message or waiting for a timer
+- **End Event** — marks where the process finishes (thick circle border)
+
+Events can also carry a marker inside (an envelope for a message event, a clock for a timer event) to convey more specific meaning.
+
+### Tasks
+
+Tasks are the actual units of work — the individual steps that someone or something performs. They are drawn as **rounded rectangles** and can be typed to indicate *who or what* does the work:
+
+- **User Task** — a human performs the step
+- **Service Task** — a system or automated process handles it
+- **Send Task** — the step involves sending a communication to another party
+
+At DBS Finance, we've extended this with our own classification that also includes AI tasks and Review/Approval steps — more on that later.
+
+### Gateways
+
+Gateways control the flow of the process — they are the decision points and merge points. Drawn as **diamonds**, the most common ones are:
+
+- **Exclusive Gateway (XOR)** — only one path is taken depending on a condition ("if approved, go here; otherwise, go there")
+- **Parallel Gateway (AND)** — all outgoing paths happen simultaneously
+- **Inclusive Gateway (OR)** — one or more paths can be taken depending on conditions
+
+### Sequence Flows and Message Flows
+
+**Sequence flows** are the arrows connecting tasks and events within the same process — they define the order of execution. **Message flows** are a distinct type of arrow (dashed) used to show communication *between* separate participants or systems.
+
+### Pools and Swimlanes
+
+When a process involves multiple parties, it's represented using **pools** (large containers, each representing a participant or system) and **swimlanes** (horizontal or vertical divisions within a pool, representing roles or sub-teams). This layout makes it immediately clear who is responsible for what.
+
+> 📸 **[EDITOR NOTE: Insert a screenshot here showing a simple BPMN diagram with at least two swimlanes, a start event, a gateway, and an end event. A real diagram from Camunda Modeler or bpmn.io would work well here.]**
+
+---
+
+## Why BPMN Works Well for Us
+
+### It's a Shared Language
+
+One of BPMN's core design goals was to bridge the gap between business analysts and technical implementers. A finance process owner can read a BPMN diagram and verify it reflects reality, while a developer or system architect can look at the same diagram and understand the technical flow. That shared vocabulary matters when we're mapping processes that span human steps, system integrations, and AI-assisted actions.
+
+To be transparent: BPMN does have a learning curve. The full notation is extensive, and drawing *good* diagrams — with the right level of detail and structurally sound flows — takes practice. But for the scope of what we're mapping (Level 2 complex processes), you won't need the full spec, and the investment in learning the core constructs pays off quickly.
+
+### A Diagram That's Also a File
+
+This is where BPMN becomes genuinely interesting for our use case. A `.bpmn` file is not just a picture — it is a structured **XML document** underneath. Every element, connection, and label in the diagram is represented as readable, machine-parseable text.
+
+Here is a small excerpt to give you a sense of what that looks like:
+
+```xml
+<bpmn:process id="Process_1" isExecutable="false">
+  <bpmn:startEvent id="Event_Start" name="Report Requested"/>
+  <bpmn:userTask id="Task_Prepare" name="Prepare Draft Report"/>
+  <bpmn:sequenceFlow id="Flow_1" 
+    sourceRef="Event_Start" targetRef="Task_Prepare"/>
+</bpmn:process>
+```
+
+This XML structure means a `.bpmn` file can be opened, read, edited, and generated by *any* system that understands text — including an AI model.
+
+### It Renders Consistently Across Tools
+
+Because the format is standardised, the same `.bpmn` file can be opened and rendered across multiple platforms without conversion or reformatting. Some commonly used options include:
+
+- **[bpmn.io](https://bpmn.io/)** — a free, open-source, browser-based renderer and editor backed by the makers of Camunda. You can paste XML directly into the demo at [demo.bpmn.io](https://demo.bpmn.io/) and see the diagram instantly.
+- **Camunda Modeler** — a desktop application for editing BPMN files with a visual interface
+- **VS Code** — with the bpmn.io VS Code extension, you can view and edit `.bpmn` files directly inside your code editor
+
+> 🔗 **[EDITOR NOTE: Link to demo.bpmn.io here: https://demo.bpmn.io/ — you may also want to embed a short screen recording or GIF showing someone pasting XML and watching the diagram appear.]**
+
+This portability is a meaningful advantage over proprietary diagramming tools where diagrams are locked into a specific format or subscription.
+
+---
+
+## The AI Angle — Why This Changes Everything for Our Mapping Exercise
+
+Here is the part that makes BPMN a particularly strategic choice for what we're doing in Finance.
+
+Because a BPMN diagram is ultimately just structured XML text, you can describe a process to an AI model in plain language — and ask it to generate the corresponding BPMN file. The AI produces the XML, you paste it into bpmn.io or Camunda Modeler, and you have a rendered diagram immediately.
+
+This shifts the effort of process mapping significantly. Instead of spending hours manually placing shapes and drawing arrows in a modelling tool, a process owner can describe the workflow conversationally — "First, the analyst pulls data from the system, then they validate it against the prior month's figures, then they send it to the manager for sign-off" — and have a working first draft of the diagram in minutes.
+
+That first draft still needs review and refinement. But it changes the starting point dramatically.
+
+### Skills That Do the Heavy Lifting
+
+AI assistants like Claude can be given **skills** — structured sets of instructions that tell the model exactly how to behave for a specific task. For BPMN generation, this means you can create a skill that not only generates valid BPMN XML, but generates it according to a specific standard: the right task types, the right naming conventions, the right colour coding.
+
+Our Finance AI Guild is actively building exactly this. The skill we're developing ensures that any BPMN generated from a process description automatically conforms to our internal classification standard — distinguishing human tasks from automated ones, from AI-assisted ones, from approval steps — with consistent colour coding so that any reader can understand the diagram at a glance without extra explanation.
+
+> 📸 **[EDITOR NOTE: Insert a before/after here if available — a raw process description on one side, the generated and rendered BPMN diagram on the other. This would be a very effective visual for this section.]**
+
+This is why BPMN was the right choice for our mapping exercise. Not just because it's a good notation, but because it unlocks AI-assisted generation in a way that proprietary or purely visual formats do not.
+
+---
+
+## Where BPMN Has Its Limits
+
+In the spirit of giving you a complete picture, it's worth being honest about where BPMN falls short.
+
+**BPMN is task-centric.** It models *what happens* and *in what order*. What it does not have are native constructs for things like:
+
+- **Data sources and systems** — you can label a task "pull from SAP" but there is no built-in BPMN element that represents a database or system integration in a semantically rich way
+- **Time dimensions** — for instance, representing that a report runs on the last business day of the month, or that a task has a service-level agreement of 24 hours, is possible with workarounds (timer events, text annotations, custom attributes) but not something the core notation handles naturally out of the box
+- **Business rules in detail** — a gateway can represent a decision, but the logic behind that decision (the actual rules and conditions) lives outside the diagram
+- **Cost and resource information** — workforce planning, capacity, cost per step — none of this is native to BPMN
+
+These are known limitations, and practitioners have developed workarounds: text annotations, custom extension attributes, companion documents. But it's worth going in with realistic expectations — a BPMN diagram is a *process flow model*, not a comprehensive business architecture document.
+
+For our purposes — mapping Level 2 complex finance workflows to understand structure, handoffs, and automation opportunities — BPMN covers exactly what we need.
+
+---
+
+## Getting Started
+
+If you want to get hands-on before your first mapping session:
+
+1. Head to **[demo.bpmn.io](https://demo.bpmn.io/)** — it's free, requires no account, and runs in the browser
+2. Try dragging out a start event, a couple of tasks, and an end event
+3. Look at the XML view to see what the underlying file looks like
+4. Download the `.bpmn` file and re-open it — notice it renders exactly the same
+
+> 🔗 **[EDITOR NOTE: You could also link here to any internal SharePoint resources — e.g. the Finance AI Guild's process mapping guidelines, the DBS task classification standard document, or an example `.bpmn` file for reference.]**
+
+The Finance AI Guild will be running mapping sessions with support, so you won't be going in cold. But familiarity with the basics will make those sessions go a lot more smoothly.
+
+---
+
+## In Summary
+
+| | |
+|---|---|
+| **What it is** | An open international standard for modelling business processes visually |
+| **Why it's readable** | Standardised shapes and symbols, consistent across teams and tools |
+| **Why it's portable** | The same `.bpmn` file opens identically in bpmn.io, Camunda, VS Code, and others |
+| **Why AI can generate it** | It's XML under the hood — a text format AI models can produce directly |
+| **What we're building** | A Finance-specific BPMN skill that enforces our task classification standard |
+| **Where it falls short** | Not native for data sources, time dimensions, or detailed business rules |
+
+---
+
+*Have questions or want to get involved with the Finance AI Guild's mapping work? Reach out to the team via [**EDITOR NOTE: insert contact/Teams channel here**].*
