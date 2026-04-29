@@ -1,0 +1,79 @@
+Here is the updated article:
+
+---
+
+**DBS GPT Web Search: What It Can Do and Where It Falls Short**
+
+If you have been using DBS GPT to automate the retrieval of information from external websites, there is a good chance you have run into some unexpected behaviour. This article walks through how the web search feature actually works under the hood, and highlights two key limitations you should be aware of before building it into your workflows.
+
+**How Web Search Works in DBS GPT**
+
+The web search capability in DBS GPT is not a simple browser call. It is itself powered by an LLM, specifically Gemini 2.5 Flash as of April 2026. What this means in practice is that when a search step is executed, the LLM decides what keywords to use based on the instructions it has been given. It then conducts the search and attempts to extract the relevant information from the results.
+
+This has an important implication: the quality and specificity of your search is directly tied to how clearly you describe what you want. The more explicit you are, the better the search will be. Vague instructions tend to produce vague searches.
+
+*[Screenshot placeholder: Example of a web search step in the DBS GPT workflow editor, showing the search instruction field]*
+
+**Limitation 1: AI-Generated Workflows May Not Specify the Target Website**
+
+When building a workflow in DBS GPT, you have two options:
+
+- **AI-generated workflow** — you describe what you want in natural language and let the AI construct the workflow for you
+- **Manual workflow** — you drag and drop task blocks yourself and configure each step explicitly
+
+The convenience of the AI-generated approach comes with a catch. When the AI builds a web search step for you, it may not explicitly encode the target website in that step. For example, if you ask DBS GPT to pull regulatory metrics from the MAS website, the AI might generate a search step that looks for the right information but leaves the destination website unspecified or ambiguous. It could end up searching more broadly than you intended, or landing on a different source altogether.
+
+The fix is simple but easy to forget: always open up AI-generated web search steps and check that the target URL or website is explicitly stated. Do not assume the AI has remembered your source just because you mentioned it in your prompt.
+
+Things to check in any AI-generated web search step:
+- Is the target website explicitly named or is the instruction too generic?
+- Would the search keywords the AI is likely to use actually lead to the right page?
+- Is there any ambiguity that could send the search to an unintended source?
+
+*[Screenshot placeholder: Side-by-side comparison of a vague AI-generated search step versus a manually corrected one with an explicit URL]*
+
+**Limitation 2: The LLM Cannot Browse, It Can Only Navigate**
+
+This is perhaps the most important limitation to internalise. There is a meaningful difference between browsing a website the way a human would, and navigating to a URL the way DBS GPT does. The LLM powering the web search does not explore a site dynamically. It does not click around, scroll through available options, or figure out what is available before deciding what to retrieve. It goes where it is pointed.
+
+This creates a real problem when the task requires contextual awareness to complete. Take a common scenario: you ask DBS GPT to retrieve the latest report from the MAS website. A human doing this task would land on the page, look through the available dates or publication list, identify the most recent one, and then download it. The LLM cannot do that sequence of steps. It does not know what dates are available because that information only becomes visible through browser interaction. If it cannot infer the exact URL of the latest report from the page content alone, it will struggle, and may either retrieve the wrong file or fail entirely.
+
+This problem gets worse when the page relies on JavaScript-driven interactions to surface data, things like:
+
+- Date pickers or reporting period selectors
+- Tab toggles or accordion menus
+- Dropdown filters that load different datasets
+- Download buttons that only appear after a certain widget state is set
+
+The common thread across all of these is that interacting with them does not change the URL. A human clicking through a date picker and selecting a specific quarter will see the page update, but the web address in the browser bar stays exactly the same. DBS GPT has no way to replicate those interaction steps. It will likely land on the default view of the page, which may not be what you need at all.
+
+*[Screenshot placeholder: Example of a JavaScript-heavy webpage such as a data portal with a date picker, to illustrate what DBS GPT cannot navigate]*
+
+**What DBS GPT Web Search Does Well**
+
+It is worth being clear that this is not a feature to avoid, it just has a sweet spot. DBS GPT handles web search reliably when:
+
+- The target is a specific, stable URL that does not require any prior browser interaction to reach
+- The file you want, whether a PDF or CSV, has its own unique download link that is directly accessible
+- The content is text-based and indexable, meaning the LLM can find it through a well-formed search query
+
+A good example of this working well would be a PDF report that lives at a permanent, predictable URL on a government or institutional website, where the link itself can be found through a straightforward text search. In that scenario, DBS GPT can locate the link, navigate to it, and retrieve the file without needing to interact with any page elements.
+
+*[Screenshot placeholder: Example of a clean, direct PDF or CSV download link that DBS GPT can handle successfully]*
+
+**The Takeaway**
+
+Web search in DBS GPT is genuinely useful, but it works best under certain conditions. To get the most out of it:
+
+- Be as explicit as possible in your search instructions, since an LLM is deciding the keywords
+- Always review AI-generated workflow steps rather than trusting them blindly
+- Double-check that target websites are explicitly named in web search steps
+- Avoid relying on it for pages that require JavaScript interactions to surface the data you need
+- Do not expect it to browse and explore a site the way a human would — if retrieving the right file requires first scanning what is available, you will need to handle that logic yourself or hardcode the target URL
+- For file downloads, it works best when the PDF or CSV has a unique, discoverable link rather than being tucked behind dynamic page interactions
+
+When you design with these constraints in mind, the feature becomes a lot more predictable and reliable.
+
+---
+
+Let me know if you want to tweak anything further.
