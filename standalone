@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>ISCA Socratic Study</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: one narrow reading column (phone first), sticky header, bottom nav bar. Ledger-paper neutrals; colour is reserved for the element code. */
+:root {
+  --paper: #f5f6f2;
+  --card: #ffffff;
+  --ink: #1a222b;
+  --muted: #5b6570;
+  --rule: #d9ddd5;
+  --think: #a8661a;
+  --think-bg: #fbf1e3;
+  --el-a: #1f7a44;
+  --el-l: #b3261e;
+  --el-x: #8a5a2b;
+  --el-i: #1d5fb4;
+  --el-e: #6e3ba8;
+  --el-n: #6b7280;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+    --think: #e2a35a; --think-bg: #2a2117;
+    --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+  --think: #e2a35a; --think-bg: #2a2117;
+  --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 16px/1.6 var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.wrap {
+  max-width: 640px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.9rem; font-weight: 600; }
+h2 { font-size: 1.4rem; font-weight: 600; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.num, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Element colour code */
+.el { font-weight: 600; }
+.el-a { color: var(--el-a); } .el-l { color: var(--el-l); } .el-x { color: var(--el-x); }
+.el-i { color: var(--el-i); } .el-e { color: var(--el-e); } .el-n { color: var(--el-n); }
+.dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: currentColor; margin-right: .35em; vertical-align: .05em; }
+
+/* Header */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+}
+.top .wrap { display: flex; align-items: center; gap: 12px; padding-block: 10px; }
+.top .title { flex: 1; min-width: 0; font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top .title b { color: var(--ink); font-weight: 600; }
+.chipbtn { border: 1px solid var(--rule); background: var(--card); border-radius: 999px; padding: 4px 12px; font-size: .85rem; }
+.progress { height: 3px; background: var(--rule); }
+.progress i { display: block; height: 100%; background: var(--ink); transition: width .25s; }
+.legend { border-top: 1px solid var(--rule); }
+.legend .wrap { display: flex; flex-wrap: wrap; gap: 6px 16px; padding-block: 10px; font-size: .9rem; }
+
+main { padding-block: 22px 120px; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.eyebrow.think { color: var(--think); }
+.lead { font-size: 1.05rem; }
+.muted { color: var(--muted); }
+
+.card { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; }
+.scenario { background: var(--think-bg); border-radius: 10px; padding: 14px 16px; }
+.prompt { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; }
+textarea, input, select {
+  font: inherit; color: var(--ink); background: var(--card);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; width: 100%;
+}
+textarea { min-height: 84px; resize: vertical; }
+.answer { border-left: 3px solid var(--ink); padding-left: 14px; display: flex; flex-direction: column; gap: 8px; }
+ul.body { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; }
+.formula { font-family: var(--font-mono); font-size: .92rem; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px; line-height: 1.7; }
+.trap { border: 1.5px dashed var(--muted); border-radius: 8px; padding: 10px 12px; }
+.trap::before { content: "Trap · "; font-weight: 700; }
+.key { font-weight: 600; font-family: var(--font-display); font-size: 1.05rem; }
+
+.btn { border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); border-radius: 8px; padding: 9px 16px; font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn:disabled { opacity: .35; cursor: default; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* MCQ options: marking uses ink fill (✓) and dashed outline (✗), never red/green */
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { text-align: left; background: var(--card); border: 1.5px solid var(--rule); border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; }
+.opt .mk { flex: none; width: 1.5em; height: 1.5em; border-radius: 50%; border: 1.5px solid var(--muted); display: grid; place-items: center; font-size: .8rem; font-weight: 700; }
+.opt .tx { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.opt.sel { border-color: var(--ink); }
+.opt.sel .mk { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.opt.right { border-color: var(--ink); border-width: 2.5px; }
+.opt.right .mk { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.opt.wrong { border-style: dashed; border-color: var(--ink); }
+.opt.wrong .mk { border-style: dashed; border-color: var(--ink); }
+.opt .why { font-size: .9rem; color: var(--muted); }
+.opt[disabled] { cursor: default; }
+.verdict { font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 6px; font-size: .8rem; font-weight: 700; }
+.badge.ok { background: var(--ink); color: var(--paper); }
+.badge.no { border: 1.5px dashed var(--ink); }
+
+/* Journal entries */
+table.jet { width: 100%; border-collapse: collapse; font-size: .92rem; }
+table.jet td { padding: 3px 0; vertical-align: top; }
+table.jet td.amt { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 10px; }
+table.jet tr.cr td.acc { padding-left: 1.4em; }
+.jeb { display: flex; flex-direction: column; gap: 8px; }
+.jeline { display: grid; grid-template-columns: 4.2em minmax(0, 1fr) 6.5em 2em; gap: 6px; align-items: center; }
+.jeline select, .jeline input { padding: 7px 6px; font-size: .9rem; }
+.jeline input { font-family: var(--font-mono); text-align: right; }
+.jeline .x { background: none; border: none; color: var(--muted); font-size: 1.2rem; }
+.jeline.ok select, .jeline.ok input { border-color: var(--ink); border-width: 2px; }
+.jeline.no select, .jeline.no input { border-style: dashed; border-color: var(--ink); }
+.jeline .acc-el { grid-column: 2 / 4; font-size: .78rem; margin-top: -4px; }
+
+/* Tables and visuals */
+.tbl-wrap { overflow-x: auto; }
+table.tbl { border-collapse: collapse; width: 100%; font-size: .88rem; }
+table.tbl th, table.tbl td { border-bottom: 1px solid var(--rule); padding: 7px 8px; text-align: left; vertical-align: top; }
+table.tbl th { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+table.tbl.num td:not(:first-child), table.tbl.num th:not(:first-child) { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.tbl tr.hide { visibility: hidden; }
+.cap { font-size: .9rem; color: var(--muted); }
+ol.flow { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+ol.flow li { position: relative; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+ol.flow li:not(:last-child)::after { content: "yes ↓"; position: absolute; left: 16px; bottom: -21px; font-size: .75rem; color: var(--muted); }
+ol.flow li span { font-size: .85rem; color: var(--muted); }
+ol.flow li i { font-style: normal; font-size: .8rem; color: var(--muted); align-self: flex-end; border: 1px dashed var(--rule); border-radius: 6px; padding: 0 6px; }
+ol.flow li.end { border: 2px solid var(--ink); }
+.timeline { display: flex; flex-direction: column; gap: 10px; overflow-x: auto; }
+.tl-row { display: grid; grid-template-columns: 5em repeat(5, minmax(3.6em, 1fr)); gap: 4px; align-items: end; font-size: .78rem; }
+.tl-row .tick { border-top: 2px solid var(--rule); padding-top: 4px; color: var(--muted); text-align: center; }
+.tl-row .tick.pay { border-top-color: var(--ink); color: var(--ink); font-weight: 600; }
+
+/* Home */
+.hero { display: flex; flex-direction: column; gap: 8px; padding-block: 8px 6px; }
+.topic { display: flex; flex-direction: column; gap: 14px; }
+.topic .meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: .9rem; color: var(--muted); }
+.bar { height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ink); }
+
+/* Quiz */
+.case { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; }
+.case summary { cursor: pointer; font-weight: 600; }
+.case .stack { margin-top: 10px; font-size: .95rem; }
+.src { font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.qdots { display: flex; flex-wrap: wrap; gap: 6px; }
+.qdots button { width: 2.1em; height: 2.1em; border-radius: 6px; border: 1px solid var(--rule); background: var(--card); font-size: .8rem; }
+.qdots button.done { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.qdots button.cur { outline: 2px solid var(--ink); outline-offset: 1px; }
+.score { font-family: var(--font-display); font-size: 3rem; font-weight: 600; line-height: 1; }
+.lorow { display: grid; grid-template-columns: minmax(0, 1fr) 4em; gap: 4px 10px; align-items: center; font-size: .9rem; }
+.lorow .bar { grid-column: 1 / -1; }
+.confirm { border: 1.5px dashed var(--ink); border-radius: 10px; padding: 12px; }
+
+/* Bottom nav */
+.nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--paper); border-top: 1px solid var(--rule);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.nav .wrap { display: flex; justify-content: space-between; gap: 10px; padding-block: 10px; }
+.nav .btn { min-width: 6.5em; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// Pure logic shared by the browser app and the Node build/tests.
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.StudyCore = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  const ELEMENTS = {
+    a: 'Asset', l: 'Liability', e: 'Equity', i: 'Income', x: 'Expense', n: 'Other term',
+  };
+
+  const escapeHtml = (s) => String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  // {a|ROU asset} → coloured account, **bold**, *em*. Escapes first so content can't inject markup.
+  function renderInline(text) {
+    return escapeHtml(text)
+      .replace(/\{([a-z])\|([^}]+)\}/g, '<span class="el el-$1">$2</span>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  }
+
+  function parseAmount(str) {
+    if (str === null || str === undefined) return null;
+    let s = String(str).trim();
+    if (!s) return null;
+    let neg = false;
+    if (/^\(.*\)$/.test(s)) { neg = true; s = s.slice(1, -1); }
+    s = s.replace(/[$,\s]/g, '');
+    if (s.startsWith('-')) { neg = !neg; s = s.slice(1); }
+    if (!/^\d+(\.\d+)?$/.test(s)) return null;
+    const n = Number(s);
+    return neg ? -n : n;
+  }
+
+  const lineKey = (l) => `${l.side}|${l.account}|${Number(l.amount)}`;
+
+  // Order-insensitive: each given line is checked off against an unused expected line.
+  function gradeJE(expected, given) {
+    const pool = expected.map(lineKey);
+    const rows = given.filter((l) => l.account || (l.amount !== null && l.amount !== undefined && l.amount !== ''));
+    const lines = rows.map((l) => {
+      const i = pool.indexOf(lineKey(l));
+      if (i >= 0) { pool.splice(i, 1); return { ok: true }; }
+      return { ok: false };
+    });
+    const extra = lines.filter((l) => !l.ok).length;
+    const missing = pool.length;
+    return { lines, missing, extra, correct: missing === 0 && extra === 0 };
+  }
+
+  function gradeNumber(expected, given, tol = 0) {
+    const n = typeof given === 'number' ? given : parseAmount(given);
+    return n !== null && Math.abs(n - expected) <= tol;
+  }
+
+  const correctIndex = (q) => q.options.findIndex((o) => o.ok);
+
+  function scoreQuiz(questions, answers) {
+    const byLO = {};
+    const missed = [];
+    let correct = 0;
+    for (const q of questions) {
+      byLO[q.lo] = byLO[q.lo] || { correct: 0, total: 0 };
+      byLO[q.lo].total++;
+      if (answers[q.id] === correctIndex(q)) { correct++; byLO[q.lo].correct++; } else missed.push(q.id);
+    }
+    return { correct, total: questions.length, byLO, missed };
+  }
+
+  function collectStrings(obj, out = []) {
+    if (typeof obj === 'string') out.push(obj);
+    else if (Array.isArray(obj)) obj.forEach((v) => collectStrings(v, out));
+    else if (obj && typeof obj === 'object') Object.values(obj).forEach((v) => collectStrings(v, out));
+    return out;
+  }
+
+  function validateTopic(t) {
+    const errs = [];
+    const where = (kind, i) => `${kind} ${i + 1}`;
+    for (const s of collectStrings(t)) {
+      for (const m of s.matchAll(/\{([a-z]?)\|/g)) {
+        if (!ELEMENTS[m[1]]) errs.push(`unknown element "${m[1]}" in: ${s.slice(0, 60)}`);
+      }
+    }
+    const accountNames = new Set((t.accounts || []).map((a) => a.name));
+    const oneCorrect = (opts, label) => {
+      if (opts.filter((o) => o.ok).length !== 1) errs.push(`${label}: needs exactly one correct option`);
+      opts.forEach((o, j) => { if (!o.why) errs.push(`${label}: option ${j + 1} has no explanation`); });
+    };
+    const balanced = (lines, label) => {
+      const dr = lines.filter((l) => l.side === 'Dr').reduce((s, l) => s + l.amount, 0);
+      const cr = lines.filter((l) => l.side === 'Cr').reduce((s, l) => s + l.amount, 0);
+      if (dr !== cr) errs.push(`${label}: journal entry does not balance (Dr ${dr}, Cr ${cr})`);
+    };
+    (t.pages || []).forEach((p, i) => {
+      const label = where(`page (${p.type})`, i);
+      if (p.type === 'mcq') oneCorrect(p.options, label);
+      if (p.type === 'je') {
+        balanced(p.lines, label);
+        p.lines.forEach((l) => { if (!accountNames.has(l.account)) errs.push(`${label}: "${l.account}" not in accounts`); });
+      }
+      if (p.type === 'calc' && typeof p.answer !== 'number') errs.push(`${label}: answer must be a number`);
+    });
+    const cases = (t.quiz && t.quiz.cases) || {};
+    const ids = new Set();
+    ((t.quiz && t.quiz.questions) || []).forEach((q, i) => {
+      const label = `quiz question ${q.id || i + 1}`;
+      if (ids.has(q.id)) errs.push(`${label}: duplicate id`);
+      ids.add(q.id);
+      if (q.lo === undefined) errs.push(`${label}: no LO`);
+      else if (t.los && !t.los[q.lo]) errs.push(`${label}: LO ${q.lo} not in topic`);
+      if (q.case && !cases[q.case]) errs.push(`${label}: unknown case "${q.case}"`);
+      if (q.options.length !== 4) errs.push(`${label}: needs four options`);
+      oneCorrect(q.options, label);
+      q.options.forEach((o, j) => { if (o.je) balanced(o.je, `${label} option ${j + 1}`); });
+    });
+    return errs;
+  }
+
+  function store(storage, key) {
+    return {
+      load() {
+        try { const raw = storage && storage.getItem(key); return raw ? JSON.parse(raw) : {}; } catch (e) { return {}; }
+      },
+      save(obj) {
+        try { storage && storage.setItem(key, JSON.stringify(obj)); } catch (e) { /* storage unavailable: progress is not kept */ }
+      },
+    };
+  }
+
+  return { ELEMENTS, escapeHtml, renderInline, parseAmount, gradeJE, gradeNumber, correctIndex, scoreQuiz, validateTopic, store };
+});
+
+</script>
+<script>
+window.STUDY_DATA = {"topics":[{"id":"leases","title":"Leases","subtitle":"SFRS(I) 16 · lessee and lessor","code":"B2.1","los":{"22":"Use of leases and the fundamentals of lease accounting","23":"Lessee and lessor accounting","24":"Sale and leaseback","25":"Presentation and disclosure"},"accounts":[{"name":"Right-of-use asset","el":"a"},{"name":"Lease liability","el":"l"},{"name":"Cash","el":"a"},{"name":"Prepaid lease payments","el":"a"},{"name":"Interest expense","el":"x"},{"name":"Depreciation expense","el":"x"},{"name":"Lease expense","el":"x"},{"name":"Legal fees expense","el":"x"},{"name":"Accumulated depreciation: ROU asset","el":"a"},{"name":"Accruals","el":"l"},{"name":"Lease receivable","el":"a"},{"name":"Equipment","el":"a"},{"name":"Finance income","el":"i"},{"name":"Lease income","el":"i"},{"name":"Retained earnings","el":"e"}],"pages":[{"type":"intro","part":"What is a lease?","lo":22,"title":"Leases, the Socratic way","body":["Each idea starts with a question for you. Think it through, jot a line if you like, then reveal the answer. The rule comes after, once you have already half-worked it out.","Account names are coloured by element, so you can see where each one lands in the financial statements at a glance. Tap **Legend** at the top any time.","At the end there is an exam-style quiz: four-option MCQs, mostly in case sets, just like the PFF paper."]},{"type":"think","part":"What is a lease?","lo":22,"scenario":"Kopi Co runs a chain of cafés. It needs a coffee roasting machine that costs about $45,000 new. The supplier, RoastPro, offers to lease one for 4 years at $10,000 a year.","prompt":"Why might Kopi Co prefer to lease rather than buy?","answer":["No large cash outlay up front, which keeps cash for opening new outlets.","Flexibility: it can return or upgrade the machine at the end.","RoastPro may handle maintenance and disposal, and knows the equipment better.","Lease accounting exists because those economics look a lot like **borrowing to buy an asset**, even though legal ownership stays with the lessor."]},{"type":"think","part":"What is a lease?","lo":22,"scenario":"A second contract: a coffee-bean supplier provides Kopi Co with \"a grinder\" for 3 years. The supplier can swap it for any other grinder in its warehouse whenever it likes, at no cost, and it regularly does so to rotate stock.","prompt":"Is Kopi Co leasing a grinder, or buying a grinding service?","answer":["A **service**. There is no **identified asset**: the supplier has a real (substantive) right to substitute the grinder and benefits from doing so.","If Kopi Co cannot point to *this* machine as the one it controls, it does not have a lease. It expenses the payments as incurred."]},{"type":"rule","part":"What is a lease?","lo":22,"title":"Definition: three tests","body":["A lease is a contract that conveys the **right to control the use of an identified asset** for a period of time **in exchange for consideration**.","- **1 Identified asset:** specified in the contract, and the supplier has no substantive right to swap it.","- **2 Economic benefits:** the customer gets substantially all the economic benefits from using it during the period.","- **3 Right to direct use:** the customer decides how and for what purpose the asset is used.","Fail any one test and it is a **service contract**, not a lease."]},{"type":"visual","part":"What is a lease?","lo":22,"title":"Is it a lease, and does it go on the balance sheet?","html":"\u003col class=\"flow\">\n      \u003cli class=\"q\">\u003cb>1 · Identified asset?\u003c/b>\u003cspan>specified, no real right for the supplier to swap it\u003c/span>\u003ci>no → service contract\u003c/i>\u003c/li>\n      \u003cli class=\"q\">\u003cb>2 · Substantially all the economic benefits?\u003c/b>\u003cspan>from using it, throughout the period\u003c/span>\u003ci>no → service contract\u003c/i>\u003c/li>\n      \u003cli class=\"q\">\u003cb>3 · Right to direct how and for what purpose it is used?\u003c/b>\u003ci>no → service contract\u003c/i>\u003c/li>\n      \u003cli class=\"q\">\u003cb>It is a lease.\u003c/b> Short-term or low-value, and exemption chosen?\u003ci>yes → expense straight-line\u003c/i>\u003c/li>\n      \u003cli class=\"end\">\u003cstrong>No exemption:\u003c/strong> lessee recognises a \u003cspan class=\"el el-a\">Right-of-use asset\u003c/span> and a \u003cspan class=\"el el-l\">Lease liability\u003c/span>\u003c/li>\n    \u003c/ol>"},{"type":"mcq","part":"What is a lease?","lo":22,"q":"Which of these contracts contains a lease for the customer?","options":[{"t":"A courier firm hires \"a van\" daily from a pool. The rental company picks which van each morning.","why":"No identified asset: the supplier chooses and can substitute freely."},{"t":"A retailer rents a specified shop unit for 5 years and decides its opening hours and what it sells there.","ok":true,"why":"Identified asset, substantially all the benefits, and the retailer directs the use. All three tests pass."},{"t":"A company pays for cloud storage capacity on whatever servers the provider allocates.","why":"Capacity on unspecified servers is a service; there is no identified asset."},{"t":"An event organiser books a hotel ballroom for one evening, with the hotel setting the layout and catering.","why":"The hotel directs how the room is used. The customer buys a service."}]},{"type":"think","part":"What is a lease?","lo":22,"scenario":"Kopi Co also rents a forklift for 10 months to move stock during a renovation, and leases 20 tablets for staff (each about $400 new) for 3 years.","prompt":"Would it be worth the effort to put these on the balance sheet? What would you want the rule to say?","answer":["Probably not. Both are small or short, and tracking them as assets and liabilities costs more than the information is worth.","SFRS(I) 16 agrees: a lessee **may elect** to expense **short-term** and **low-value** leases straight-line instead."]},{"type":"rule","part":"What is a lease?","lo":22,"title":"Two optional exemptions (lessee only)","body":["- **Short-term:** lease term of **12 months or less** with **no purchase option**.","- **Low-value asset:** judged on the asset’s value **when new**, regardless of the lessee’s size. Laptops, phones, tablets, small furniture.","Exempt leases: {x|Lease expense} recognised **straight-line** over the lease term. Nothing goes on the balance sheet.","! A 12-month lease **with a purchase option** is *not* short-term. And a car is not low-value just because the company is huge."]},{"type":"mcq","part":"What is a lease?","lo":22,"q":"Which lease can Kopi Co keep off the balance sheet using an exemption?","options":[{"t":"A 3-year lease of a delivery van","why":"Over 12 months and a van is not low-value when new."},{"t":"A 10-month lease of a forklift, no purchase option","ok":true,"why":"Short-term: 12 months or less and no purchase option."},{"t":"A 12-month lease of a forklift with an option to buy it at the end","why":"A purchase option disqualifies the short-term exemption."},{"t":"A 5-year lease of a building floor, because Kopi Co is a large group","why":"Low-value is judged on the asset when new, not on the lessee’s size."}]},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"Kopi Co signs the RoastPro lease on 1 Jan 20X1: 4 years, $10,000 a year paid in **arrears** (each 31 Dec). The rate implicit in the lease is 8%. Kopi Co cannot cancel.","prompt":"On day 1, how much does Kopi Co owe? Is it $40,000?","answer":["No. $40,000 is paid over four years, and money paid later is worth less today. Kopi Co owes the **present value**: $10,000 × 3.3121 = **$33,121**.","The difference ($6,879) is interest Kopi Co will pay over the lease, exactly like a loan."]},{"type":"rule","part":"Lessee accounting","lo":23,"title":"The lease liability","body":["> {l|Lease liability} = PV of lease payments not yet paid","- **Discount rate:** the **rate implicit in the lease** if readily determinable; otherwise the lessee’s **incremental borrowing rate**.","- **Arrears** (end of each period) = ordinary annuity. **Advance** (start of each period) = annuity due. More on that shortly.","! Lessees no longer split leases into finance and operating. Every lease (bar the exemptions) goes on the balance sheet."]},{"type":"calc","part":"Lessee accounting","lo":23,"q":"Work it out yourself. 4 payments of $10,000 in arrears, 8%. The 4-year annuity factor at 8% is 3.3121. What is the initial lease liability?","answer":33121,"unit":"$","working":["$10,000 × 3.3121 = $33,121","Round to the nearest dollar."]},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"Suppose the contract also said Kopi Co pays an extra 2% of the café’s coffee sales to RoastPro each year, and rent rises each year with the consumer price index (CPI).","prompt":"Which of those extra payments can Kopi Co measure reliably on day 1, and so include in the liability?","answer":["The **CPI-linked** increase depends on an **index**: include it, measured using the index at commencement.","The **2% of sales** depends on future performance. Leave it out, and expense it when the sales happen."]},{"type":"rule","part":"Lessee accounting","lo":23,"title":"What counts as a lease payment","body":["Included in the liability:","- fixed payments, less lease incentives receivable","- variable payments that depend on an **index or rate**","- amounts expected under a **residual value guarantee**","- a **purchase option** price, if **reasonably certain** to be exercised","- **termination penalties**, if the lease term assumes termination","! Variable payments linked to **sales or usage** are *not* lease payments. They are expensed as incurred."]},{"type":"mcq","part":"Lessee accounting","lo":23,"q":"Which of these is excluded from the lease liability?","options":[{"t":"Rent that rises each year in line with CPI","why":"Index-linked: included, using the index at commencement."},{"t":"A purchase option the lessee is reasonably certain to exercise","why":"Included at its exercise price."},{"t":"1% of the lessee’s annual revenue from the store","ok":true,"why":"Linked to sales, so it is expensed when incurred, not included in the liability."},{"t":"A residual value guarantee the lessee expects to pay","why":"Amounts expected to be payable under a residual value guarantee are included."}]},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"Kopi Co also paid its lawyers $1,000 in cash to negotiate the lease. Without the lease, it would not have spent this.","prompt":"Expense it, or add it to the asset? Think about what you would do if you had bought the machine instead.","answer":["Add it to the asset. When you buy PPE, costs directly needed to get it are capitalised. The same logic applies here.","These are **initial direct costs**. The {a|Right-of-use asset} becomes $33,121 + $1,000 = **$34,121**."]},{"type":"rule","part":"Lessee accounting","lo":23,"title":"The right-of-use asset","body":["> {a|Right-of-use asset} = {l|Lease liability} + payments at or before commencement + initial direct costs + restoration costs − incentives received","- Payments made on or before day 1 are not in the liability (they are already paid) but they *are* part of the asset’s cost.","- **Restoration costs:** if the lessee must restore the site at the end, it recognises a provision ({l|Liability}) and adds the same amount to the asset.","- Incentives received from the lessor reduce the asset."]},{"type":"je","part":"Lessee accounting","lo":23,"q":"Record Kopi Co’s entry on 1 Jan 20X1. Lease liability $33,121; legal fees $1,000 paid in cash.","accounts":["Right-of-use asset","Lease liability","Cash","Prepaid lease payments","Interest expense","Depreciation expense","Lease expense","Legal fees expense","Accumulated depreciation: ROU asset","Accruals"],"lines":[{"side":"Dr","account":"Right-of-use asset","amount":34121},{"side":"Cr","account":"Lease liability","amount":33121},{"side":"Cr","account":"Cash","amount":1000}],"why":"ROU asset = liability 33,121 + initial direct costs 1,000."},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"It is 31 Dec 20X1. Kopi Co pays RoastPro $10,000.","prompt":"Does the liability fall by the full $10,000? What happened to it during the year before the payment?","answer":["During the year it **grew by interest**: $33,121 × 8% = $2,650. That is an expense.","The payment then reduces it: $33,121 + $2,650 − $10,000 = **$25,771**. Only $7,350 of the payment repaid “principal”."]},{"type":"visual","part":"Lessee accounting","lo":23,"title":"The lease liability over 4 years (arrears)","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl num reveal-rows\">\u003cthead>\u003ctr>\u003cth>Year\u003c/th>\u003cth>Opening\u003c/th>\u003cth>Interest 8%\u003c/th>\u003cth>Payment (31 Dec)\u003c/th>\u003cth>Closing\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\u003ctr>\u003ctd>20X1\u003c/td>\u003ctd>33,121\u003c/td>\u003ctd>2,650\u003c/td>\u003ctd>(10,000)\u003c/td>\u003ctd>25,771\u003c/td>\u003c/tr>\u003ctr>\u003ctd>20X2\u003c/td>\u003ctd>25,771\u003c/td>\u003ctd>2,062\u003c/td>\u003ctd>(10,000)\u003c/td>\u003ctd>17,833\u003c/td>\u003c/tr>\u003ctr>\u003ctd>20X3\u003c/td>\u003ctd>17,833\u003c/td>\u003ctd>1,427\u003c/td>\u003ctd>(10,000)\u003c/td>\u003ctd>9,260\u003c/td>\u003c/tr>\u003ctr>\u003ctd>20X4\u003c/td>\u003ctd>9,260\u003c/td>\u003ctd>740\u003c/td>\u003ctd>(10,000)\u003c/td>\u003ctd>0\u003c/td>\u003c/tr>\u003c/tbody>\u003c/table>\u003c/div>\u003cp class=\"cap\">Interest totals $6,879, which is exactly $40,000 minus the $33,121 borrowed. Interest is highest in year 1 because the balance is highest. Final-year interest is rounded so the balance ends at 0.\u003c/p>"},{"type":"je","part":"Lessee accounting","lo":23,"q":"Record Kopi Co’s interest and payment on 31 Dec 20X1 (one entry, all lines).","accounts":["Right-of-use asset","Lease liability","Cash","Prepaid lease payments","Interest expense","Depreciation expense","Lease expense","Legal fees expense","Accumulated depreciation: ROU asset","Accruals"],"lines":[{"side":"Dr","account":"Interest expense","amount":2650},{"side":"Dr","account":"Lease liability","amount":7350},{"side":"Cr","account":"Cash","amount":10000}],"alt":"Recording it as two entries (Dr Interest / Cr Lease liability, then Dr Lease liability / Cr Cash) is equally correct. The net effect is the same.","why":"Interest 2,650; the remaining 7,350 of the payment reduces the liability."},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"The roaster’s useful life is 6 years, but Kopi Co must hand it back after 4. There is no purchase option.","prompt":"Over how many years should Kopi Co depreciate the ROU asset?","answer":["**4 years**. Kopi Co only gets to use it for the lease term, so the shorter of lease term and useful life.","If ownership transferred at the end, or a purchase option were reasonably certain, it would use the **useful life** (6 years) instead, because it will keep the machine."]},{"type":"calc","part":"Lessee accounting","lo":23,"q":"Straight-line, no residual value. What is the 20X1 depreciation on the ROU asset of $34,121?","answer":8530,"unit":"$","working":["$34,121 ÷ 4 years = $8,530","Total 20X1 expense = interest 2,650 + depreciation 8,530 = $11,180, more than the $10,000 cash paid. Lease expense is front-loaded."]},{"type":"think","part":"Lessee accounting","lo":23,"scenario":"Same lease, but RoastPro wants each $10,000 payment in **advance**, on 1 January, starting on day 1.","prompt":"Is the liability bigger or smaller than before? And what happens to the first payment?","answer":["The first payment is made immediately, so it is not discounted. The PV of all four payments is bigger: $35,771.","But that first $10,000 is paid on day 1, so it is **never in the liability**. It goes straight into the ROU asset (a payment at commencement). The liability is the PV of the 3 remaining payments: **$25,771**."]},{"type":"visual","part":"Lessee accounting","lo":23,"title":"Arrears vs advance","html":"\u003cdiv class=\"timeline\">\n      \u003cdiv class=\"tl-row\">\u003cb>Arrears\u003c/b>\u003cspan class=\"tick\">1 Jan X1\u003c/span>\u003cspan class=\"tick pay\">31 Dec X1\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">X2\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">X3\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">X4\u003cbr>$10k\u003c/span>\u003c/div>\n      \u003cdiv class=\"tl-row\">\u003cb>Advance\u003c/b>\u003cspan class=\"tick pay\">1 Jan X1\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">1 Jan X2\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">X3\u003cbr>$10k\u003c/span>\u003cspan class=\"tick pay\">X4\u003cbr>$10k\u003c/span>\u003cspan class=\"tick\">31 Dec X4\u003c/span>\u003c/div>\n    \u003c/div>\n    \u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl num\">\u003cthead>\u003ctr>\u003cth>\u003c/th>\u003cth>Arrears\u003c/th>\u003cth>Advance\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\n      \u003ctr>\u003ctd>PV of all 4 payments\u003c/td>\u003ctd>33,121\u003c/td>\u003ctd>35,771\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Paid on day 1\u003c/td>\u003ctd>0\u003c/td>\u003ctd>10,000\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>\u003cspan class=\"el el-l\">Lease liability\u003c/span> on day 1\u003c/td>\u003ctd>33,121\u003c/td>\u003ctd>25,771\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>20X1 interest (8%)\u003c/td>\u003ctd>2,650\u003c/td>\u003ctd>2,062\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>\n    \u003cp class=\"cap\">Annuity due factor = 1 + the annuity factor for one period fewer.\u003c/p>"},{"type":"mcq","part":"Lessee accounting","lo":23,"q":"With payments in advance, what is Kopi Co’s lease liability immediately after the 1 Jan 20X1 payment?","options":[{"t":"$35,771","why":"That is the PV of all four payments, before the day-1 payment is made."},{"t":"$25,771","ok":true,"why":"PV of the three remaining payments. The first was paid on day 1, so it never sat in the liability."},{"t":"$33,121","why":"That is the PV for payments in arrears."},{"t":"$30,000","why":"Undiscounted. The liability is measured at present value."}]},{"type":"think","part":"Lessor accounting","lo":23,"scenario":"Now sit in RoastPro’s chair. It leased Kopi Co a roaster for 4 of its 6 years of life, and the payments are worth about what the machine is worth today.","prompt":"Economically, has RoastPro rented the machine out, or has it effectively sold it on credit?","answer":["Effectively **sold it on credit**. Kopi Co gets most of the machine’s useful life and RoastPro recovers about its full value. Most of the **risks and rewards of ownership** have passed.","So unlike the lessee, the **lessor still classifies**: this looks like a **finance lease**."]},{"type":"rule","part":"Lessor accounting","lo":23,"title":"Lessor: finance or operating?","body":["A lease is a **finance lease** if it transfers **substantially all the risks and rewards** of ownership; otherwise it is an **operating lease**.","Indicators of a finance lease:","- ownership transfers to the lessee by the end","- a **bargain purchase option** reasonably certain to be exercised","- lease term is the **major part of the economic life**","- PV of lease payments is **substantially all of the fair value**","- the asset is so **specialised** only the lessee can use it without major changes","! Only the **lessor** classifies. The lessee always uses the single on-balance-sheet model."]},{"type":"mcq","part":"Lessor accounting","lo":23,"q":"A lessor leases a machine for 2 years. It has a 10-year economic life; payments are worth about 25% of its fair value; title stays with the lessor. How does the lessor classify it?","options":[{"t":"Finance lease, because there is a written contract","why":"Every lease has a contract. Classification depends on risks and rewards."},{"t":"Operating lease","ok":true,"why":"Short term relative to life, PV far below fair value, no transfer of title. The lessor keeps the risks and rewards."},{"t":"Finance lease, because the lessee recognises an ROU asset","why":"The lessee recognises an ROU asset regardless. That doesn’t drive the lessor’s classification."},{"t":"No classification needed under SFRS(I) 16","why":"That is true for lessees only. Lessors still classify."}]},{"type":"visual","part":"Lessor accounting","lo":23,"title":"Lessor: the two models side by side","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl\">\u003cthead>\u003ctr>\u003cth>\u003c/th>\u003cth>Finance lease\u003c/th>\u003cth>Operating lease\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\n      \u003ctr>\u003ctd>Underlying asset\u003c/td>\u003ctd>\u003cstrong>Derecognise\u003c/strong> it\u003c/td>\u003ctd>\u003cstrong>Keep\u003c/strong> it and charge \u003cspan class=\"el el-x\">Depreciation expense\u003c/span>\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>On day 1\u003c/td>\u003ctd>\u003cspan class=\"el el-a\">Lease receivable\u003c/span> = net investment (PV of payments + PV of unguaranteed residual)\u003c/td>\u003ctd>Nothing new\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Income\u003c/td>\u003ctd>\u003cspan class=\"el el-i\">Finance income\u003c/span> at a constant rate on the net investment\u003c/td>\u003ctd>\u003cspan class=\"el el-i\">Lease income\u003c/span>, usually \u003cstrong>straight-line\u003c/strong>\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Feels like…\u003c/td>\u003ctd>Selling on credit\u003c/td>\u003ctd>Renting out\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>"},{"type":"je","part":"Lessor accounting","lo":23,"q":"RoastPro classifies the Kopi Co lease as a finance lease (machine carrying amount $33,121, so no selling profit). Record RoastPro’s receipt of the first $10,000 on 31 Dec 20X1.","accounts":["Lease receivable","Equipment","Cash","Finance income","Lease income","Depreciation expense","Lease liability","Retained earnings"],"lines":[{"side":"Dr","account":"Cash","amount":10000},{"side":"Cr","account":"Finance income","amount":2650},{"side":"Cr","account":"Lease receivable","amount":7350}],"why":"The lessor’s schedule mirrors the lessee’s: 2,650 is income, 7,350 reduces the receivable. (On day 1: Dr Lease receivable 33,121, Cr Equipment 33,121.)"},{"type":"think","part":"Lessor accounting","lo":23,"scenario":"A landlord leases a café unit to Kopi Co for 3 years under an operating lease. To win the tenant, year 1 is **rent-free**; years 2 and 3 are $9,000 each.","prompt":"Should the landlord recognise zero income in year 1?","answer":["No. The landlord gave the use of the unit for all three years, so income should match that.","Operating lease income is recognised **straight-line**: total $18,000 ÷ 3 years."]},{"type":"calc","part":"Lessor accounting","lo":23,"q":"What lease income does the landlord recognise in year 1?","answer":6000,"unit":"$","working":["($9,000 × 2) ÷ 3 = $6,000 each year.","Year 1 entry: Dr Accrued lease income (an asset) 6,000, Cr Lease income 6,000. The landlord also keeps depreciating the unit."]},{"type":"think","part":"Sale and leaseback","lo":24,"scenario":"A company sells its head office for more than its carrying amount, then immediately leases it back for 10 years and carries on working there.","prompt":"It still uses the building every day. Should it book the whole profit on the sale?","answer":["Not all of it. It has only really given up part of the building: the years after the leaseback ends (the buyer’s share).","So the gain is recognised only on the **rights transferred** to the buyer. And first, check whether it is really a sale at all."]},{"type":"rule","part":"Sale and leaseback","lo":24,"title":"Sale and leaseback","body":["First ask: **is the transfer a sale** under SFRS(I) 15? (Has control passed to the buyer?)","- **Yes, a sale:** derecognise the asset. Measure the ROU asset at the **share of the old carrying amount** kept. Recognise gain only on the rights **transferred**.","- **Not a sale:** keep the asset. The cash received is a {l|financial liability}: it is really a loan.","> {a|Right-of-use asset} = carrying amount × (PV of leaseback payments ÷ fair value)","Notes example: CA $600,000, sold at FV $1,000,000, PV of leaseback $400,000. ROU = $240,000; gain recognised = $240,000 (of the total $400,000).","! A sale price above fair value is **extra financing** from the buyer; below fair value it is a **prepayment** of lease payments."]},{"type":"calc","part":"Sale and leaseback","lo":24,"q":"A building with carrying amount $400,000 is sold at its fair value of $500,000 (a genuine sale) and leased back. PV of leaseback payments is $200,000. What gain does the seller-lessee recognise?","answer":60000,"unit":"$","working":["Total gain = 500,000 − 400,000 = 100,000.","Share transferred = (500,000 − 200,000) ÷ 500,000 = 60%.","Gain recognised = 100,000 × 60% = **$60,000**.","Check: ROU = 400,000 × 200,000/500,000 = 160,000. Dr Cash 500,000, Dr ROU 160,000; Cr Building 400,000, Cr Lease liability 200,000, Cr Gain 60,000."]},{"type":"mcq","part":"Sale and leaseback","lo":24,"q":"In a sale and leaseback, control of the asset does **not** pass to the buyer. How does the seller account for the cash received?","options":[{"t":"Derecognise the asset and recognise the full gain","why":"No sale means no derecognition and no gain."},{"t":"Derecognise the asset and recognise an ROU asset","why":"That is the treatment when it *is* a sale."},{"t":"Keep the asset and recognise a financial liability for the cash","ok":true,"why":"It is, in substance, a secured loan."},{"t":"Keep the asset and recognise the cash as income","why":"The cash must be repaid through the leaseback payments. It is a liability, not income."}]},{"type":"think","part":"Presentation and disclosure","lo":25,"scenario":"Kopi Co’s 20X1 cash payment of $10,000 is part interest ($2,650) and part repayment of the liability ($7,350).","prompt":"Where in the statement of cash flows does the repayment part belong? Think about what a lease liability really is.","answer":["It is repaying borrowing, so it goes under **financing** activities.","Interest follows the entity’s policy for interest paid. Payments for short-term, low-value and variable leases are **operating**."]},{"type":"rule","part":"Presentation and disclosure","lo":25,"title":"Where it all shows up","body":["- **Balance sheet:** {a|Right-of-use asset} and {l|Lease liability} shown separately, or inside other lines with those lines disclosed.","- **Profit or loss:** {x|Interest expense} on the lease liability (a finance cost) and {x|Depreciation expense} on the ROU asset, shown separately.","- **Cash flows:** principal → financing; interest → per policy; short-term, low-value and variable payments → operating.","- **Lessee notes:** ROU depreciation by class, interest expense, short-term and low-value lease expense, variable payments, total cash outflow, additions to ROU assets, ROU carrying amount by class, sale-and-leaseback gains, maturity analysis of lease liabilities.","- **Lessor notes:** finance income or lease income, selling profit, and a maturity analysis of undiscounted receipts for each of the next 5 years plus the total after.","+ Lessee notes = what it cost, what it paid, what it added, and when it’s due."]},{"type":"mcq","part":"Presentation and disclosure","lo":25,"q":"Where does a lessee present the principal portion of its lease payments in the statement of cash flows?","options":[{"t":"Operating activities","why":"Operating is for short-term, low-value and variable lease payments."},{"t":"Investing activities","why":"The lessee is not buying an asset with cash; it is repaying a liability."},{"t":"Financing activities","ok":true,"why":"Repaying the lease liability is like repaying a loan."},{"t":"Not shown; it is a non-cash transaction","why":"The payment is real cash. Only the initial recognition of the ROU asset is non-cash."}]},{"type":"summary","part":"Wrap-up","lo":25,"title":"Leases on one page","rows":[["What is a lease?","Right to control the use of an identified asset for a period, for consideration."],["Lessee model?","Single model: {a|Right-of-use asset} + {l|Lease liability}, except short-term (≤ 12 months, no purchase option) and low-value."],["Lease liability?","PV of unpaid lease payments at the implicit rate, else the incremental borrowing rate."],["ROU asset?","Liability + payments at or before day 1 + initial direct costs + restoration − incentives."],["After day 1?","Liability: + interest − payments. ROU: depreciate over the shorter of lease term and useful life."],["Lessor?","Finance ({a|Lease receivable}, {i|Finance income}) vs operating (keep asset, straight-line {i|Lease income})."],["Sale and leaseback?","If a sale: ROU = CA × PV/FV, gain only on rights transferred. If not: {l|financial liability}."],["Cash flows?","Principal = financing. Short-term, low-value and variable = operating."]]}],"quiz":{"cases":{"ruby":{"name":"Ruby Enterprises","source":"Official practice paper (Q16–20 case, lease paragraph only)","text":["Ruby Enterprises Pte Ltd (Ruby) is a jewellery wholesaler based in Orchard Towers. Ruby has a financial year ending 31 December 20X7.","On 1 October 20X7, Ruby entered into a 5-year lease agreement to lease additional office space from a financial institution. Lease payments of $15,000 are due annually with the first payment due on 1 October 20X8. The effective rate of interest implicit in the lease is 7.5%. Ruby incurred $3,500 in legal costs to obtain the lease in October 20X7."]},"harbour":{"name":"Harbour Cranes","text":["Harbour Cranes Pte Ltd (Harbour) leases a tower crane to Bay Builders on 1 January 20X5. The lease runs for 5 years with payments of $20,000 due each 31 December. The crane’s economic life is 6 years.","Harbour expects the crane to be worth $5,000 when it is returned; Bay Builders does not guarantee this amount. The rate implicit in the lease is 10%. The crane’s fair value and carrying amount on 1 January 20X5 are both $78,920. Title stays with Harbour."]}},"questions":[{"id":"ruby-17","case":"ruby","lo":23,"source":"Official practice paper Q17","q":"With reference to SFRS(I) 16, Leases, identify which of the following journal entries Ruby should post in October 20X7 to account for the initial recognition of the lease?","options":[{"je":[{"side":"Dr","account":"Right of use asset","amount":64188,"el":"a"},{"side":"Cr","account":"Lease liability","amount":60688,"el":"l"},{"side":"Cr","account":"Bank","amount":3500,"el":"a"}],"ok":true,"why":"PV = 15,000 × 4.0459 = 60,688 (payments in arrears: the first is a year after commencement). Legal costs are initial direct costs: ROU = 60,688 + 3,500 = 64,188."},{"je":[{"side":"Dr","account":"Right of use asset","amount":78500,"el":"a"},{"side":"Cr","account":"Lease liability","amount":78500,"el":"l"}],"why":"Uses the undiscounted payments (5 × 15,000) plus legal costs. The liability is a present value, and the legal costs were paid in cash."},{"je":[{"side":"Dr","account":"Statement of profit or loss – lease expense","amount":18500,"el":"x"},{"side":"Cr","account":"Bank","amount":18500,"el":"a"}],"why":"Treats it as an expensed lease. It is not short-term or low-value, so it goes on the balance sheet. No payment was due in October either."},{"je":[{"side":"Dr","account":"Statement of profit or loss – interest costs","amount":5625,"el":"x"},{"side":"Dr","account":"Statement of profit or loss – legal fees","amount":3500,"el":"x"},{"side":"Cr","account":"Bank","amount":9125,"el":"a"}],"why":"Expenses everything and recognises no ROU asset or liability. Initial direct costs are capitalised."}]},{"id":"ruby-18","case":"ruby","lo":23,"source":"Official practice paper Q18","q":"With reference to SFRS(I) 16, Leases, identify which of the following journal entries Ruby should record on 31 December 20X7 to account for the interest due on the lease?","options":[{"je":[{"side":"Dr","account":"Lease liability","amount":282,"el":"l"},{"side":"Cr","account":"Right of use asset","amount":282,"el":"a"}],"why":"Interest is an expense in profit or loss. It never reduces the ROU asset."},{"je":[{"side":"Dr","account":"Statement of profit or loss – interest expense","amount":1125,"el":"x"},{"side":"Cr","account":"Accruals","amount":1125,"el":"l"}],"why":"Interest accrues on the lease liability itself, not a separate accrual. And 1,125 is 15,000 × 7.5%: a full year on one payment, not 3 months on the liability."},{"je":[{"side":"Dr","account":"Statement of profit or loss – interest expense","amount":1138,"el":"x"},{"side":"Cr","account":"Lease liability","amount":1138,"el":"l"}],"ok":true,"why":"60,688 × 7.5% × 3/12 = 1,138 for October to December, added to the lease liability."},{"je":[{"side":"Dr","account":"Statement of profit or loss – interest expense","amount":5625,"el":"x"},{"side":"Cr","account":"Right of use asset","amount":5625,"el":"a"}],"why":"5,625 is 75,000 × 7.5%: a full year on the undiscounted payments. And interest increases the lease liability; it does not reduce the ROU asset."}]},{"id":"ruby-dep","case":"ruby","lo":23,"source":"Practice question based on the Ruby case","q":"Ruby depreciates the right-of-use asset straight-line over the lease term. What depreciation should Ruby charge for the year ended 31 December 20X7?","options":[{"t":"$3,034","why":"Excludes the legal costs, which are part of the ROU asset’s cost."},{"t":"$3,209","ok":true,"why":"64,188 ÷ 5 × 3/12 = 3,209. Only three months of use in 20X7."},{"t":"$12,838","why":"A full year’s depreciation, but the lease started on 1 October."},{"t":"$0","why":"Depreciation starts when the asset is available for use: 1 October 20X7."}]},{"id":"ruby-liab","case":"ruby","lo":23,"source":"Practice question based on the Ruby case","q":"What is the carrying amount of Ruby’s lease liability at 31 December 20X7?","options":[{"t":"$60,688","why":"Ignores the interest accrued since 1 October."},{"t":"$61,826","ok":true,"why":"60,688 + interest 1,138 = 61,826. No payment has been made yet (first due 1 Oct 20X8)."},{"t":"$46,826","why":"Deducts a payment that isn’t due until 1 October 20X8."},{"t":"$75,000","why":"The undiscounted total of payments, which is not how the liability is measured."}]},{"id":"ruby-pl","case":"ruby","lo":23,"source":"Practice question based on the Ruby case","q":"What total expense does the lease add to Ruby’s profit or loss for 20X7?","options":[{"t":"$1,138","why":"Only the interest. Depreciation on the ROU asset is also an expense."},{"t":"$4,347","ok":true,"why":"Interest 1,138 + depreciation 3,209 = 4,347."},{"t":"$7,847","why":"Expenses the legal costs too, but they were capitalised into the ROU asset."},{"t":"$3,750","why":"That is three months of the cash payment (15,000 × 3/12). Under SFRS(I) 16 the lessee recognises interest and depreciation, not a rent expense."}]},{"id":"harb-class","case":"harbour","lo":23,"q":"How should Harbour classify the lease of the crane?","options":[{"t":"Operating lease, because title stays with Harbour","why":"Title transfer is only one indicator. The others point strongly to finance."},{"t":"Operating lease, because the residual value is unguaranteed","why":"An unguaranteed residual does not make it operating. Substantially all the risks and rewards still pass."},{"t":"Finance lease","ok":true,"why":"The term (5 of 6 years) is the major part of the economic life, and the PV of payments ($75,816) is substantially all of the fair value ($78,920)."},{"t":"Harbour does not classify; Bay Builders decides","why":"It is the other way round: lessors classify, and lessees use a single model."}]},{"id":"harb-ni","case":"harbour","lo":23,"q":"What is Harbour’s net investment in the lease (lease receivable) on 1 January 20X5?","options":[{"t":"$75,816","why":"Leaves out the PV of the unguaranteed residual value, which is part of the net investment."},{"t":"$78,920","ok":true,"why":"PV of payments 75,816 + PV of unguaranteed residual 3,104 = 78,920."},{"t":"$100,000","why":"Undiscounted payments. The net investment is a present value."},{"t":"$105,000","why":"Undiscounted payments plus residual. This is the gross investment, not the net."}]},{"id":"harb-inc","case":"harbour","lo":23,"q":"What finance income does Harbour recognise for the year ended 31 December 20X5?","options":[{"t":"$20,000","why":"That is the cash received. Most of it reduces the receivable."},{"t":"$7,892","ok":true,"why":"78,920 × 10% = 7,892: a constant rate on the net investment."},{"t":"$7,582","why":"Applies 10% to the PV of payments only, leaving out the residual."},{"t":"$5,216","why":"Spreads total income straight-line. Finance income follows the effective interest method."}]},{"id":"harb-je","case":"harbour","lo":23,"q":"Which journal entry should Harbour record when it receives the first payment on 31 December 20X5?","options":[{"je":[{"side":"Dr","account":"Cash","amount":20000,"el":"a"},{"side":"Cr","account":"Lease income","amount":20000,"el":"i"}],"why":"Operating-lease treatment. Under a finance lease, the receipt is split between income and the receivable."},{"je":[{"side":"Dr","account":"Cash","amount":20000,"el":"a"},{"side":"Cr","account":"Lease receivable","amount":20000,"el":"a"}],"why":"Ignores the finance income earned during the year."},{"je":[{"side":"Dr","account":"Cash","amount":20000,"el":"a"},{"side":"Cr","account":"Finance income","amount":7892,"el":"i"},{"side":"Cr","account":"Lease receivable","amount":12108,"el":"a"}],"ok":true,"why":"Income 7,892; the remaining 12,108 reduces the receivable."},{"je":[{"side":"Dr","account":"Depreciation expense","amount":14784,"el":"x"},{"side":"Cr","account":"Accumulated depreciation – crane","amount":14784,"el":"a"}],"why":"Harbour derecognised the crane at commencement, so it has nothing to depreciate."}]},{"id":"harb-op","case":"harbour","lo":23,"q":"Suppose instead the lease ran for only 2 years and no finance-lease indicator applied. How would Harbour account for it?","options":[{"t":"Recognise a lease receivable and derecognise the crane","why":"That is finance-lease accounting."},{"t":"Keep the crane, depreciate it, and recognise lease income straight-line","ok":true,"why":"Operating lease: the lessor keeps the asset and recognises income on a straight-line basis."},{"t":"Recognise a right-of-use asset for the crane","why":"ROU assets are a lessee concept."},{"t":"Recognise all lease income up front on 1 January 20X5","why":"Income is spread over the lease term."}]},{"id":"s-ident","lo":22,"q":"A customer contracts for the use of \"a delivery truck\" for 3 years. The supplier can substitute any truck from its fleet at any time at negligible cost and benefits from doing so. Which statement is correct?","options":[{"t":"The contract contains a lease, because the term exceeds 12 months","why":"Term length doesn’t create a lease; there must be an identified asset."},{"t":"The contract does not contain a lease, because there is no identified asset","ok":true,"why":"A substantive substitution right means the customer does not control a specific asset."},{"t":"The contract contains a lease, but the low-value exemption applies","why":"A truck is not low-value, and there is no lease to begin with."},{"t":"The contract contains a lease for the supplier only","why":"Lease identification is assessed for the contract as a whole."}]},{"id":"s-short","lo":22,"q":"Which lease qualifies for the short-term lease exemption?","options":[{"t":"A 12-month equipment lease with an option to purchase at the end","why":"A purchase option disqualifies the exemption."},{"t":"An 18-month lease of a photocopier","why":"Over 12 months."},{"t":"A 9-month lease of a warehouse with no purchase option","ok":true,"why":"12 months or less, with no purchase option."},{"t":"A 5-year lease of a laptop","why":"This may qualify as **low-value**, but it is not short-term."}]},{"id":"s-rate","lo":23,"q":"A lessee cannot readily determine the interest rate implicit in a lease. Which rate should it use to measure the lease liability?","options":[{"t":"The lessor’s weighted average cost of capital","why":"The lessee uses its own borrowing rate, not the lessor’s cost of capital."},{"t":"The lessee’s incremental borrowing rate","ok":true,"why":"This is the fallback when the implicit rate is not readily determinable."},{"t":"The central bank policy rate","why":"Not specific to the lessee or the asset."},{"t":"Zero: the liability is measured at the undiscounted payments","why":"The liability is always discounted."}]},{"id":"s-var","lo":23,"q":"A store lease has fixed rent of $50,000 a year plus 3% of the store’s annual sales. How is the 3% treated?","options":[{"t":"Included in the lease liability, based on forecast sales","why":"Sales-linked variable payments are not lease payments."},{"t":"Added to the ROU asset when paid","why":"They are not capitalised."},{"t":"Recognised in profit or loss when the sales occur","ok":true,"why":"Variable payments that depend on sales or usage are expensed when incurred."},{"t":"Disclosed only, with no expense recognised","why":"They are a real expense."}]},{"id":"s-adv","lo":23,"q":"A lessee agrees to 4 annual payments of $12,000, **in advance**, starting on the commencement date. The rate implicit in the lease is 6%. What is the lease liability immediately after the first payment?","options":[{"t":"$44,076","why":"The PV of all four payments, before the first payment is made on day 1."},{"t":"$32,076","ok":true,"why":"PV of the 3 remaining payments: 12,000 × 2.6730 = 32,076."},{"t":"$41,581","why":"Treats the payments as in arrears."},{"t":"$36,000","why":"Undiscounted remaining payments."}]},{"id":"s-dep","lo":23,"q":"A lessee leases a machine for 5 years (useful life 8 years) and is reasonably certain to exercise a purchase option at the end. Over what period should the ROU asset be depreciated?","options":[{"t":"5 years, the lease term","why":"That would be right without the purchase option."},{"t":"8 years, the useful life","ok":true,"why":"With ownership expected to pass, the lessee will use the asset for its whole useful life."},{"t":"3 years, the remaining life after the lease","why":"No basis for this."},{"t":"Not depreciated until the option is exercised","why":"Depreciation starts at commencement."}]},{"id":"s-slb","lo":24,"q":"An entity sells a building (carrying amount $900,000) at its fair value of $1,500,000 and leases it back. The transfer is a sale. PV of leaseback payments is $600,000. What gain does the seller-lessee recognise?","options":[{"t":"$600,000","why":"The full gain. Only the portion relating to rights transferred is recognised."},{"t":"$360,000","ok":true,"why":"600,000 × (1,500,000 − 600,000) ÷ 1,500,000 = 360,000."},{"t":"$240,000","why":"That is the portion relating to the rights retained."},{"t":"$0","why":"Since it is a genuine sale, the gain on rights transferred is recognised."}]},{"id":"s-nosale","lo":24,"q":"In a sale and leaseback, the seller has a repurchase option that means control does not pass to the buyer. How does the seller-lessee account for the proceeds?","options":[{"t":"As revenue","why":"There is no sale."},{"t":"As a financial liability, keeping the asset on its books","ok":true,"why":"Not a sale: the asset stays, and the cash is a financial liability."},{"t":"As a deferred gain, released over the lease term","why":"That was old-standard treatment, not SFRS(I) 16."},{"t":"As a reduction of the asset’s carrying amount","why":"The asset is not derecognised or written down."}]},{"id":"s-cf","lo":25,"q":"How should a lessee present payments for short-term leases that it expenses under the exemption in its statement of cash flows?","options":[{"t":"Operating activities","ok":true,"why":"Short-term, low-value and variable lease payments are operating cash flows."},{"t":"Investing activities","why":"No asset is acquired."},{"t":"Financing activities","why":"Financing is for the principal of recognised lease liabilities."},{"t":"Excluded from the statement of cash flows","why":"They are cash payments."}]},{"id":"s-disc","lo":25,"q":"Which of the following must a lessee disclose in the notes?","options":[{"t":"The fair value of each right-of-use asset","why":"Not required. ROU assets are disclosed at carrying amount by class."},{"t":"The expense relating to short-term leases accounted for under the exemption","ok":true,"why":"Required, so users can see lease costs that aren’t on the balance sheet."},{"t":"The lessor’s profit margin on the lease","why":"The lessee wouldn’t know this, and it isn’t required."},{"t":"A forecast of next year’s sales-based variable payments","why":"Variable lease payments expensed in the period are disclosed, but not forecasts."}]}]}},{"id":"income-tax","title":"Income Tax","subtitle":"SFRS(I) 1-12 · current and deferred tax","code":"B2.2","los":{"26":"Concept and purpose of deferred tax","27":"Permanent and temporary differences","28":"Current and deferred tax balances","29":"Balance sheet liability approach","30":"Unused tax losses","31":"Presentation and disclosure"},"accounts":[{"name":"Current tax expense","el":"x"},{"name":"Current tax payable","el":"l"},{"name":"Deferred tax expense","el":"x"},{"name":"Deferred tax income","el":"i"},{"name":"Deferred tax liability","el":"l"},{"name":"Deferred tax asset","el":"a"},{"name":"Revaluation surplus (OCI)","el":"e"},{"name":"Property, plant and equipment","el":"a"},{"name":"Cash","el":"a"},{"name":"Retained earnings","el":"e"},{"name":"Accruals","el":"l"}],"pages":[{"type":"intro","part":"Why deferred tax?","lo":26,"title":"Income tax, the Socratic way","body":["Each idea starts with a question for you. Think it through, then reveal the answer. The rule comes after.","Examples use Singapore’s corporate tax rate of **17%**. Account names are coloured by element. Tap **Legend** any time.","At the end there is an exam-style quiz: four-option MCQs, mostly in case sets. Income tax didn’t appear in the practice paper, but it has six LOs (two at cognitive level 3), so expect it in the real exam."]},{"type":"think","part":"Why deferred tax?","lo":26,"scenario":"Lim Trading made an accounting profit of $200,000. At 17% you might expect a tax bill of $34,000. But IRAS assesses only $30,770.","prompt":"How can the tax bill differ from profit × rate? What might cause the gap?","answer":["**Accounting profit** follows SFRS(I). **Taxable profit** follows tax law, and the two don’t always agree.","Some items are **never** taxable or deductible (a fine, non-deductible entertainment). Others are only **timing**: depreciation in the accounts vs capital allowances for tax, or a provision that is deductible only when paid."]},{"type":"think","part":"Why deferred tax?","lo":26,"scenario":"Lim Trading claimed $50,000 of capital allowances on a new machine this year, but only charged $25,000 of depreciation. Over the machine’s life both will total the same $100,000.","prompt":"Lim paid less tax this year. Has that saving gone for good, or does Lim owe something back?","answer":["It owes it back. Bigger allowances now mean **smaller allowances later**, so later tax bills will be higher.","That future tax already exists today because of this year’s events. Ignoring it would understate liabilities. That is **deferred tax**: 25,000 × 17% = $4,250."]},{"type":"rule","part":"Why deferred tax?","lo":26,"title":"The objective of deferred tax","body":["Account for the **current and future tax consequences** of transactions in the **same period** and the **same place** (P&L, OCI or equity) as the transactions themselves.","- **Balance sheet liability approach:** compare each asset’s and liability’s **carrying amount** with its **tax base**. The gap is a **temporary difference**.","> Deferred tax = temporary difference × tax rate","+ Deferred tax = tax that belongs to this year’s accounts but is paid (or saved) in a later year."]},{"type":"think","part":"Permanent vs temporary","lo":27,"scenario":"Lim Trading paid a $2,000 fine for a late filing, and made a $20,000 warranty provision that IRAS will let it deduct only when claims are actually paid.","prompt":"For each item: will it **ever** affect tax? If yes, when?","answer":["The **fine** is never deductible. That is a **permanent difference**: no deferred tax. It just pushes up the effective tax rate.","The **warranty provision** will be deductible later, when paid. That is a **temporary difference**, so deferred tax applies (here, a future tax saving)."]},{"type":"rule","part":"Permanent vs temporary","lo":27,"title":"Two kinds of difference","body":["- **Permanent:** never taxable or deductible → **no deferred tax**. Fines and penalties, non-deductible entertainment, exempt dividends.","- **Taxable temporary:** will **increase** future taxable profit → {l|Deferred tax liability}. Allowances faster than depreciation, revaluation surplus, interest receivable taxed when received.","- **Deductible temporary:** will **reduce** future taxable profit → {a|Deferred tax asset}. Provisions deductible when paid, depreciation faster than allowances, unused tax losses.","! A permanent difference changes the **effective tax rate**, not deferred tax."]},{"type":"mcq","part":"Permanent vs temporary","lo":27,"q":"Which item is a **permanent** difference?","options":[{"t":"Capital allowances claimed faster than depreciation","why":"Timing only: over the asset’s life both total the same. Taxable temporary difference."},{"t":"A penalty for breaching environmental regulations","ok":true,"why":"Never deductible, so it never reverses."},{"t":"A restructuring provision deductible when paid","why":"Deductible later, so it is a deductible temporary difference."},{"t":"Interest receivable that is taxed when received","why":"Taxable later, so it is a taxable temporary difference."}]},{"type":"think","part":"Permanent vs temporary","lo":27,"scenario":"A machine cost $80,000. Lim has already claimed $60,000 of capital allowances on it.","prompt":"If Lim recovered the machine’s value (by using or selling it), how much more could it still deduct for tax?","answer":["Only $20,000: the cost not yet claimed. That remaining deduction is the machine’s **tax base**."]},{"type":"rule","part":"Permanent vs temporary","lo":27,"title":"Tax base","body":["- **Asset:** the amount that will be **deductible** for tax when you recover its carrying amount. Usually cost less allowances claimed.","- **Liability:** carrying amount **minus** any amount that will be **deductible** in future.","- **Revenue received in advance:** carrying amount minus any part that won’t be taxable in future.","> Temporary difference = carrying amount − tax base"]},{"type":"think","part":"Permanent vs temporary","lo":27,"scenario":"Lim’s balance sheet shows a warranty provision of $20,000. The whole amount will be deductible when the claims are paid.","prompt":"Using the liability rule (carrying amount minus future deductions), what is its tax base?","answer":["$20,000 − $20,000 = **$0**.","Carrying amount 20,000 vs tax base 0: a 20,000 **deductible** difference, so {a|Deferred tax asset} = 20,000 × 17% = $3,400."]},{"type":"calc","part":"Permanent vs temporary","lo":27,"q":"A delivery van cost $120,000. Capital allowances of $90,000 have been claimed. Its carrying amount is $80,000. What is its tax base?","answer":30000,"unit":"$","working":["Tax base = cost − allowances claimed = 120,000 − 90,000 = $30,000.","The carrying amount (80,000) doesn’t affect the tax base. It gives the temporary difference: 80,000 − 30,000 = 50,000 taxable."]},{"type":"visual","part":"Permanent vs temporary","lo":27,"title":"Which way does the difference go?","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl\">\u003cthead>\u003ctr>\u003cth>\u003c/th>\u003cth>Carrying amount &gt; tax base\u003c/th>\u003cth>Carrying amount &lt; tax base\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\n      \u003ctr>\u003cth scope=\"row\">Asset\u003c/th>\u003ctd>Taxable → \u003cspan class=\"el el-l\">Deferred tax liability\u003c/span>\u003c/td>\u003ctd>Deductible → \u003cspan class=\"el el-a\">Deferred tax asset\u003c/span>\u003c/td>\u003c/tr>\n      \u003ctr>\u003cth scope=\"row\">Liability\u003c/th>\u003ctd>Deductible → \u003cspan class=\"el el-a\">Deferred tax asset\u003c/span>\u003c/td>\u003ctd>Taxable → \u003cspan class=\"el el-l\">Deferred tax liability\u003c/span>\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>\n    \u003cp class=\"key\">Assets: bigger in the books = tax to pay later. Liabilities: flip it.\u003c/p>"},{"type":"mcq","part":"Permanent vs temporary","lo":27,"q":"Which of these gives rise to a **deferred tax asset**?","options":[{"t":"Equipment with carrying amount $50,000 and tax base $30,000","why":"Asset CA > TB → taxable → DTL."},{"t":"A provision of $15,000 with tax base $0","ok":true,"why":"Liability CA > TB → deductible → DTA."},{"t":"Interest receivable of $4,000 with tax base $0","why":"Asset CA > TB → taxable → DTL."},{"t":"A $3,000 fine accrued but unpaid","why":"Fines are never deductible: permanent difference, no deferred tax."}]},{"type":"think","part":"Current and deferred tax","lo":28,"scenario":"Back to Lim’s year 1. Profit $200,000 after depreciation of $25,000 and $6,000 of non-deductible entertainment. Capital allowances: $50,000.","prompt":"Starting from accounting profit, what would you add back and take off to reach taxable profit?","answer":["Add back what tax doesn’t allow: **depreciation** (tax gives allowances instead) and **entertainment**.","Take off what tax does allow that the accounts didn’t charge: the **capital allowances**."]},{"type":"visual","part":"Current and deferred tax","lo":28,"title":"Current tax computation","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl num\">\u003ctbody>\n      \u003ctr>\u003ctd>Accounting profit\u003c/td>\u003ctd>200,000\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Add: depreciation (not deductible)\u003c/td>\u003ctd>25,000\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Less: capital allowances\u003c/td>\u003ctd>(50,000)\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Add: entertainment (permanent)\u003c/td>\u003ctd>6,000\u003c/td>\u003c/tr>\n      \u003ctr>\u003cth scope=\"row\">Taxable profit\u003c/th>\u003ctd>\u003cb>181,000\u003c/b>\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>"},{"type":"calc","part":"Current and deferred tax","lo":28,"q":"Taxable profit is $181,000. What is Lim’s current tax at 17%?","answer":30770,"unit":"$","working":["181,000 × 17% = $30,770."]},{"type":"je","part":"Current and deferred tax","lo":28,"q":"Record Lim’s current tax of $30,770 for year 1 (unpaid at year end).","accounts":["Current tax expense","Current tax payable","Deferred tax expense","Deferred tax income","Deferred tax liability","Deferred tax asset","Revaluation surplus (OCI)","Property, plant and equipment","Cash","Retained earnings","Accruals"],"lines":[{"side":"Dr","account":"Current tax expense","amount":30770},{"side":"Cr","account":"Current tax payable","amount":30770}],"why":"Unpaid current tax is a current liability. If Lim had overpaid, it would be a current tax asset."},{"type":"calc","part":"Current and deferred tax","lo":28,"q":"At the end of year 1 the machine’s carrying amount is $75,000 and its tax base is $50,000. What deferred tax balance should Lim recognise?","answer":4250,"unit":"$","working":["Temporary difference = 75,000 − 50,000 = 25,000, taxable (asset CA > TB).","25,000 × 17% = $4,250 deferred tax liability."]},{"type":"je","part":"Current and deferred tax","lo":28,"q":"Record the deferred tax for year 1. The opening balance is 0.","accounts":["Current tax expense","Current tax payable","Deferred tax expense","Deferred tax income","Deferred tax liability","Deferred tax asset","Revaluation surplus (OCI)","Property, plant and equipment","Cash","Retained earnings","Accruals"],"lines":[{"side":"Dr","account":"Deferred tax expense","amount":4250},{"side":"Cr","account":"Deferred tax liability","amount":4250}],"why":"Total tax expense = current 30,770 + deferred 4,250 = 35,020."},{"type":"rule","part":"Current and deferred tax","lo":28,"title":"Recognition and measurement","body":["> Tax expense = current tax + (closing deferred tax − opening deferred tax)","- **Current tax:** taxable profit × rate. Unpaid → {l|Current tax payable}; overpaid → current tax **asset**.","- {l|Deferred tax liability}: recognise for **all** taxable temporary differences (narrow exceptions, e.g. goodwill on initial recognition).","- {a|Deferred tax asset}: recognise **only to the extent future taxable profit is probable**.","- **Rate:** the rate **enacted or substantively enacted** by the reporting date for when the difference reverses. **Never discount** deferred tax.","! A rate the government has only *proposed* is not used."]},{"type":"think","part":"Current and deferred tax","lo":28,"scenario":"Lim revalues its building upward by $50,000. The gain goes to the revaluation surplus in OCI. The tax base is unchanged.","prompt":"The revaluation creates a taxable difference. Where should the deferred tax on it go: P&L or OCI?","answer":["**OCI.** Deferred tax follows the item: the revaluation went to OCI, so its tax goes there too.","DTL = 50,000 × 17% = $8,500. Net surplus in equity = $41,500. Nothing touches P&L."]},{"type":"je","part":"Current and deferred tax","lo":28,"q":"Record the deferred tax on the $50,000 revaluation (the revaluation itself is already booked).","accounts":["Current tax expense","Current tax payable","Deferred tax expense","Deferred tax income","Deferred tax liability","Deferred tax asset","Revaluation surplus (OCI)","Property, plant and equipment","Cash","Retained earnings","Accruals"],"lines":[{"side":"Dr","account":"Revaluation surplus (OCI)","amount":8500},{"side":"Cr","account":"Deferred tax liability","amount":8500}],"why":"50,000 × 17% = 8,500, charged against the surplus in OCI, not to deferred tax expense."},{"type":"visual","part":"Balance sheet approach","lo":29,"title":"The balance sheet liability approach in five steps","html":"\u003col class=\"flow\">\n      \u003cli class=\"q\">\u003cb>1 · For each asset and liability\u003c/b>\u003cspan>compare carrying amount with tax base\u003c/span>\u003c/li>\n      \u003cli class=\"q\">\u003cb>2 · Temporary difference\u003c/b>\u003cspan>carrying amount − tax base: taxable or deductible?\u003c/span>\u003c/li>\n      \u003cli class=\"q\">\u003cb>3 · Multiply by the enacted rate\u003c/b>\u003cspan>taxable → \u003cspan class=\"el el-l\">Deferred tax liability\u003c/span>; deductible → \u003cspan class=\"el el-a\">Deferred tax asset\u003c/span>\u003c/span>\u003c/li>\n      \u003cli class=\"q\">\u003cb>4 · DTA test\u003c/b>\u003cspan>recognise a DTA only to the extent future taxable profit is probable\u003c/span>\u003c/li>\n      \u003cli class=\"end\">\u003cstrong>5 · Movement = closing − opening\u003c/strong> (remeasure the opening balance if the rate changed). Goes to P&amp;L, or OCI/equity if the item went there.\u003c/li>\n    \u003c/ol>"},{"type":"think","part":"Balance sheet approach","lo":29,"scenario":"Year 2: Lim charges another $25,000 of depreciation and claims $30,000 of allowances. Carrying amount is now $50,000; tax base $20,000.","prompt":"The closing difference is $30,000. Is the year-2 deferred tax expense $30,000 × 17%?","answer":["No. 30,000 × 17% = $5,100 is the **closing balance**. The expense is the **movement**: 5,100 − 4,250 = **$850**.","Under the balance sheet approach you work out the closing balance first, then the expense falls out as the difference."]},{"type":"visual","part":"Balance sheet approach","lo":29,"title":"Deferred tax worksheet: machine","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl num\">\u003cthead>\u003ctr>\u003cth>\u003c/th>\u003cth>Carrying amount\u003c/th>\u003cth>Tax base\u003c/th>\u003cth>Difference\u003c/th>\u003cth>DTL 17%\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\n      \u003ctr>\u003ctd>End of year 1\u003c/td>\u003ctd>75,000\u003c/td>\u003ctd>50,000\u003c/td>\u003ctd>25,000\u003c/td>\u003ctd>4,250\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>End of year 2\u003c/td>\u003ctd>50,000\u003c/td>\u003ctd>20,000\u003c/td>\u003ctd>30,000\u003c/td>\u003ctd>5,100\u003c/td>\u003c/tr>\n      \u003ctr>\u003cth scope=\"row\">Year-2 movement\u003c/th>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003c/td>\u003ctd>\u003cb>850\u003c/b>\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>\n    \u003cp class=\"cap\">Year-2 entry: Dr \u003cspan class=\"el el-x\">Deferred tax expense\u003c/span> 850, Cr \u003cspan class=\"el el-l\">Deferred tax liability\u003c/span> 850.\u003c/p>"},{"type":"calc","part":"Balance sheet approach","lo":29,"q":"Opening DTL $4,250. At year end the taxable difference is $30,000 at 17%. What is the deferred tax **expense** for the year?","answer":850,"unit":"$","working":["Closing DTL = 30,000 × 17% = 5,100.","Expense = 5,100 − 4,250 = $850."]},{"type":"think","part":"Balance sheet approach","lo":29,"scenario":"Suppose that before the end of year 1, a new tax rate of 15% is enacted for future years. The machine’s difference is still $25,000.","prompt":"Which rate should Lim use, and what does that do to the deferred tax balance?","answer":["Use the **enacted** 15%, because that is the rate when the difference reverses. DTL = 25,000 × 15% = $3,750.","If Lim had already booked $4,250 at 17%, it remeasures: a $500 **credit** to P&L. A rate cut reduces a DTL."]},{"type":"mcq","part":"Balance sheet approach","lo":29,"q":"A company has an opening DTL of $4,250 (a $25,000 difference at 17%). During the year a rate of 15% is substantively enacted and the difference is unchanged. What is the effect on profit or loss?","options":[{"t":"No effect: deferred tax is measured at the rate when it first arose","why":"Deferred tax is remeasured at each reporting date using the enacted rate."},{"t":"Deferred tax credit of $500","ok":true,"why":"New DTL 3,750 vs 4,250: the 500 reduction goes to P&L (the original difference arose there)."},{"t":"Deferred tax expense of $500","why":"Wrong direction: a lower rate reduces a liability, which is a credit."},{"t":"Credit of $500 to OCI","why":"The difference arose in P&L (allowances vs depreciation), so the rate effect goes to P&L."}]},{"type":"think","part":"Unused tax losses","lo":30,"scenario":"Tembusu Pte Ltd has a tax loss of $300,000 that it can carry forward. Its budgets show taxable profits of only about $200,000 over the next few years that are probable.","prompt":"Is the tax loss an asset? If so, how much of it?","answer":["Yes, but only partly. A loss is only worth something if there will be **profits to set it against**.","Recognise a {a|Deferred tax asset} on the $200,000 that is probable: 200,000 × 17% = **$34,000**. The other $100,000 is disclosed as unrecognised."]},{"type":"rule","part":"Unused tax losses","lo":30,"title":"Unused tax losses","body":["- Carried-forward losses work like a **deductible** temporary difference: they will cut future tax.","- Recognise a DTA **only to the extent future taxable profit is probable**. A history of **recent losses** is strong evidence against, unless there is convincing other evidence.","- Evidence for: taxable temporary differences that will reverse, forecast profits, tax-planning opportunities, losses from causes unlikely to recur.","- **Reassess every reporting date:** write the DTA down if profit is no longer probable, or recognise a previously unrecognised DTA if it now is.","! Singapore: unused trade losses can be carried forward **indefinitely**, but only if the **shareholding test** is met (broadly the same substantial shareholders)."]},{"type":"je","part":"Unused tax losses","lo":30,"q":"Record Tembusu’s deferred tax asset of $34,000 on its unused losses.","accounts":["Current tax expense","Current tax payable","Deferred tax expense","Deferred tax income","Deferred tax liability","Deferred tax asset","Revaluation surplus (OCI)","Property, plant and equipment","Cash","Retained earnings","Accruals"],"lines":[{"side":"Dr","account":"Deferred tax asset","amount":34000},{"side":"Cr","account":"Deferred tax income","amount":34000}],"why":"200,000 × 17% = 34,000. The credit reduces tax expense in P&L."},{"type":"mcq","part":"Unused tax losses","lo":30,"q":"A company has made losses for the last three years and has no taxable temporary differences. Management “hopes” to return to profit but has no firm plans. What should it do with its unused tax losses?","options":[{"t":"Recognise a DTA on all the losses, because they never expire","why":"Carry-forward doesn’t make recovery probable. Recent losses are strong evidence against recognition."},{"t":"Recognise a DTA on half the losses as a prudent estimate","why":"There is no “half” rule. The test is probable future taxable profit, and there is no convincing evidence here."},{"t":"Recognise no DTA, and disclose the unused losses","ok":true,"why":"Without convincing evidence of future taxable profit, no DTA is recognised. Unrecognised losses are disclosed."},{"t":"Recognise the losses as a current tax asset","why":"Current tax assets are for tax overpaid, not losses carried forward."}]},{"type":"think","part":"Presentation and disclosure","lo":31,"scenario":"Lim’s profit was $200,000, but its tax expense is $35,020, not $34,000 (17% of profit).","prompt":"What would a reader of the accounts want explained? And what explains this gap?","answer":["Readers want to know why the effective rate isn’t 17%. Here the only reason is the **non-deductible entertainment**: 6,000 × 17% = $1,020.","The machine’s timing difference does **not** explain any of the gap, because deferred tax already adds back the tax “saved” this year."]},{"type":"visual","part":"Presentation and disclosure","lo":31,"title":"The tax reconciliation","html":"\u003cdiv class=\"tbl-wrap\">\u003ctable class=\"tbl num\">\u003ctbody>\n      \u003ctr>\u003ctd>Accounting profit × 17% (200,000 × 17%)\u003c/td>\u003ctd>34,000\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Tax effect of non-deductible entertainment (6,000 × 17%)\u003c/td>\u003ctd>1,020\u003c/td>\u003c/tr>\n      \u003ctr>\u003cth scope=\"row\">Tax expense (current 30,770 + deferred 4,250)\u003c/th>\u003ctd>\u003cb>35,020\u003c/b>\u003c/td>\u003c/tr>\n    \u003c/tbody>\u003c/table>\u003c/div>\n    \u003cp class=\"cap\">Only permanent items and rate effects appear. Temporary differences don’t, because deferred tax balances them.\u003c/p>"},{"type":"rule","part":"Presentation and disclosure","lo":31,"title":"Presentation and disclosure","body":["- **Components of tax expense:** current tax, prior-year adjustments, deferred tax from temporary differences, from **rate changes**, and from previously unrecognised losses.","- Tax charged to **OCI** and directly to **equity**.","- **Tax reconciliation:** accounting profit × applicable rate → actual tax expense.","- Changes in the applicable rate compared with last year.","- Deductible differences and **unused tax losses with no DTA** recognised.","- For each type of temporary difference: the DTA/DTL and the amount in P&L.","- Evidence supporting a DTA when the entity has **recent losses**.","- **Presentation:** deferred tax is always **non-current**. **Offset** DTAs and DTLs only with a legal right to offset and the **same tax authority**."]},{"type":"mcq","part":"Presentation and disclosure","lo":31,"q":"Which item would appear as a reconciling item in the tax reconciliation (profit × rate → tax expense)?","options":[{"t":"Capital allowances claimed in excess of depreciation","why":"A temporary difference: the deferred tax charge already offsets it."},{"t":"Non-deductible entertainment expenses","ok":true,"why":"Permanent: it raises tax expense above profit × rate, so it must be explained."},{"t":"A warranty provision deductible when paid","why":"Temporary: offset by the deferred tax credit."},{"t":"The current tax payable at year end","why":"A balance, not a reconciling item between profit × rate and expense."}]},{"type":"summary","part":"Wrap-up","lo":31,"title":"Income tax on one page","rows":[["Tax expense?","Current tax + movement in deferred tax."],["Temporary difference?","Carrying amount − tax base, for each asset and liability."],["Permanent difference?","Never taxable or deductible: no deferred tax; it changes the effective rate."],["Asset CA > TB?","Taxable → {l|Deferred tax liability}. For liabilities, the reverse."],["DTA recognised when?","Only to the extent future taxable profit is probable, including for unused losses."],["Which rate?","Enacted or substantively enacted for the reversal period. No discounting."],["Revaluation?","DTL charged to OCI, not P&L."],["Key disclosure?","Tax reconciliation: profit × rate → tax expense."]]}],"quiz":{"cases":{"merlion":{"name":"Merlion Foods","text":["Merlion Foods Pte Ltd (Merlion) has a financial year ending 31 December 20X6, its first year of trading. Accounting profit before tax is $500,000. The tax rate is 17%.","Merlion bought machinery for $300,000 on 1 January 20X6. Depreciation for 20X6 is $60,000; capital allowances claimed are $90,000.","Profit is after charging $10,000 of entertainment, which is not deductible for tax, and a warranty provision of $40,000. The warranty costs are deductible only when claims are paid; none were paid in 20X6. Future taxable profits are expected to be strong."]},"orchid":{"name":"Orchid Hotels","text":["Orchid Hotels Ltd (Orchid) has a financial year ending 31 December 20X8. At 1 January 20X8 it had a deferred tax liability of $51,000, arising on a $300,000 taxable temporary difference on plant, measured at 17%.","At 31 December 20X8 the taxable temporary difference on plant is $360,000. In November 20X8, a reduction in the tax rate to 15% for future years was substantively enacted.","On 31 December 20X8 Orchid revalued a hotel building upward by $200,000, recognised in OCI. The tax base is unchanged; assume the gain would be taxable when the building’s value is recovered."]}},"questions":[{"id":"mer-cur","case":"merlion","lo":28,"q":"What is Merlion’s current tax for 20X6?","options":[{"t":"$85,000","why":"Accounting profit × 17%. Current tax is based on taxable profit."},{"t":"$88,400","ok":true,"why":"Taxable profit = 500,000 + depreciation 60,000 − allowances 90,000 + entertainment 10,000 + warranty 40,000 = 520,000; × 17% = 88,400."},{"t":"$81,600","why":"Forgets to add back the warranty provision, which isn’t deductible until paid."},{"t":"$86,700","why":"Forgets to add back the non-deductible entertainment."}]},{"id":"mer-dtl","case":"merlion","lo":29,"q":"What deferred tax arises on the machinery at 31 December 20X6?","options":[{"t":"Deferred tax liability of $5,100","ok":true,"why":"CA 240,000 − TB 210,000 = 30,000 taxable; × 17% = 5,100."},{"t":"Deferred tax asset of $5,100","why":"Asset CA > TB is a taxable difference, so it is a liability."},{"t":"Deferred tax liability of $15,300","why":"Multiplies the allowances, not the temporary difference."},{"t":"None: capital allowances are a permanent difference","why":"Allowances and depreciation both total the cost over time. It is a timing difference."}]},{"id":"mer-war","case":"merlion","lo":27,"q":"How should Merlion treat the warranty provision for deferred tax?","options":[{"t":"Permanent difference: no deferred tax","why":"It will be deductible when paid, so it is temporary."},{"t":"Taxable temporary difference: DTL of $6,800","why":"A liability with CA > TB is deductible, not taxable."},{"t":"Deductible temporary difference: DTA of $6,800","ok":true,"why":"Tax base 0, carrying amount 40,000: deductible. Profits are expected, so recognise a DTA of 6,800."},{"t":"Deductible temporary difference, but no DTA because it is Merlion’s first year","why":"The test is probable future taxable profit, which the case says is strong."}]},{"id":"mer-total","case":"merlion","lo":28,"q":"What is Merlion’s total tax expense for 20X6?","options":[{"t":"$88,400","why":"Current tax only, leaving out deferred tax."},{"t":"$100,300","why":"Adds the DTA. A deferred tax asset reduces tax expense."},{"t":"$86,700","ok":true,"why":"Current 88,400 + DTL 5,100 − DTA 6,800 = 86,700."},{"t":"$85,000","why":"Profit × 17%. The non-deductible entertainment adds to this."}]},{"id":"mer-recon","case":"merlion","lo":31,"q":"In Merlion’s tax reconciliation (profit × 17% → tax expense), what is the reconciling item?","options":[{"t":"Machinery timing difference of $5,100","why":"Temporary differences are balanced by deferred tax and don’t appear."},{"t":"Warranty provision of $6,800","why":"Also temporary, so offset by the DTA."},{"t":"Non-deductible entertainment of $1,700","ok":true,"why":"85,000 + 1,700 = 86,700. Only the permanent item is reconciling."},{"t":"There is no reconciling item","why":"Tax expense (86,700) differs from profit × 17% (85,000)."}]},{"id":"orc-close","case":"orchid","lo":29,"q":"What deferred tax liability on plant should Orchid recognise at 31 December 20X8?","options":[{"t":"$61,200","why":"Uses the old 17% rate. The 15% rate was substantively enacted before year end."},{"t":"$54,000","ok":true,"why":"360,000 × 15% = 54,000."},{"t":"$9,000","why":"That is only the increase in the difference × 15%. The balance covers the whole difference."},{"t":"$51,000","why":"The opening balance. The difference and rate have both changed."}]},{"id":"orc-move","case":"orchid","lo":29,"q":"What deferred tax expense on plant goes to profit or loss for 20X8?","options":[{"t":"$3,000","ok":true,"why":"Closing 54,000 − opening 51,000 = 3,000. The rate cut and the bigger difference partly offset."},{"t":"$10,200","why":"Increase in the difference × 17%, ignoring the rate change."},{"t":"$54,000","why":"That is the closing balance, not the movement."},{"t":"$9,000","why":"Ignores remeasuring the opening balance at the new rate."}]},{"id":"orc-reval","case":"orchid","lo":28,"q":"How should Orchid account for deferred tax on the hotel revaluation?","options":[{"t":"DTL of $30,000, charged to profit or loss","why":"Deferred tax follows the item. The revaluation went to OCI."},{"t":"DTL of $30,000, charged to OCI","ok":true,"why":"200,000 × 15% (the enacted rate) = 30,000, in OCI."},{"t":"DTL of $34,000, charged to OCI","why":"Uses 17%, but 15% was enacted before year end."},{"t":"No deferred tax, because the gain is unrealised","why":"The revaluation still creates a taxable temporary difference."}]},{"id":"orc-pres","case":"orchid","lo":31,"q":"How should Orchid present its deferred tax liability in the statement of financial position?","options":[{"t":"As a current liability, because the rate changes next year","why":"Deferred tax is never classified as current."},{"t":"As a non-current liability","ok":true,"why":"Deferred tax balances are always presented as non-current."},{"t":"Split between current and non-current by reversal date","why":"This isn’t done for deferred tax."},{"t":"Netted against current tax payable","why":"Offsetting is only within current tax or within deferred tax, with a legal right and the same tax authority."}]},{"id":"orc-off","case":"orchid","lo":31,"q":"Orchid also has a deferred tax asset. When may it offset the DTA against its DTL?","options":[{"t":"Always, since both are deferred tax","why":"Offsetting needs specific conditions."},{"t":"When they relate to the same tax authority and Orchid has a legal right to offset","ok":true,"why":"Both conditions are required."},{"t":"Only if the DTA is larger than the DTL","why":"Size is irrelevant."},{"t":"Never","why":"Offsetting is required when the conditions are met."}]},{"id":"s-perm","lo":27,"q":"Which of the following creates **no** deferred tax?","options":[{"t":"A fine paid to a regulator","ok":true,"why":"Never deductible: a permanent difference."},{"t":"Depreciation that is slower than capital allowances","why":"A taxable temporary difference → DTL."},{"t":"A provision deductible when paid","why":"A deductible temporary difference → DTA."},{"t":"A revaluation surplus","why":"A taxable temporary difference → DTL in OCI."}]},{"id":"s-base","lo":27,"q":"A machine cost $120,000. Capital allowances of $90,000 have been claimed, and its carrying amount is $80,000. What is its tax base?","options":[{"t":"$80,000","why":"That is the carrying amount."},{"t":"$30,000","ok":true,"why":"Cost 120,000 − allowances 90,000 = 30,000 still deductible."},{"t":"$50,000","why":"That is the temporary difference."},{"t":"$120,000","why":"Ignores the allowances already claimed."}]},{"id":"s-int","lo":27,"q":"A company accrues interest receivable of $5,000. The interest is taxed only when received. What deferred tax arises (17%)?","options":[{"t":"DTA of $850","why":"Asset CA > TB is taxable, so it is a liability."},{"t":"DTL of $850","ok":true,"why":"CA 5,000, tax base 0: taxable difference; × 17% = 850."},{"t":"None: interest is a permanent difference","why":"It will be taxed when received, so it is temporary."},{"t":"Current tax of $850","why":"Not taxable until received."}]},{"id":"s-adv","lo":27,"q":"A company received $10,000 of revenue in advance, which was taxed on receipt. It is still a liability at year end. What deferred tax arises (17%)?","options":[{"t":"DTL of $1,700","why":"A liability with CA > TB is deductible, not taxable."},{"t":"DTA of $1,700","ok":true,"why":"Tax base = 10,000 − 10,000 not taxable in future = 0. CA > TB on a liability → deductible → DTA 1,700."},{"t":"None, because the tax has already been paid","why":"That is exactly why a DTA arises: tax has been paid ahead of the accounting income."},{"t":"DTA of $10,000","why":"The difference must be multiplied by the tax rate."}]},{"id":"s-rate","lo":28,"q":"Which rate should be used to measure deferred tax?","options":[{"t":"The current year’s rate, always","why":"Use the rate expected when the difference reverses, if enacted."},{"t":"A rate announced in the Budget speech but not yet legislated","why":"Only enacted or substantively enacted rates are used."},{"t":"The enacted or substantively enacted rate for the reversal period, without discounting","ok":true,"why":"That is the measurement rule, and deferred tax is never discounted."},{"t":"The enacted rate, discounted to present value","why":"Deferred tax is never discounted."}]},{"id":"s-loss","lo":30,"q":"A company has unused tax losses of $500,000. Future taxable profit of $300,000 is probable. What DTA should it recognise (17%)?","options":[{"t":"$85,000","why":"Recognises a DTA on the full loss. Only the part covered by probable profits is recognised."},{"t":"$51,000","ok":true,"why":"300,000 × 17% = 51,000."},{"t":"$0","why":"Some profit is probable, so a DTA is recognised to that extent."},{"t":"$34,000","why":"That is the tax on the unrecognised part."}]},{"id":"s-reassess","lo":30,"q":"Last year a company did not recognise a DTA on its tax losses. This year it has signed long-term contracts that make future taxable profit probable. What should it do?","options":[{"t":"Nothing: the earlier decision is final","why":"DTAs are reassessed at every reporting date."},{"t":"Recognise the DTA now, to the extent profit is probable","ok":true,"why":"A previously unrecognised DTA is recognised once recovery becomes probable."},{"t":"Restate last year’s accounts as a prior-period error","why":"Last year’s judgement was right on the evidence then. This is a change in estimate."},{"t":"Recognise the DTA directly in equity","why":"It goes to P&L, because the losses arose there."}]},{"id":"s-cur","lo":28,"q":"A company paid $50,000 of tax instalments during the year, but its final current tax for the year is $42,000. How is the difference presented?","options":[{"t":"Current tax liability of $8,000","why":"It overpaid, so IRAS owes the company."},{"t":"Current tax asset of $8,000","ok":true,"why":"Tax paid exceeds the amount due, so the excess is a current tax asset."},{"t":"Deferred tax asset of $8,000","why":"Overpaid current tax is current, not deferred."},{"t":"Reduction of next year’s tax expense","why":"This year’s expense is 42,000. The overpayment is an asset."}]},{"id":"s-disc","lo":31,"q":"Which of these must be disclosed?","options":[{"t":"Unused tax losses for which no DTA is recognised","ok":true,"why":"Required, so users can see potential tax benefits not on the balance sheet."},{"t":"The tax computation submitted to IRAS","why":"Not required."},{"t":"The present value of deferred tax balances","why":"Deferred tax isn’t discounted."},{"t":"Forecast tax rates for the next five years","why":"Only changes in the applicable rate vs last year are disclosed."}]}]}}]};
+</script>
+<script>
+// Browser UI. Reads window.STUDY_DATA (built from content/*.js) and uses window.StudyCore.
+(function () {
+  const C = window.StudyCore;
+  const DATA = window.STUDY_DATA;
+  const md = C.renderInline;
+  const esc = C.escapeHtml;
+  const $app = document.getElementById('app');
+  const fmt = (n) => Number(n).toLocaleString('en-US');
+
+  let storage = null;
+  try { storage = window.localStorage; } catch (e) { storage = null; }
+  const stores = {};
+  const st = (id) => (stores[id] = stores[id] || C.store(storage, `isca-study:v1:${id}`));
+
+  const ui = { view: 'home', topic: null, legend: false, confirmSubmit: false, qIndex: 0 };
+  let prog = {};
+  const save = () => st(ui.topic.id).save(prog);
+  const topicById = (id) => DATA.topics.find((t) => t.id === id);
+
+  // Stable shuffle per attempt so answer positions don't form a pattern. Official questions keep their printed order.
+  function shuffled(n, seed) {
+    const idx = [...Array(n).keys()];
+    let s = seed || 1;
+    for (let i = n - 1; i > 0; i--) {
+      s = (s * 9301 + 49297) % 233280;
+      const j = Math.floor((s / 233280) * (i + 1));
+      [idx[i], idx[j]] = [idx[j], idx[i]];
+    }
+    return idx;
+  }
+  const isOfficial = (q) => /^Official/.test(q.source || '');
+
+  // ── Shared bits
+  const legendHtml = () => Object.entries(C.ELEMENTS)
+    .map(([k, v]) => `<span class="el el-${k}"><span class="dot"></span>${v}</span>`).join('');
+
+  function header(title, pct) {
+    return `<header class="top">
+      <div class="wrap">
+        <button class="chipbtn" data-act="home" aria-label="Back to topics">← Topics</button>
+        <div class="title">${title}</div>
+        <button class="chipbtn" data-act="legend" aria-expanded="${ui.legend}">Legend</button>
+      </div>
+      ${pct === undefined ? '' : `<div class="progress"><i style="width:${pct}%"></i></div>`}
+      ${ui.legend ? `<div class="legend"><div class="wrap">${legendHtml()}<span class="muted">Contra accounts take the colour of the element they reduce.</span></div></div>` : ''}
+    </header>`;
+  }
+
+  const jeTable = (lines) => `<table class="jet">${lines.map((l) => {
+    const acc = l.el ? `<span class="el el-${l.el}">${esc(l.account)}</span>` : md(l.account);
+    return `<tr class="${l.side === 'Cr' ? 'cr' : ''}"><td class="acc">${l.side} ${acc}</td><td class="amt">${fmt(l.amount)}</td></tr>`;
+  }).join('')}</table>`;
+
+  function bodyLines(lines) {
+    const out = [];
+    let list = [];
+    const flush = () => { if (list.length) { out.push(`<ul class="body">${list.join('')}</ul>`); list = []; } };
+    for (const s of lines) {
+      if (s.startsWith('- ')) { list.push(`<li>${md(s.slice(2))}</li>`); continue; }
+      flush();
+      if (s.startsWith('> ')) out.push(`<div class="formula">${md(s.slice(2))}</div>`);
+      else if (s.startsWith('! ')) out.push(`<p class="trap">${md(s.slice(2))}</p>`);
+      else if (s.startsWith('+ ')) out.push(`<p class="key">${md(s.slice(2))}</p>`);
+      else out.push(`<p>${md(s)}</p>`);
+    }
+    flush();
+    return out.join('');
+  }
+
+  // ── Home
+  function renderHome() {
+    const cards = DATA.topics.map((t) => {
+      const p = st(t.id).load();
+      const page = p.page || 0;
+      const done = Math.round((p.maxPage === undefined ? 0 : p.maxPage + 1) / t.pages.length * 100);
+      const best = p.quizBest;
+      return `<article class="card topic">
+        <div class="stack" style="gap:4px">
+          <span class="eyebrow">${esc(t.code)}</span>
+          <h2>${esc(t.title)}</h2>
+          <p class="muted">${esc(t.subtitle)}</p>
+        </div>
+        <div class="stack" style="gap:6px">
+          <div class="meta"><span>Lesson · ${t.pages.length} pages</span><span>${done}% seen</span></div>
+          <div class="bar"><i style="width:${done}%"></i></div>
+          <div class="meta"><span>Exam quiz · ${t.quiz.questions.length} MCQs</span><span>${best ? `Best ${best.correct}/${best.total}` : 'Not taken yet'}</span></div>
+        </div>
+        <div class="row">
+          <button class="btn" data-act="lesson" data-topic="${t.id}">${page > 0 ? `Continue (page ${page + 1})` : 'Start lesson'}</button>
+          <button class="btn ghost" data-act="quiz-start" data-topic="${t.id}">Exam quiz</button>
+        </div>
+      </article>`;
+    }).join('');
+    $app.innerHTML = `<header class="top"><div class="wrap"><div class="title"><b>ISCA PFF</b> · Socratic study</div>
+        <button class="chipbtn" data-act="legend" aria-expanded="${ui.legend}">Legend</button></div>
+        ${ui.legend ? `<div class="legend"><div class="wrap">${legendHtml()}</div></div>` : ''}</header>
+      <main class="wrap stack" style="gap:20px">
+        <section class="hero">
+          <h1>Think first, then learn the rule.</h1>
+          <p class="lead muted">Each topic asks you to reason it out before it explains, checks you as you go, and ends with an exam-style quiz.</p>
+        </section>
+        ${cards}
+        <p class="muted" style="font-size:.9rem">More ISCA topics will be added here. Progress is saved on this device only.</p>
+      </main>`;
+  }
+
+  // ── Lesson pages
+  function renderPage(p, i) {
+    const s = prog;
+    switch (p.type) {
+      case 'intro':
+        return `<span class="eyebrow">Start here</span><h1>${esc(p.title)}</h1>${bodyLines(p.body)}
+          <div class="card stack" style="gap:8px"><span class="eyebrow">Colour code</span><div class="row" style="gap:6px 16px">${legendHtml()}</div></div>`;
+      case 'think': {
+        const revealed = s.revealed && s.revealed[i];
+        return `<span class="eyebrow think">Think first</span>
+          <div class="scenario">${md(p.scenario)}</div>
+          <p class="prompt">${md(p.prompt)}</p>
+          <label class="muted" for="think-${i}" style="font-size:.85rem">Your thinking (not marked)</label>
+          <textarea id="think-${i}" data-think="${i}" placeholder="Jot a line or two…">${esc((s.think && s.think[i]) || '')}</textarea>
+          ${revealed ? `<div class="answer"><span class="eyebrow">Model answer</span>${p.answer.map((a) => `<p>${md(a)}</p>`).join('')}</div>`
+            : `<div><button class="btn" data-act="reveal" data-i="${i}">Reveal answer</button></div>`}`;
+      }
+      case 'rule':
+        return `<span class="eyebrow">The rule</span><h2>${esc(p.title)}</h2>${bodyLines(p.body)}`;
+      case 'visual':
+        return `<span class="eyebrow">Picture it</span><h2>${esc(p.title)}</h2>${p.html}${
+          p.html.includes('reveal-rows') ? `<div class="row"><button class="btn ghost" data-act="row-next">Next year</button><button class="btn ghost" data-act="row-all">Show all</button></div>` : ''}`;
+      case 'mcq': {
+        const chosen = s.mcq ? s.mcq[i] : undefined;
+        const answered = chosen !== undefined;
+        const order = shuffled(p.options.length, i + 7);
+        const opts = order.map((oi, pos) => {
+          const o = p.options[oi];
+          let cls = '';
+          let mk = String.fromCharCode(65 + pos);
+          if (answered && o.ok) { cls = 'right'; mk = '✓'; }
+          else if (answered && oi === chosen) { cls = 'wrong'; mk = '✗'; }
+          return `<button class="opt ${cls}" data-act="mcq" data-i="${i}" data-o="${oi}" ${answered ? 'disabled' : ''}>
+            <span class="mk">${mk}</span><span class="tx"><span>${md(o.t)}</span>${answered ? `<span class="why">${md(o.why)}</span>` : ''}</span></button>`;
+        }).join('');
+        const verdict = answered ? (p.options[chosen].ok ? '<span class="badge ok">✓ Correct</span>' : '<span class="badge no">✗ Not quite</span>') : '';
+        return `<span class="eyebrow">Quick check</span><p class="prompt">${md(p.q)}</p><div class="opts">${opts}</div>${verdict ? `<div>${verdict}</div>` : ''}`;
+      }
+      case 'je': return renderJE(p, i);
+      case 'calc': {
+        const c = (s.calc && s.calc[i]) || {};
+        const verdict = c.checked ? (C.gradeNumber(p.answer, c.value) ? '<span class="badge ok">✓ Correct</span>' : '<span class="badge no">✗ Not quite</span>') : '';
+        return `<span class="eyebrow">Work it out</span><p class="prompt">${md(p.q)}</p>
+          <div class="row" style="flex-wrap:nowrap"><span class="mono">${esc(p.unit || '')}</span>
+            <input id="calc-${i}" data-calc="${i}" inputmode="decimal" autocomplete="off" class="mono" value="${esc(c.value || '')}" placeholder="0" style="max-width:12em">
+            <button class="btn" data-act="calc-check" data-i="${i}">Check</button></div>
+          ${verdict ? `<div>${verdict}</div>` : ''}
+          ${c.checked || c.shown ? `<div class="answer"><span class="eyebrow">Working · answer ${esc(p.unit || '')}${fmt(p.answer)}</span>${p.working.map((w) => `<p>${md(w)}</p>`).join('')}</div>`
+            : `<div><button class="btn ghost" data-act="calc-show" data-i="${i}">Show working</button></div>`}`;
+      }
+      case 'summary':
+        return `<span class="eyebrow">Wrap-up</span><h2>${esc(p.title)}</h2>
+          <div class="tbl-wrap"><table class="tbl"><tbody>${p.rows.map(([q, a]) => `<tr><th scope="row" style="text-transform:none;letter-spacing:0;font-size:.88rem;color:var(--ink)">${esc(q)}</th><td>${md(a)}</td></tr>`).join('')}</tbody></table></div>
+          <div class="card stack"><p class="prompt">Ready for the exam-style quiz?</p><p class="muted">${ui.topic.quiz.questions.length} four-option MCQs, mostly in case sets like the real PFF paper. No feedback until you submit.</p>
+          <div><button class="btn" data-act="quiz-start" data-topic="${ui.topic.id}">Start the quiz</button></div></div>`;
+      default: return '';
+    }
+  }
+
+  function renderJE(p, i) {
+    const s = prog;
+    s.je = s.je || {};
+    const state = s.je[i] || { rows: [{ side: 'Dr', account: '', amount: '' }, { side: 'Cr', account: '', amount: '' }] };
+    s.je[i] = state;
+    const accs = p.accounts.map((n) => ui.topic.accounts.find((a) => a.name === n));
+    const elOf = (name) => (accs.find((a) => a && a.name === name) || {}).el;
+    const graded = state.checked ? C.gradeJE(p.lines, state.rows.map((r) => ({ ...r, amount: C.parseAmount(r.amount) }))) : null;
+    let gi = 0;
+    const rows = state.rows.map((r, ri) => {
+      const blank = !r.account && !r.amount;
+      const mark = graded && !blank ? (graded.lines[gi++].ok ? 'ok' : 'no') : '';
+      const el = elOf(r.account);
+      return `<div class="jeline ${mark}">
+        <select data-je="${i}" data-r="${ri}" data-f="side" aria-label="Debit or credit"><option ${r.side === 'Dr' ? 'selected' : ''}>Dr</option><option ${r.side === 'Cr' ? 'selected' : ''}>Cr</option></select>
+        <select data-je="${i}" data-r="${ri}" data-f="account" aria-label="Account"><option value="">Account…</option>${accs.map((a) => `<option ${a.name === r.account ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
+        <input data-je="${i}" data-r="${ri}" data-f="amount" inputmode="decimal" autocomplete="off" aria-label="Amount" value="${esc(r.amount)}" placeholder="0">
+        <button class="x" data-act="je-del" data-i="${i}" data-r="${ri}" aria-label="Remove line">×</button>
+        ${el ? `<span class="acc-el el el-${el}"><span class="dot"></span>${C.ELEMENTS[el]}</span>` : ''}
+      </div>`;
+    }).join('');
+    let verdict = '';
+    if (graded) {
+      const right = graded.lines.filter((l) => l.ok).length;
+      verdict = graded.correct ? '<span class="badge ok">✓ Correct entry</span>'
+        : `<span class="badge no">✗ ${right} line${right === 1 ? '' : 's'} right${graded.missing ? ` · ${graded.missing} expected line${graded.missing === 1 ? '' : 's'} missing or wrong` : ''}</span>`;
+    }
+    const answer = state.shown || (graded && graded.correct)
+      ? `<div class="answer"><span class="eyebrow">Model entry</span>${jeTable(p.lines.map((l) => ({ ...l, el: elOf(l.account) })))}<p class="muted">${md(p.why || '')}</p>${p.alt ? `<p class="muted">${md(p.alt)}</p>` : ''}</div>` : '';
+    return `<span class="eyebrow">Journal entry</span><p class="prompt">${md(p.q)}</p>
+      <div class="jeb">${rows}</div>
+      <div class="row"><button class="btn ghost" data-act="je-add" data-i="${i}">+ Add line</button>
+        <button class="btn" data-act="je-check" data-i="${i}">Check entry</button>
+        ${answer ? '' : `<button class="btn ghost" data-act="je-show" data-i="${i}">Show answer</button>`}</div>
+      ${verdict ? `<div>${verdict}</div>` : ''}${answer}`;
+  }
+
+  function renderLesson() {
+    const t = ui.topic;
+    const i = Math.min(prog.page || 0, t.pages.length - 1);
+    const p = t.pages[i];
+    const pct = ((i + 1) / t.pages.length) * 100;
+    const last = i === t.pages.length - 1;
+    $app.innerHTML = `${header(`<b>${esc(t.title)}</b> · ${esc(p.part)} · ${i + 1}/${t.pages.length}`, pct)}
+      <main class="wrap stack">${renderPage(p, i)}</main>
+      <nav class="nav"><div class="wrap">
+        <button class="btn ghost" data-act="prev" ${i === 0 ? 'disabled' : ''}>Back</button>
+        ${last ? `<button class="btn" data-act="quiz-start" data-topic="${t.id}">Quiz</button>` : '<button class="btn" data-act="next">Next</button>'}
+      </div></nav>`;
+  }
+
+  // ── Quiz
+  function quizQuestions() {
+    const qz = prog.attempt;
+    return qz.ids.map((id) => ui.topic.quiz.questions.find((q) => q.id === id));
+  }
+
+  function startQuiz(onlyIds) {
+    const all = ui.topic.quiz.questions;
+    const ids = onlyIds && onlyIds.length ? all.filter((q) => onlyIds.includes(q.id)).map((q) => q.id) : all.map((q) => q.id);
+    const seed = Math.floor(Math.random() * 100000) + 1;
+    prog.attempt = { ids, answers: {}, seed, submitted: false };
+    ui.qIndex = 0;
+    ui.confirmSubmit = false;
+    save();
+    ui.view = 'quiz';
+  }
+
+  function optOrder(q, k) {
+    return isOfficial(q) ? [0, 1, 2, 3] : shuffled(4, prog.attempt.seed + k * 31);
+  }
+
+  const optBody = (o) => (o.je ? jeTable(o.je) : `<span>${md(o.t)}</span>`);
+
+  function renderQuiz() {
+    const t = ui.topic;
+    const qs = quizQuestions();
+    const k = Math.min(ui.qIndex, qs.length - 1);
+    const q = qs[k];
+    const a = prog.attempt.answers;
+    const c = q.case ? t.quiz.cases[q.case] : null;
+    const answeredCount = qs.filter((x) => a[x.id] !== undefined).length;
+    const opts = optOrder(q, k).map((oi, pos) => `<button class="opt ${a[q.id] === oi ? 'sel' : ''}" data-act="qpick" data-q="${q.id}" data-o="${oi}">
+        <span class="mk">${String.fromCharCode(65 + pos)}</span><span class="tx">${optBody(q.options[oi])}</span></button>`).join('');
+    const unanswered = qs.length - answeredCount;
+    $app.innerHTML = `${header(`<b>${esc(t.title)} quiz</b> · Question ${k + 1} of ${qs.length}`, (answeredCount / qs.length) * 100)}
+      <main class="wrap stack">
+        ${c ? `<details class="case" ${k === 0 || qs[k - 1].case !== q.case ? 'open' : ''}><summary>Case: ${esc(c.name)}</summary>
+          <div class="stack">${c.source ? `<span class="src">${esc(c.source)}</span>` : ''}${c.text.map((x) => `<p>${md(x)}</p>`).join('')}</div></details>` : ''}
+        ${q.source ? `<span class="src">${esc(q.source)}</span>` : ''}
+        <p class="prompt">${md(q.q)}</p>
+        <div class="opts" role="radiogroup">${opts}</div>
+        <div class="qdots" aria-label="Jump to question">${qs.map((x, j) => `<button class="${a[x.id] !== undefined ? 'done' : ''} ${j === k ? 'cur' : ''}" data-act="qgo" data-k="${j}" aria-label="Question ${j + 1}">${j + 1}</button>`).join('')}</div>
+        ${ui.confirmSubmit ? `<div class="confirm stack"><p>${unanswered ? `${unanswered} question${unanswered === 1 ? ' is' : 's are'} unanswered and will be marked wrong.` : 'All questions answered.'} Submit now?</p>
+          <div class="row"><button class="btn" data-act="qsubmit-yes">Submit</button><button class="btn ghost" data-act="qsubmit-no">Keep going</button></div></div>`
+          : `<div><button class="btn ghost" data-act="qsubmit">Submit quiz</button></div>`}
+      </main>
+      <nav class="nav"><div class="wrap">
+        <button class="btn ghost" data-act="qprev" ${k === 0 ? 'disabled' : ''}>Back</button>
+        ${k === qs.length - 1 ? '<button class="btn" data-act="qsubmit">Submit</button>' : '<button class="btn" data-act="qnext">Next</button>'}
+      </div></nav>`;
+  }
+
+  function renderResults() {
+    const t = ui.topic;
+    const qs = quizQuestions();
+    const a = prog.attempt.answers;
+    const s = C.scoreQuiz(qs, a);
+    const los = Object.entries(s.byLO).map(([lo, v]) => `<div class="lorow"><span>LO ${lo} · ${esc(t.los[lo])}</span><span class="mono" style="text-align:right">${v.correct}/${v.total}</span>
+      <div class="bar"><i style="width:${(v.correct / v.total) * 100}%"></i></div></div>`).join('');
+    const review = qs.map((q, j) => {
+      const ci = C.correctIndex(q);
+      const mine = a[q.id];
+      const ok = mine === ci;
+      return `<article class="card stack" style="gap:10px">
+        <div class="row" style="justify-content:space-between"><span class="src">Q${j + 1} · LO ${q.lo}${q.case ? ` · ${esc(t.quiz.cases[q.case].name)}` : ''}</span>${ok ? '<span class="badge ok">✓</span>' : '<span class="badge no">✗</span>'}</div>
+        <p style="font-weight:600">${md(q.q)}</p>
+        ${!ok ? `<div class="opt wrong" style="cursor:default"><span class="mk">✗</span><span class="tx"><span class="muted" style="font-size:.8rem">Your answer</span>${mine === undefined ? '<span>Not answered</span>' : `${optBody(q.options[mine])}<span class="why">${md(q.options[mine].why)}</span>`}</span></div>` : ''}
+        <div class="opt right" style="cursor:default"><span class="mk">✓</span><span class="tx"><span class="muted" style="font-size:.8rem">Correct answer</span>${optBody(q.options[ci])}<span class="why">${md(q.options[ci].why)}</span></span></div>
+      </article>`;
+    }).join('');
+    $app.innerHTML = `${header(`<b>${esc(t.title)} quiz</b> · Results`)}
+      <main class="wrap stack" style="gap:18px">
+        <div class="row" style="align-items:baseline;gap:14px"><span class="score">${s.correct}/${s.total}</span><span class="muted">${Math.round((s.correct / s.total) * 100)}%</span></div>
+        <div class="stack" style="gap:10px">${los}</div>
+        <div class="row">
+          ${s.missed.length ? `<button class="btn" data-act="quiz-retry">Retry the ${s.missed.length} I missed</button>` : ''}
+          <button class="btn ghost" data-act="quiz-start" data-topic="${t.id}">Retake full quiz</button>
+          <button class="btn ghost" data-act="lesson" data-topic="${t.id}">Back to lesson</button>
+        </div>
+        <h2>Review</h2>
+        ${review}
+      </main>`;
+  }
+
+  function render() {
+    if (ui.view === 'home') renderHome();
+    else if (ui.view === 'lesson') renderLesson();
+    else if (ui.view === 'quiz') renderQuiz();
+    else if (ui.view === 'results') renderResults();
+  }
+
+  function go(view, scrollTop = true) {
+    ui.view = view;
+    render();
+    if (scrollTop) window.scrollTo(0, 0);
+  }
+
+  function openTopic(id) {
+    ui.topic = topicById(id);
+    prog = st(id).load();
+  }
+
+  // ── Events
+  $app.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const act = b.dataset.act;
+    const i = Number(b.dataset.i);
+    if (act === 'home') { ui.legend = false; return go('home'); }
+    if (act === 'legend') { ui.legend = !ui.legend; return render(); }
+    if (act === 'lesson') {
+      openTopic(b.dataset.topic);
+      prog.maxPage = Math.max(prog.maxPage || 0, prog.page || 0);
+      save();
+      return go('lesson');
+    }
+    if (act === 'next' || act === 'prev') {
+      prog.page = Math.max(0, Math.min(ui.topic.pages.length - 1, (prog.page || 0) + (act === 'next' ? 1 : -1)));
+      prog.maxPage = Math.max(prog.maxPage || 0, prog.page);
+      save();
+      return go('lesson');
+    }
+    if (act === 'reveal') { prog.revealed = { ...(prog.revealed || {}), [i]: true }; save(); return render(); }
+    if (act === 'mcq') { prog.mcq = { ...(prog.mcq || {}), [i]: Number(b.dataset.o) }; save(); return render(); }
+    if (act === 'calc-check' || act === 'calc-show') {
+      prog.calc = prog.calc || {};
+      const c = prog.calc[i] || {};
+      if (act === 'calc-check') { c.value = document.getElementById(`calc-${i}`).value; c.checked = true; } else c.shown = true;
+      prog.calc[i] = c; save(); return render();
+    }
+    if (act === 'je-add') { prog.je[i].rows.push({ side: 'Cr', account: '', amount: '' }); prog.je[i].checked = false; save(); return render(); }
+    if (act === 'je-del') { prog.je[i].rows.splice(Number(b.dataset.r), 1); prog.je[i].checked = false; save(); return render(); }
+    if (act === 'je-check') { prog.je[i].checked = true; save(); return render(); }
+    if (act === 'je-show') { prog.je[i].shown = true; save(); return render(); }
+    if (act === 'row-next' || act === 'row-all') {
+      const hidden = [...document.querySelectorAll('table.reveal-rows tr.hide')];
+      (act === 'row-all' ? hidden : hidden.slice(0, 1)).forEach((r) => r.classList.remove('hide'));
+      return;
+    }
+    if (act === 'quiz-start') {
+      openTopic(b.dataset.topic || ui.topic.id);
+      const resuming = prog.attempt && !prog.attempt.submitted && prog.attempt.ids.length === ui.topic.quiz.questions.length;
+      if (!resuming) startQuiz();
+      return go('quiz');
+    }
+    if (act === 'quiz-retry') {
+      const s = C.scoreQuiz(quizQuestions(), prog.attempt.answers);
+      startQuiz(s.missed); return go('quiz');
+    }
+    if (act === 'qpick') { prog.attempt.answers[b.dataset.q] = Number(b.dataset.o); save(); return go('quiz', false); }
+    if (act === 'qgo') { ui.qIndex = Number(b.dataset.k); ui.confirmSubmit = false; return go('quiz'); }
+    if (act === 'qnext') { ui.qIndex++; ui.confirmSubmit = false; return go('quiz'); }
+    if (act === 'qprev') { ui.qIndex--; ui.confirmSubmit = false; return go('quiz'); }
+    if (act === 'qsubmit') { ui.confirmSubmit = true; render(); const el = document.querySelector('.confirm'); if (el) el.scrollIntoView({ block: 'center' }); return; }
+    if (act === 'qsubmit-no') { ui.confirmSubmit = false; return render(); }
+    if (act === 'qsubmit-yes') {
+      prog.attempt.submitted = true;
+      const qs = quizQuestions();
+      const s = C.scoreQuiz(qs, prog.attempt.answers);
+      if (qs.length === ui.topic.quiz.questions.length && (!prog.quizBest || s.correct > prog.quizBest.correct)) prog.quizBest = { correct: s.correct, total: s.total };
+      ui.confirmSubmit = false;
+      save();
+      return go('results');
+    }
+  });
+
+  // Typing: keep state without re-rendering (so the keyboard stays open).
+  $app.addEventListener('input', (e) => {
+    const el = e.target;
+    if (el.dataset.think !== undefined) { prog.think = { ...(prog.think || {}), [el.dataset.think]: el.value }; save(); }
+    if (el.dataset.calc !== undefined) { prog.calc = prog.calc || {}; prog.calc[el.dataset.calc] = { ...(prog.calc[el.dataset.calc] || {}), value: el.value }; save(); }
+    if (el.dataset.je !== undefined && el.dataset.f === 'amount') { const s = prog.je[el.dataset.je]; s.rows[el.dataset.r].amount = el.value; s.checked = false; save(); }
+  });
+  $app.addEventListener('change', (e) => {
+    const el = e.target;
+    if (el.dataset.je !== undefined && el.dataset.f !== 'amount') {
+      const s = prog.je[el.dataset.je]; s.rows[el.dataset.r][el.dataset.f] = el.value; s.checked = false; save(); render();
+    }
+  });
+
+  // Hide amortisation rows after the first, so the table fills in year by year.
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll('table.reveal-rows:not([data-ready])').forEach((tb) => {
+      tb.dataset.ready = '1';
+      tb.querySelectorAll('tbody tr').forEach((r, j) => { if (j > 0) r.classList.add('hide'); });
+    });
+  });
+  observer.observe($app, { childList: true, subtree: true });
+
+  if (DATA.topics.length === 1) { openTopic(DATA.topics[0].id); }
+  render();
+})();
+
+</script>
+</body>
+</html>
