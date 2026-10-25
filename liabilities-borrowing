@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bonds and Borrowing Costs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<!-- B2.4 Basic financial liabilities and C2 Borrowing costs: classify, measure the bond, effective interest, capitalise inside the window, present.
+     Built from lease.html (the reference); same look as apps/study. -->
+<style>
+:root {
+  --paper: #f5f6f2;
+  --card: #ffffff;
+  --ink: #1a222b;
+  --muted: #5b6570;
+  --rule: #d9ddd5;
+  --think: #a8661a;
+  --think-bg: #fbf1e3;
+  --el-a: #1f7a44;
+  --el-l: #b3261e;
+  --el-x: #8a5a2b;
+  --el-i: #1d5fb4;
+  --el-e: #6e3ba8;
+  --el-n: #6b7280;
+  --here: #1e9e5a; --here-bg: #e8f5ed; --star: #c48f00; --star-bg: #fdf5d8; --accent: #0e6e74;
+  --pt-map: #2e8b57; --pt-think: #a8661a; --pt-theory: #5b6570; --pt-worked: #c2571a; --pt-check: #4a90d9; --pt-compare: #6f6a12; --pt-types: #1a222b; --pt-quiz: #1f4fa8;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+    --think: #e2a35a; --think-bg: #2a2117;
+    --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+    --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+    --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+  --think: #e2a35a; --think-bg: #2a2117;
+  --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+  --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+  --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+  color-scheme: dark;
+}
+
+
+:root {
+  --font-chart: "Inter", "Public Sans", system-ui, sans-serif;
+  --sec-1: color-mix(in srgb, #f3d36b 24%, var(--card)); --sec-1-ink: #8a6a00;
+  --sec-2: color-mix(in srgb, #8bb6ea 20%, var(--card)); --sec-2-ink: #2f5f9e;
+  --sec-3: color-mix(in srgb, #b9a0e6 20%, var(--card)); --sec-3-ink: #6a47a8;
+  --sec-4: color-mix(in srgb, #f0a868 20%, var(--card)); --sec-4-ink: #a2581a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; } }
+:root[data-theme="dark"] { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--font-body); -webkit-text-size-adjust: 100%; }
+main { max-width: none; margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; line-height: 1.25; margin: 0; }
+p { margin: 0; }
+.eyebrow { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.el { font-weight: 600; }
+.el-r { color: #e3170a; } .el-a { color: var(--el-a); } .el-l { color: var(--el-l); } .el-x { color: var(--el-x); } .el-i { color: var(--el-i); } .el-e { color: var(--el-e); } .el-n { color: var(--el-n); }
+
+/* The chart: three sections side by side in one SVG; scrolls sideways on a narrow screen */
+.fl-box { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 8px; overflow-x: auto; }
+.fl-box svg { display: block; max-width: none; height: auto; font-family: var(--font-chart); font-feature-settings: "tnum", "cv11"; }
+.sec rect { stroke: none; }
+.sec-1 rect { fill: var(--sec-1); } .sec-2 rect { fill: var(--sec-2); } .sec-3 rect { fill: var(--sec-3); } .sec-4 rect { fill: var(--sec-4); }
+.sec text { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sec-1 text { fill: var(--sec-1-ink); } .sec-2 text { fill: var(--sec-2-ink); } .sec-3 text { fill: var(--sec-3-ink); } .sec-4 text { fill: var(--sec-4-ink); }
+.fl-info1 rect { fill: var(--card); stroke: var(--sec-1-ink); stroke-dasharray: 3 2; stroke-width: 1.2; } .fl-info1 .fl-t { fill: var(--sec-1-ink); }
+.fl-info2 rect, .fl-info3 rect { fill: var(--card); stroke-dasharray: 3 2; stroke-width: 1.2; }
+.fl-info2 rect { stroke: var(--sec-2-ink); } .fl-info2 .fl-t { fill: var(--sec-2-ink); }
+.fl-info3 rect { stroke: var(--sec-3-ink); } .fl-info3 .fl-t { fill: var(--sec-3-ink); }
+.fl-pstep rect { fill: var(--card); stroke: var(--sec-4-ink); stroke-width: 1.4; }
+.xlink { margin-left: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--accent); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.mode { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
+.mode button { font: inherit; color: var(--ink); border: 1px solid var(--rule); background: var(--card); border-radius: 999px; padding: 3px 11px; cursor: pointer; }
+.mode button.on { background: var(--sec-2-ink); border-color: var(--sec-2-ink); color: #fff; }
+.topbar .mode + .mode { margin-left: 8px; }
+.fl-n { cursor: pointer; outline: none; }
+.fl-n rect { stroke-width: 1.1; }
+.fl-n .fl-t { font-size: 10px; font-weight: 650; fill: var(--ink); }
+.fl-n .fl-s { font-size: 8.2px; font-weight: 400; fill: var(--muted); }
+.fl-n .fl-li { fill: var(--ink); }
+.fl-n .fl-num { fill: var(--sec-3-ink); stroke: none; }
+.fl-n .fl-numt { font-size: 6.4px; font-weight: 700; fill: #fff; }
+.fl-n .fl-tag { font-size: 7.8px; font-style: italic; font-weight: 600; fill: var(--sec-3-ink); }
+.fl-n .fl-je { font: 500 7.8px var(--font-mono); fill: var(--ink); }
+.fl-n .fl-hr { stroke: var(--rule); stroke-dasharray: 2 2; }
+.fl-n tspan.el-a { fill: var(--el-a); font-weight: 600; } .fl-n tspan.el-l { fill: var(--el-l); font-weight: 600; }
+.fl-n tspan.el-x { fill: var(--el-x); font-weight: 600; } .fl-n tspan.el-r { fill: #e3170a; font-weight: 700; } .fl-n tspan.el-n { fill: var(--muted); font-weight: 400; }
+.fl-q rect { fill: color-mix(in srgb, var(--accent) 8%, var(--card)); stroke: var(--accent); }
+.fl-no rect { fill: color-mix(in srgb, #d23b32 11%, var(--card)); stroke: #c0392b; }
+.fl-no .fl-t { fill: #b3261e; }
+.fl-yes rect, .fl-gold rect { fill: color-mix(in srgb, #2fa865 13%, var(--card)); stroke: var(--el-a); }
+.fl-gold rect { stroke: var(--star); stroke-width: 2.6; }
+.fl-gold.fl-dash rect { stroke-width: 2; stroke-dasharray: 6 4; }
+.fl-exit rect { fill: color-mix(in srgb, #e05aa0 12%, var(--card)); stroke: #c2417f; }
+.fl-asset rect { fill: color-mix(in srgb, var(--el-a) 12%, var(--card)); stroke: var(--el-a); stroke-width: 1.8; }
+.fl-asset .fl-t { fill: var(--el-a); }
+.fl-liab rect { fill: color-mix(in srgb, var(--el-l) 10%, var(--card)); stroke: var(--el-l); stroke-width: 1.8; }
+.fl-liab .fl-t { fill: var(--el-l); }
+.fl-lstep rect, .fl-astep rect, .fl-chart rect { fill: var(--card); stroke: color-mix(in srgb, var(--ink) 18%, transparent); filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .06)); }
+.fl-lstep rect { stroke: var(--el-l); stroke-width: 1.4; }
+.fl-astep rect { stroke: var(--el-a); stroke-width: 1.4; }
+.fl-n:hover rect { stroke-width: 2; }
+.fl-n.tapped rect { stroke-width: 2.8; }
+.fl-e path { fill: none; stroke: var(--muted); stroke-width: 1.15; }
+.fl-e.dashed path { stroke-dasharray: 4 3; }
+.fl-e text { font-size: 8.2px; fill: var(--muted); }
+.fl-ah { fill: var(--muted); stroke: var(--muted); stroke-width: .6; stroke-linejoin: round; }
+.fl-j circle { fill: var(--card); stroke: var(--muted); }
+.fl-j text { font-size: 8.6px; font-weight: 600; fill: var(--ink); }
+/* mini charts */
+.mc-a { fill: none; stroke: var(--el-a); stroke-width: 2; }
+.mc-l { fill: none; stroke: var(--el-l); stroke-width: 2; }
+.mc-gap { fill: color-mix(in srgb, var(--muted) 16%, transparent); }
+.mc-ax { stroke: var(--rule); }
+.mc-dep { fill: color-mix(in srgb, var(--el-x) 45%, var(--card)); }
+.mc-int { fill: var(--el-x); }
+.mc-rent { stroke: var(--ink); stroke-dasharray: 3 3; stroke-width: 1; }
+.mc-lbl { font-size: 7.6px; font-weight: 600; }
+.mc-lbl.m { font-size: 7px; }
+.mc { pointer-events: none; } /* taps go to the box underneath, except the bars */
+.mc .mc-bar { pointer-events: auto; cursor: pointer; }
+.mc-hit { fill: transparent; }
+.mc-bar:hover .mc-hit { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
+.mc-bar.sel .mc-hit { fill: color-mix(in srgb, var(--ink) 10%, transparent); }
+.mc-bar.sel rect:not(.mc-hit) { stroke: var(--ink); stroke-width: .8; }
+.mc-h2 { font-size: 7.8px; font-weight: 500; fill: var(--muted); }
+.je .jl { display: flex; justify-content: space-between; gap: 18px; }
+.je .amt { font-variant-numeric: tabular-nums; }
+.mc-h { font-size: 8.6px; font-weight: 650; fill: var(--ink); }
+.mc-lb { fill: color-mix(in srgb, var(--el-l) 70%, var(--card)); } .mc-ab { fill: color-mix(in srgb, var(--el-a) 70%, var(--card)); }
+.mc-lb.up { fill: color-mix(in srgb, var(--el-l) 45%, var(--card)); }
+.mc-sg { font-size: 6.5px; font-weight: 700; fill: var(--el-l); }
+.mc-dl, .mc-da { fill: none; stroke-width: 1; stroke-dasharray: 1.5 2; stroke-linecap: round; }
+.mc-dl { stroke: var(--el-l); } .mc-da { stroke: var(--el-a); }
+.mc-prin { fill: color-mix(in srgb, var(--el-l) 40%, var(--card)); }
+.mc-lbl.a { fill: var(--el-a); } .mc-lbl.l { fill: var(--el-l); } .mc-lbl.x { fill: var(--el-x); } .mc-lbl.m { fill: var(--muted); font-weight: 400; }
+/* the note under the chart */
+.note { max-width: 1500px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px; min-height: 4em; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 20px; font-size: .78rem; line-height: 1.5; }
+.note.has-je { grid-template-columns: minmax(0, 1fr) minmax(220px, 340px); }
+@media (max-width: 720px) { .note.has-je { grid-template-columns: minmax(0, 1fr); } }
+.note .txt { display: flex; flex-direction: column; gap: 6px; }
+.note ul { margin: 2px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 2px; }
+.note ul.ops { list-style: none; padding-left: .6em; }
+.note .why p + p, .note .why ul + p { margin-top: 4px; }
+.note h3 { margin: 0; font: 600 .88rem var(--font-display); }
+.note .why { border-left: 3px solid var(--star); padding-left: 10px; }
+.note { position: relative; }
+.note .ex { background: color-mix(in srgb, var(--ink) 5%, var(--card)); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
+.note .ex > b { font-size: .72rem; font-weight: 600; color: var(--muted); }
+table.calc { align-self: flex-start; border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+table.calc td { padding: 1px 0; vertical-align: baseline; }
+table.calc td.op { width: 1.3em; color: var(--muted); font-weight: 600; }
+table.calc td.amt { text-align: right; padding-left: 28px; font-weight: 600; white-space: nowrap; }
+table.calc tr.tot td { border-top: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); padding-top: 2px; }
+svg.links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+svg.links path { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+svg.links circle { fill: var(--muted); }
+.note .traps { border-left: 3px solid #e3170a; padding-left: 10px; }
+.note .traps > b { color: #e3170a; display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.note .why > b { color: var(--star); display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.jes { display: flex; flex-direction: column; gap: 8px; align-self: start; }
+.je { font: 500 .72rem/1.55 var(--font-mono); background: color-mix(in srgb, var(--el-a) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--el-a) 35%, transparent); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; }
+.je .cr { padding-left: 1.6em; }
+.je .jn { font-family: var(--font-body); font-size: .68rem; color: var(--muted); }
+.mc-cap { fill: color-mix(in srgb, var(--el-a) 55%, var(--card)); } .mc-in { fill: color-mix(in srgb, var(--el-a) 70%, var(--card)); }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="eyebrow">B2.4 Financial liabilities · C2 Borrowing costs <a class="xlink" href="borrowing-costs.html">borrowing costs in depth →</a></div>
+    <div class="mode" id="mode" role="group" aria-label="Coupon rate against the market rate">Coupon vs market rate (6%)
+      <button data-m="premium">8%: premium</button><button data-m="par">6%: at face</button><button data-m="discount">4%: discount</button></div>
+    <div class="mode" id="start" role="group" aria-label="What the money is spent on">Money spent on
+      <button data-s="dec">warehouse, ready 31 December</button><button data-s="sep">warehouse, ready 30 September</button><button data-s="equip">ready-to-use equipment</button></div>
+  </div>
+  <div class="fl-box" id="chart"></div>
+  <div class="note" id="note" aria-live="polite"></div>
+</main>
+<script>
+// Worked example behind every number, chart and year note: the study app's notes bond (3 years, face $1,000,000, market 6%).
+// Switch 1 changes only the coupon (8% premium, 6% at face, 4% discount); switch 2 changes only what the money buys and when it is ready.
+const EX = { face: 1000000, mkt: 0.06, n: 3, spend: 1000000, life: 20, buyRate: 0.05,
+  coupon: { premium: 0.08, par: 0.06, discount: 0.04 },
+  build: { dec: 12, sep: 9, equip: 0 } };
+const f1 = (n) => `${n < -0.5 ? '−' : ''}$${Math.abs(Math.round(n)).toLocaleString('en-US')}`; // money, whole dollars
+const nb = (s) => s.replace(/ /g, ' '); // keeps spacing in SVG text
+const pct = (r) => `${+(r * 100).toFixed(2)}%`;
+const AF = (r, k) => (1 - (1 + r) ** -k) / r, DF = (r, k) => (1 + r) ** -k; // annuity and single-sum PV factors
+function schedule(kind, build) {
+  const { face, mkt, n, spend, life, buyRate } = EX, c = EX.coupon[kind], months = EX.build[build], r0 = Math.round;
+  const cpn = r0(face * c);
+  const price = r0(cpn * AF(mkt, n) + face * DF(mkt, n)); // PV of the coupons + PV of the face, at the market rate
+  const pvF = r0(face * DF(mkt, n)), pvC = price - pvF;
+  const rows = [];
+  let b = price;
+  for (let k = 1; k <= n; k++) { // effective interest: opening × market rate; the last year clears the rounding so it lands on face
+    const i = k === n ? face + cpn - b : r0(b * mkt);
+    rows.push({ open: b, int: i, close: b + i - cpn, amort: cpn - i });
+    b += i - cpn;
+  }
+  const INT = rows.map((x) => x.int);
+  const CAP = INT.map((i, k) => (k === 0 ? r0((i * months) / 12) : 0)); // only year 1 falls inside the window
+  const EXP = INT.map((i, k) => i - CAP[k]);
+  const buy = r0(cpn * AF(buyRate, n - 1) + face * DF(buyRate, n - 1)); // buy-back price at the end of year 1, market rate 5%
+  return { kind, build, prem: kind === 'premium', disc: kind === 'discount', c, cpn, face, mkt, n, spend, life, months, qual: months > 0,
+    price, pvC, pvF, diff: price - face, rows, INT, CAP, EXP, totInt: INT.reduce((a, x) => a + x, 0), cost: spend + CAP[0],
+    buyRate, buy, buyGL: rows[0].close - buy, asset: months ? 'Warehouse' : 'Equipment', assetUC: months ? 'Warehouse under construction' : 'Equipment',
+    ready: months === 12 ? '31 December' : '30 September' };
+}
+const what = (S) => `Kopi Co issues a ${S.n}-year bond on 1 January 20X1: face ${f1(S.face)}, coupon ${pct(S.c)} paid each 31 December, market rate ${pct(S.mkt)}. ` +
+  (S.qual ? `The money builds a warehouse (spend ${f1(S.spend)}): work runs from 1 January and it is ready on ${S.ready} 20X1.` : `The money buys ready-to-use equipment for ${f1(S.spend)} on 1 January 20X1.`);
+const kindWord = (S) => (S.prem ? 'premium' : S.disc ? 'discount' : 'at face');
+// Practice paper Q46–47 (Helix): $6,000,000 of 12% bonds, half-yearly, 4 years, market 10% → 8 periods at 5%.
+const HX = (() => { const r0 = Math.round, cp = 360000, p = r0(cp * AF(0.05, 8) + 6000000 * DF(0.05, 8)), pf = r0(6000000 * DF(0.05, 8));
+  const i1 = r0(p * 0.05), c1 = p + i1 - cp, i2 = r0(c1 * 0.05);
+  return { cp, p, pf, pc: p - pf, prem: p - 6000000, i1, c1, i2, am2: cp - i2 }; })();
+// The notes' loan with arrangement fees: $500,000, 2 years, 5%, fees $10,000. Effective rate by bisection.
+const LN = (() => { const r0 = Math.round, net = 490000, pv = (r) => 25000 * AF(r, 2) + 500000 * DF(r, 2);
+  let lo = 0.0001, hi = 1; for (let k = 0; k < 200; k++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; }
+  const r = (lo + hi) / 2, i1 = r0(net * r), i2 = 500000 + 25000 - (net + i1 - 25000);
+  return { net, r, i1, i2 }; })();
+
+// Section 1 is drawn at LEFT.scale, so its type comes out smaller. Boxes: x, y, w, h; arrows: SVG paths ending at the tip.
+const LEFT = {
+  at: [6, 52], scale: 0.86,
+  nodes: [
+    { id: 't1', x: 8, y: 8, w: 160, h: 40, k: 'q', t: 'Test: an obligation to pay?', sub: ['contract to deliver cash', 'or another financial asset'] },
+    { id: 'eq', x: 186, y: 4, w: 128, h: 50, k: 'no', t: 'Not a financial liability', sub: ['equity, or a provision,', 'tax, deferred revenue'] },
+    { id: 'fl', x: 8, y: 140, w: 160, h: 36, k: 'yes', t: 'A financial liability', sub: ['default: amortised cost'] },
+    { id: 'exa', x: 186, y: 76, w: 128, h: 46, k: 'exit', t: 'Exit A: for trading?', sub: ['held for trading, e.g.', 'derivatives, short sales'] },
+    { id: 'fv', x: 186, y: 136, w: 128, h: 44, k: 'gold', dash: true, t: 'At FVTPL', sub: ['fair value, changes', 'in {x|P&L}'] },
+    { id: 'exb', x: 186, y: 194, w: 128, h: 46, k: 'exit', t: 'Exit B: designated?', sub: ['at the start, e.g. to', 'cut a mismatch'] },
+    { id: 'ac', x: 362, y: 136, w: 124, h: 44, k: 'gold', t: 'At amortised cost', sub: ['loans, bonds, payables'] },
+    { id: 'kinds', x: 8, y: 270, w: 478, h: 92, k: 'info1', t: 'Which is which?', list: true,
+      sub: ['**loan, bond, trade payable** → financial liability', '**preference shares the issuer must redeem** → financial liability', '**ordinary shares** → equity', '**provision, income tax, deferred revenue** → a liability, but not financial'] },
+  ],
+  joins: [{ id: 'and', cx: 338, cy: 158, t: 'and' }],
+  edges: [
+    { d: 'M88 48 V139', lab: 'yes', lx: 93, ly: 100 },
+    { d: 'M168 28 H185', lab: 'no', lx: 176, ly: 23, anchor: 'middle' },
+    { d: 'M168 152 C 178 152, 176 99, 185 99' },
+    { d: 'M168 164 C 178 164, 176 217, 185 217', lab: 'either exit', lx: 88, ly: 190, anchor: 'middle' },
+    { d: 'M250 122 V135', lab: 'yes', lx: 256, ly: 132 },
+    { d: 'M250 194 V181', lab: 'yes', lx: 256, ly: 191 },
+    { d: 'M314 99 C 338 99, 338 119, 338 145', lab: 'no', lx: 322, ly: 94 },
+    { d: 'M314 217 C 338 217, 338 197, 338 171', lab: 'no', lx: 322, ly: 229 },
+    { d: 'M350 158 H361' },
+  ],
+};
+
+// Sections 2–4, at full size. Liability lane on top (the bond is measured first), the asset it pays for below.
+// Big boxes are top-aligned: title, short lines, the journal entry (je) under a dotted rule, then closing lines (after) under their own rule.
+const right = (S) => ({
+  nodes: [
+    { id: 'costs', x: 456, y: 28, w: 302, h: 58, k: 'info2', t: 'Transaction costs (issue costs)', sub: ['**amortised cost:** deducted from the liability, spread as interest', '**FVTPL:** expensed at once'] },
+    { id: 'bond', x: 456, y: 140, w: 92, h: 40, k: 'liab', t: 'Bond payable', sub: ['a loan from investors'] },
+    { id: 'wh', x: 456, y: 284, w: 92, h: 40, k: 'asset', t: S.asset, sub: [S.qual ? 'what the money builds' : 'what the money buys'] },
+    { id: 'bond1', x: 566, y: 100, w: 192, h: 120, k: 'lstep', t: 'Fair value − transaction costs',
+      sub: ['price = PV of coupons + PV of face', 'both at the **market** rate'],
+      je: ['Dr {a|Cash}', 'Cr {l|Bond payable}'],
+      after: [S.prem ? '**premium:** coupon 8% > market 6%' : S.disc ? '**discount:** coupon 4% < market 6%' : '**at face:** coupon = market 6%', `example: {l|${f1(S.price)}}`] },
+    { id: 'qa', x: 566, y: 244, w: 192, h: 120, k: 'astep', t: 'A qualifying asset?', bullets: true,
+      sub: ['**yes:** takes a substantial period to get ready', '**no:** ready when bought, financial assets, quick or mass-made inventory'],
+      je: [`Dr {a|${S.asset}} {n|spend}`, 'Cr {a|Cash}'],
+      after: [S.qual ? `example: built in ${S.months} months → **qualifies**` : 'example: ready to use → {r|does not qualify}'] },
+    { id: 'bcdef', x: 456, y: 376, w: 302, h: 62, k: 'info2', t: 'Borrowing costs include',
+      sub: ['effective interest (so premium, discount, issue costs) + lease interest + FX differences that adjust interest'] },
+    { id: 'gap', x: 790, y: 26, w: 206, h: 64, k: 'info3', t: S.prem ? 'Coupon 8% > market 6%: **PREMIUM**' : S.disc ? 'Coupon 4% < market 6%: **DISCOUNT**' : 'Coupon = market 6%: **AT FACE**',
+      sub: S.prem ? ['interest expense < coupon cash', 'the gap pays the premium down to face'] : S.disc ? ['interest expense > coupon cash', 'the gap builds the discount up to face'] : ['interest expense = coupon cash', 'the carrying amount stays at face'] },
+    { id: 'eir', x: 790, y: 100, w: 206, h: 120, k: 'lstep', t: 'Effective interest',
+      sub: ['interest = opening × **market** rate', 'cash = face × **coupon** rate'],
+      je: S.prem ? ['Dr {x|Interest expense}', 'Dr {l|Bond payable} {n|premium}', 'Cr {a|Cash} {n|coupon}'] : S.disc ? ['Dr {x|Interest expense}', 'Cr {a|Cash} {n|coupon}', 'Cr {l|Bond payable} {n|discount}'] : ['Dr {x|Interest expense}', 'Cr {a|Cash} {n|coupon}'],
+      after: [`example, year 1: {x|${f1(S.INT[0])}} vs cash ${f1(S.cpn)}`] },
+    { id: 'cap', x: 790, y: 244, w: 206, h: 120, k: 'astep', t: 'Capitalise inside the window', bullets: true,
+      sub: ['**start:** spending, interest and work all begun', '**suspend:** during long halts in active work', '**stop:** substantially all the work done'],
+      je: S.qual ? [`Dr {a|${S.asset}}`, 'Cr {x|Interest expense}'] : ['{n|no entry: not qualifying}'],
+      after: [S.qual ? `example: {x|${f1(S.INT[0])}} × ${S.months}/12 = {a|${f1(S.CAP[0])}}` : `example: all {x|${f1(S.INT[0])}} expensed`] },
+    { id: 'howmuch', x: 790, y: 376, w: 206, h: 62, k: 'astep', t: 'How much?', bullets: true,
+      sub: ['**specific:** actual cost − income on idle cash', '**general:** weighted rate × spend, capped'] },
+    // Section 4: three equal columns, full height. Balance sheet | profit or loss | cash flows.
+    { id: 'split', x: 1030, y: 28, w: 188, h: 100, k: 'lstep', t: 'Split the liability', bullets: true, sub: ['**non-current:** repaid after 12 months', '**current:** due within 12 months'],
+      je: [nb(`{n|end yr 1} {l|non-current} ${f1(S.rows[0].close)}`), nb(`{n|end yr 2} {l|current}     ${f1(S.rows[1].close)}`)],
+      after: ['{r|trap:} the final year is all current'] },
+    { id: 'bal', x: 1030, y: 136, w: 188, h: 150, k: 'chart', t: 'Carrying amount moves to face' },
+    { id: 'repay', x: 1030, y: 294, w: 188, h: 76, k: 'lstep', t: 'Repaid: derecognise', bullets: true,
+      sub: ['**early:** carrying − cash → {x|P&L}', '**at maturity:** carrying = face, no gain'] },
+    { id: 'whpres', x: 1030, y: 378, w: 188, h: 60, k: 'astep', t: `${S.asset} at cost`,
+      sub: S.qual ? [`{a|${f1(S.spend)}} + interest {a|${f1(S.CAP[0])}} = {a|${f1(S.cost)}}`] : [`{a|${f1(S.spend)}}: no interest in it`] },
+    { id: 'plcol', x: 1234, y: 28, w: 188, h: 410, k: 'pstep', t: 'Profit or loss', list: true, top: true, chartAt: 80,
+      sub: ['**{x|interest expense}** → finance costs', '**capitalised** → asset, then depreciation', '**repayment gain / loss** → P&L', '**FVTPL changes** → P&L; own credit → OCI'] },
+    { id: 'cashcol', x: 1438, y: 28, w: 188, h: 410, k: 'pstep', t: 'Statement of cash flows', list: true, top: true, chartAt: 80,
+      sub: ['**proceeds** → financing', '**coupons paid** → operating or financing', '**face repaid** → financing', `**${S.asset.toLowerCase()} spend** → investing`] },
+  ],
+  edges: [
+    { d: 'M425 188 C 440 188, 440 160, 455 160' },
+    { cls: 'dashed', d: 'M662 86 V99' },
+    { d: 'M548 160 H565' },
+    { d: 'M548 304 H565' },
+    { cls: 'dashed', d: 'M662 220 V243', lab: 'the cash is spent on it', lx: 667, ly: 235 },
+    { d: 'M758 160 H789' },
+    { d: 'M758 304 H789' },
+    { cls: 'dashed', d: 'M893 90 V99' },
+    { cls: 'dashed', d: 'M893 220 V243', lab: 'its interest is the borrowing cost', lx: 898, ly: 235 },
+    { d: 'M893 376 V365' },
+    { cls: 'dashed', d: 'M758 407 H789' },
+    { d: 'M996 160 C 1013 160, 1012 78, 1029 78' },
+    { d: 'M996 304 C 1012 304, 1012 408, 1029 408' },
+  ],
+});
+
+// Everything right of the decision section is stretched sideways by STRETCH (positions, widths and arrows; type keeps its size),
+// so box text has room. Coordinates above are written for the unstretched layout.
+const STRETCH = 1.18, SPLIT_X = 440;
+const SX = (x) => (x <= SPLIT_X ? x : SPLIT_X + (x - SPLIT_X) * STRETCH);
+const stretchPath = (d) => { // x values in M/L/C/S/Q/T pairs and H; y values untouched
+  let cmd = '', i = 0;
+  return d.replace(/[A-Za-z]|-?\d*\.?\d+/g, (t) => {
+    if (/[A-Za-z]/.test(t)) { cmd = t.toUpperCase(); i = 0; return t; }
+    const v = +t, isX = cmd === 'H' || (cmd !== 'V' && i % 2 === 0);
+    i++;
+    return String(+(isX ? SX(v) : v).toFixed(1));
+  });
+};
+const stretch = (part) => ({ ...part,
+  nodes: part.nodes.map((n) => ({ ...n, x: SX(n.x), w: SX(n.x + n.w) - SX(n.x) })),
+  edges: part.edges.map((e) => ({ ...e, d: stretchPath(e.d), lx: e.lx != null ? SX(e.lx) : e.lx })) });
+const W = SX(1640), H = 450;
+const SECTIONS = [
+  { cls: 'sec-1', x: 0, w: 434, t: 'Is it a financial liability?' },
+  { cls: 'sec-2', x: 440, w: 330, t: 'Day 1 · initial' },
+  { cls: 'sec-3', x: 776, w: 234, t: 'Each year · subsequent' },
+  { cls: 'sec-4', x: 1016, w: 624, t: 'Year end · present' },
+].map((c) => ({ ...c, x: SX(c.x), w: SX(c.x + c.w) - SX(c.x) }));
+
+// What shows under the chart when a box is tapped: what it is (reason folded in), the example, traps and the entries.
+// A note can be a function of the worked example S, so its numbers follow the switches.
+const NOTES = {
+  t1: { h: 'Test: a contractual obligation to pay', what: 'A financial liability is a **contractual obligation** to deliver cash or another financial asset (or to swap financial instruments on unfavourable terms). The obligation decides it, not the label. For example:\n- bank loans and bonds\n- trade payables\n- preference shares the issuer **must** redeem',
+    traps: ['Preference shares the issuer must buy back are a **liability**, even though they are called shares.', 'A provision, income tax or deferred revenue is a liability but **not** a financial one: tax is imposed by law, not a contract, and deferred revenue is settled with goods or services, not cash.'] },
+  eq: { h: 'Not a financial liability', what: 'No contractual obligation to pay cash:\n- **equity** if it is a residual interest the entity never has to repay (ordinary shares; preference shares with no redemption and discretionary dividends)\n- **another kind of liability** if the obligation is not contractual or not settled in cash: provisions (B2.3), income tax (B2.2), deferred revenue' },
+  kinds: { h: 'Which is which?', what: 'Ask one question of each item: is there a **contract** to pay cash (or another financial asset) that the entity cannot avoid?\n- **loan, bond, trade payable:** yes → financial liability\n- **preference shares the issuer must redeem** (e.g. buy back for $1 each in 20X9): yes, whatever the name → financial liability\n- **ordinary shares:** no obligation to pay anything → equity\n- **provision** (e.g. a lawsuit): an obligation, but not from a contract to pay cash → a liability under B2.3\n- **income tax payable:** imposed by law, not a contract → a liability under B2.2\n- **deferred revenue:** settled by delivering goods or services, not cash → a liability, not financial',
+    traps: ['The **name** does not decide it: redeemable preference shares are a liability; a provision is not a financial liability.'] },
+  fl: { h: 'A financial liability', what: 'Recognise it when the entity becomes a party to the contract: the bond is issued, the loan is drawn. Then decide how to measure it. Amortised cost is the default; only the two exits lead to fair value through profit or loss (FVTPL).' },
+  exa: { h: 'Exit A: held for trading', what: 'Liabilities that are traded or are derivatives:\n- derivatives with a negative fair value (e.g. a loss-making forward contract)\n- short positions (securities sold that were borrowed)\n- liabilities taken on to buy back in the near term',
+    traps: ['An ordinary loan or bond is **not** held for trading, even if it could be repaid early.'] },
+  exb: { h: 'Exit B: designated at FVTPL', what: 'On initial recognition the entity may designate a liability at FVTPL, for example to remove an accounting mismatch when the related assets are at fair value. The choice cannot be revoked later.',
+    traps: ['Designation happens **on day 1** only, and it is irrevocable.'] },
+  fv: { h: 'At fair value through profit or loss', what: 'Carried at fair value, with every change in profit or loss. Transaction costs are **expensed** at once, because the liability is not measured at cost.\nOne twist for **designated** liabilities: the part of the fair value change caused by the entity’s **own credit risk** goes to OCI. Otherwise a company whose credit got worse would book a gain, because its debt is worth less.',
+    traps: ['Own-credit changes on a **designated** liability go to **OCI**, not P&L.', 'Transaction costs are expensed at FVTPL, but deducted at amortised cost.'],
+    je: ['… only if at FVTPL (not here): issue', 'Dr {a|Cash}', 'Cr {l|Financial liability at FVTPL}', '… transaction costs', 'Dr {x|Transaction costs}', 'Cr {a|Cash}', '… year end: fair value rises', 'Dr {x|Fair value loss}', 'Cr {l|Financial liability at FVTPL}'] },
+  ac: { h: 'At amortised cost', what: 'The default for loans, bonds and payables. On day 1 it is fair value (usually the cash received) minus transaction costs. Each year interest at the effective rate builds it up and each cash payment brings it down, so it reaches the amount repayable at maturity.',
+    traps: ['Amortised cost is the **default**, not a choice: FVTPL needs held for trading or a day-1 designation.'] },
+  costs: { h: 'Transaction costs (issue costs)', what: 'Costs caused by issuing the liability: arrangement fees, underwriting, legal fees. At amortised cost they are **deducted** on day 1, so less is recorded than will be repaid. The effective rate rises above the stated rate, and the costs reach the P&L as extra interest over the life. At FVTPL they are expensed at once.\nThe Kopi Co bond has no issue costs. The notes’ loan shows how they work:',
+    ex: ['A $500,000 loan for 2 years at 5%, interest paid yearly; the bank keeps $10,000 of arrangement fees.',
+      { calc: [{ t: 'loan', v: 500000 }, { op: '−', t: 'arrangement fees', v: 10000 }, { op: '=', t: '{l|loan}, day 1', v: LN.net, link: '0.1' }] },
+      `The effective rate becomes ${(LN.r * 100).toFixed(4)}%:`,
+      { calc: [{ t: `{x|interest}, year 1: ${f1(LN.net)} × ${(LN.r * 100).toFixed(4)}%`, v: LN.i1 }, { op: '+', t: '{x|interest}, year 2 (lands the loan on face)', v: LN.i2 }, { op: '=', t: 'total {x|interest}', v: LN.i1 + LN.i2 }, { op: '=', t: 'cash interest $50,000 + fees $10,000', v: 60000 }] },
+      'The official practice paper, Q49 (Helix): bond issue costs are part of the bond’s effective interest under SFRS(I) 9. Helix’s lab equipment is ready to use, so nothing is capitalised under SFRS(I) 1-23.'],
+    traps: ['Issue costs are **not** expensed up front at amortised cost.', 'They are **not** added to the cost of the asset the money buys (practice Q49).'],
+    je: ['… day 1: the cash that arrives', `Dr {a|Cash} :: ${f1(LN.net)}`, `Cr {l|Loan} :: ${f1(LN.net)}`] },
+  bond: { h: 'Bond payable', what: 'A bond is a loan cut into pieces and sold to investors. The issuer promises two sets of cash flows: a coupon each year (face × coupon rate) and the face value at maturity. It is a financial liability at amortised cost.' },
+  bond1: (S) => ({ h: 'Day 1: the bond at its issue price', what: 'Investors pay what the promised cash flows are worth at the **market rate** for similar bonds:\n- + PV of the coupons (an annuity)\n- + PV of the face value (a single sum)\nThat price is the fair value and, less any issue costs, the opening carrying amount. A coupon above the market rate makes investors pay more than face (a **premium**); below it, less (a **discount**).',
+    ex: [what(S), { calc: [{ t: `PV of coupons: ${f1(S.cpn)} × ${AF(S.mkt, S.n).toFixed(4)} (${S.n} years at ${pct(S.mkt)})`, v: S.pvC }, { op: '+', t: `PV of face: ${f1(S.face)} × ${DF(S.mkt, S.n).toFixed(4)}`, v: S.pvF }, { op: '=', t: '{l|bond payable}, day 1', v: S.price, link: '0.1' },
+      ...(S.diff ? [{ op: '−', t: 'face', v: S.face }, { op: '=', t: S.prem ? 'premium' : 'discount', v: Math.abs(S.diff) }] : [])] },
+      'The official practice paper, Q46 (Helix): $6,000,000 of 12% bonds, interest twice a year, 4 years, market yield 10%. So 8 periods at 5%, coupon $360,000:',
+      { calc: [{ t: `PV of coupons: ${f1(HX.cp)} × ${AF(0.05, 8).toFixed(4)}`, v: HX.pc }, { op: '+', t: `PV of face: $6,000,000 × ${DF(0.05, 8).toFixed(4)}`, v: HX.pf }, { op: '=', t: 'price', v: HX.p }, { op: '−', t: 'face', v: 6000000 }, { op: '=', t: 'premium', v: HX.prem }] },
+      `The closest option is $388,780 (the exact working gives ${f1(HX.prem)}).`],
+    traps: ['Discount at the **market** rate, never the coupon rate (that just gives face).', 'Half-yearly coupons: **halve** both rates and **double** the periods.', 'Some books split the credit into {l|Bonds payable} (face) and {l|Premium on bonds payable}; the total is the same.'],
+    je: ['… 1 January 20X1: issue', `Dr {a|Cash} :: ${f1(S.price)}`, `Cr {l|Bond payable} :: ${f1(S.price)}`] }),
+  wh: (S) => ({ h: S.qual ? 'The warehouse' : 'The equipment', what: S.qual ? 'What the bond money pays for. A warehouse takes months to build, so the interest on the money tied up in it while it is built is part of what it cost.' : 'Ready-to-use equipment can be used the day it is bought, so no interest is part of its cost: there is no build period for the money to be tied up in.' }),
+  qa: (S) => ({ h: 'A qualifying asset?', what: 'A qualifying asset **necessarily takes a substantial period of time** to get ready for its intended use or sale. Usually qualifying:\n- buildings and plants under construction (factories, power stations, a vault)\n- investment property being built\n- intangibles that take a long time to develop\n- inventories that take a long time to mature (whisky, ships built to order)\nNot qualifying:\n- assets **ready for use or sale when acquired**\n- financial assets\n- inventories made over a short period\n- inventories made in large quantities on a repetitive basis (the entity need not apply the standard)',
+    ex: [S.qual ? `Kopi Co’s warehouse takes ${S.months} months to build, so it qualifies.` : 'Kopi Co’s equipment is ready to use when bought, so it does not qualify: all the interest is expensed, as with Helix’s lab equipment (practice Q49).'],
+    traps: ['It is about the **asset**, not the loan: ready-to-use equipment never qualifies, however it is financed.', 'Mass-produced or quickly made inventory does not qualify.'],
+    je: ['… 20X1: the spending', `Dr {a|${S.assetUC}} :: ${f1(S.spend)}`, `Cr {a|Cash} :: ${f1(S.spend)}`] }),
+  bcdef: (S) => ({ h: 'What counts as a borrowing cost', what: 'Interest and other costs of borrowing money:\n- interest worked out with the **effective interest method**, so premiums, discounts and issue costs are already in it\n- interest on lease liabilities (B2.1)\n- exchange differences on foreign-currency loans, to the extent they adjust the interest cost',
+    ex: [`Kopi Co, year 1: the borrowing cost is the effective interest, ${f1(S.INT[0])} (${pct(S.mkt)} × ${f1(S.price)}), not the coupon of ${f1(S.cpn)}.`],
+    traps: ['Capitalise the **effective** interest, not the coupon cash.'] }),
+  gap: (S) => (S.prem
+    ? { h: 'Premium: interest expense is less than the coupon', what: `Investors paid ${f1(S.diff)} over face because the 8% coupon beats the 6% market rate. Each year the expense is the market cost, 6% of what is owed, while the coupon pays 8% of face. The difference repays part of the premium, so the carrying amount falls to face by maturity.`,
+      ex: ['Year 1:', { calc: [{ t: '{x|interest expense}', v: S.INT[0], link: '0.0' }, { op: '+', t: 'premium amortised (repays part of the bond)', v: S.rows[0].amort, link: '0.1' }, { op: '=', t: 'coupon paid', v: S.cpn, link: '0.2' }] },
+        'Over the life:', { calc: [{ t: `coupons: ${S.n} × ${f1(S.cpn)}`, v: S.n * S.cpn }, { op: '−', t: 'premium', v: S.diff }, { op: '=', t: 'total {x|interest}', v: S.totInt }] },
+        'The official practice paper, Q48 (Helix): the premium is amortised over the term of the bond and reduces the interest expense in each period.'],
+      traps: ['A premium is **not** income on issue, and it is **not** left until maturity (practice Q48).'],
+      je: ['… 31 December 20X1', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Dr {l|Bond payable} {n|premium} :: ${f1(S.rows[0].amort)}`, `Cr {a|Cash} :: ${f1(S.cpn)}`] }
+    : S.disc
+    ? { h: 'Discount: interest expense is more than the coupon', what: `Investors paid ${f1(-S.diff)} under face because the 4% coupon falls short of the 6% market rate. Each year the expense is the market cost, 6% of what is owed, while the coupon pays only 4% of face. The unpaid part adds to the bond, so the carrying amount climbs to face by maturity.`,
+      ex: ['Year 1:', { calc: [{ t: 'coupon paid', v: S.cpn, link: '0.1' }, { op: '+', t: 'discount unwound (added to the bond)', v: -S.rows[0].amort, link: '0.2' }, { op: '=', t: '{x|interest expense}', v: S.INT[0], link: '0.0' }] },
+        'Over the life:', { calc: [{ t: `coupons: ${S.n} × ${f1(S.cpn)}`, v: S.n * S.cpn }, { op: '+', t: 'discount', v: -S.diff }, { op: '=', t: 'total {x|interest}', v: S.totInt }] }],
+      traps: ['A discount is **not** a loss on issue: it is extra interest, spread over the term.'],
+      je: ['… 31 December 20X1', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {a|Cash} :: ${f1(S.cpn)}`, `Cr {l|Bond payable} {n|discount} :: ${f1(-S.rows[0].amort)}`] }
+    : { h: 'At face: interest expense equals the coupon', what: 'The 6% coupon equals the 6% market rate, so investors pay exactly face. The expense each year is 6% of face, which is the coupon, so the carrying amount stays at face throughout.',
+      ex: ['Each year:', { calc: [{ t: `{x|interest expense}: ${f1(S.face)} × 6%`, v: S.INT[0], link: '0.0' }, { op: '=', t: 'coupon paid', v: S.cpn, link: '0.1' }] }],
+      traps: ['Switch the coupon to 8% or 4% and the expense no longer equals the cash.'],
+      je: ['… each 31 December', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {a|Cash} :: ${f1(S.cpn)}`] }),
+  eir: (S) => { const am = S.rows[0].amort;
+    return { h: 'Each year: effective interest', what: `Interest expense = the opening carrying amount × the effective rate (the market rate on day 1, fixed for the life). The cash paid is face × the coupon rate. The difference moves the carrying amount towards face.${S.qual ? ' In year 1 part of the interest moves into the warehouse (the box below).' : ''} Tap a bar in the charts for any year.`,
+      ex: ['Year 1:', { calc: [{ t: 'opening: the issue price', v: S.price }, { op: '+', t: `{x|interest}: ${f1(S.price)} × ${pct(S.mkt)}`, v: S.INT[0], link: '0.0' }, { op: '−', t: `coupon: ${f1(S.face)} × ${pct(S.c)}`, v: S.cpn, link: S.disc ? '0.1' : am ? '0.2' : '0.1' }, { op: '=', t: 'closing', v: S.rows[0].close }] },
+        'The official practice paper, Q47 (Helix): interest for the six months to 31 December 20X5 is period 2:',
+        { calc: [{ t: 'price, 1 January 20X5', v: HX.p }, { op: '+', t: `period 1 interest: ${f1(HX.p)} × 5%`, v: HX.i1 }, { op: '−', t: 'coupon, 30 June', v: HX.cp }, { op: '=', t: 'opening, period 2', v: HX.c1 }] },
+        { calc: [{ t: `{x|interest expense}: ${f1(HX.c1)} × 5%`, v: HX.i2 }, { op: '+', t: 'premium amortised', v: HX.am2 }, { op: '=', t: 'coupon paid', v: HX.cp }] },
+        `So: Dr Interest expense ${f1(HX.i2)}, Dr Premium on bonds payable ${f1(HX.am2)}, Cr Cash ${f1(HX.cp)}.`],
+      traps: ['Interest expense is **not** the coupon (face × coupon rate).', 'Use the **opening carrying amount**, not face.', 'The effective rate is fixed on day 1: later market moves do not change it.'],
+      je: ['… 31 December 20X1: interest and coupon', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`,
+        ...(S.prem ? [`Dr {l|Bond payable} {n|premium} :: ${f1(am)}`, `Cr {a|Cash} :: ${f1(S.cpn)}`] : S.disc ? [`Cr {a|Cash} :: ${f1(S.cpn)}`, `Cr {l|Bond payable} {n|discount} :: ${f1(-am)}`] : [`Cr {a|Cash} :: ${f1(S.cpn)}`])] }; },
+  cap: (S) => ({ h: 'Capitalise inside the window', what: 'Borrowing costs directly attributable to a qualifying asset **must** be added to its cost while the window is open:\n- **commence** when all three have happened: spending on the asset, borrowing costs incurred, and work to get it ready has begun\n- **suspend** during extended periods when active development stops; not for normal technical or administrative work, or a delay that is a necessary part of the process\n- **cease** when substantially all the work to get it ready is complete, even if minor fixes remain\nOutside the window, interest is an expense. The capitalised part reaches the P&L later, through depreciation.',
+    ex: S.qual
+      ? [what(S), { calc: [{ t: '{x|interest}, year 1 (effective)', v: S.INT[0] }, { op: '×', t: `months inside the window: 1 January to ${S.ready}`, vt: `${S.months}/12` }, { op: '=', t: `capitalised into the {a|warehouse}`, v: S.CAP[0], link: '0.0' }, ...(S.months < 12 ? [{ t: '{x|interest expense}: the other 3 months', v: S.EXP[0] }] : [])] },
+        ...(S.months < 12 ? ['The official practice paper, Q16 (Ruby): a $275,000 loan at 5.5% from 1 January 20X7; the vault is ready on 30 September.', { calc: [{ t: 'interest for the year: $275,000 × 5.5%', v: 15125 }, { op: '×', t: '1 January to 30 September', vt: '9/12' }, { op: '=', t: 'capitalised', v: 11344 }, { t: '{x|interest expense}: $15,125 − $11,344', v: 3781 }] }, 'So: capitalise $11,344 and expense $3,781.'] : [])]
+      : [what(S), `Not a qualifying asset, so nothing is capitalised: all ${f1(S.INT[0])} of year-1 interest is an expense.`],
+    traps: ['Only the months **inside** the window: not the whole year when the asset is ready part-way (practice Q16).', 'Do **not** suspend for a normal or necessary delay (e.g. concrete curing, planned inspections); do suspend for a long halt, such as a site idle in a dispute.', 'Stop at **substantially complete**, even if the asset is not yet in use.', 'Capitalising is **required** for a qualifying asset, not a policy choice (practice Q9).'],
+    je: S.qual ? ['… 31 December 20X1: move the qualifying part', `Dr {a|${S.assetUC}} :: ${f1(S.CAP[0])}`, `Cr {x|Interest expense} :: ${f1(S.CAP[0])}`]
+      : ['… only if a qualifying asset (none here)', `Dr {a|Asset under construction}`, 'Cr {x|Interest expense}'] }),
+  howmuch: { h: 'How much: specific or general borrowings', what: '- **specific loan** (taken out for this asset): the actual borrowing costs in the window **minus** any investment income from parking the unused money\n- **general pool**: the capitalisation rate × the spending on the asset, weighted by time. The rate is the borrowing costs on general loans ÷ the average general loans outstanding. Never more than the actual borrowing costs.\nKopi Co’s bond was issued for the warehouse, so it is a specific borrowing (with no idle cash here). The notes’ examples:',
+    ex: ['Specific: borrow $5,000,000 at 6% on 1 January to build a warehouse; work runs all year; unused cash earns $40,000 in a deposit.',
+      { calc: [{ t: '{x|interest}: $5,000,000 × 6%', v: 300000, link: '0.0' }, { op: '−', t: 'income on the unused cash', v: 40000, link: '1.1' }, { op: '=', t: 'capitalised', v: 260000 }] },
+      'General: loans of $2,000,000 at 6% and $3,000,000 at 8% all year; spend $1,000,000 on 1 January and $2,000,000 on 1 July.',
+      { calc: [{ t: '{x|interest}: $120,000 + $240,000', v: 360000 }, { op: '÷', t: 'general loans', v: 5000000 }, { op: '=', t: 'capitalisation rate', vt: '7.2%' }] },
+      { calc: [{ t: '$1,000,000 × 12/12', v: 1000000 }, { op: '+', t: '$2,000,000 × 6/12', v: 1000000 }, { op: '=', t: 'weighted spend', v: 2000000 }, { op: '×', t: 'capitalisation rate', vt: '7.2%' }, { op: '=', t: 'capitalised (below the $360,000 actual, so no cap)', v: 144000, link: '2.0' }] },
+      'The other $216,000 stays in profit or loss.'],
+    traps: ['Deduct the investment income on a **specific** loan.', 'General pool: a **weighted** average rate, and spending weighted by time.', 'Never capitalise more than the actual borrowing costs.'],
+    je: ['… specific: interest for the year', 'Dr {a|Warehouse under construction} :: $300,000', 'Cr {a|Cash} :: $300,000', '… specific: income on the unused cash', 'Dr {a|Cash} :: $40,000', 'Cr {a|Warehouse under construction} :: $40,000', '… general: move the qualifying part', 'Dr {a|Asset under construction} :: $144,000', 'Cr {x|Interest expense} :: $144,000'] },
+  split: (S) => ({ h: 'Current vs non-current', what: `The bond is repaid in one go on 31 December 20X${S.n}, so it is **non-current** until the last year. Then the whole carrying amount (face plus any premium left, or less any discount) is **current**.\nThe coupons fall on the year end, so no interest is owed at 31 December. When a coupon date differs from the year end, the interest built up since the last coupon is a separate **current** liability (e.g. a 31 March coupon and a 31 December year end: 9 months accrued).`,
+    ex: [{ calc: [{ t: '{l|bond}, end of year 1: non-current', v: S.rows[0].close }, { t: `{l|bond}, end of year 2: current (repaid 31 December 20X${S.n})`, v: S.rows[1].close }] }],
+    traps: ['In the year before maturity the **whole** bond is current, not just the coupon.', 'Accrued interest, when the coupon is not on the year end, is a **current** liability.'] }),
+  bal: (S) => ({ h: 'The carrying amount over the life', what: `Each year interest (+) builds the bond up and the coupon (−) brings it down. ${S.prem ? 'The coupon is bigger, so the balance steps down' : S.disc ? 'The interest is bigger, so the balance steps up' : 'The two are equal, so the balance stays at face'} to face, ${f1(S.face)}, the amount repaid at maturity. The axis starts at $900,000 so the moves show. Tap a group of bars for that year in full.`,
+    ex: [{ calc: [{ t: '{l|bond}, day 1', v: S.price }, ...S.rows.map((x, k) => ({ t: `{l|bond}, end of year ${k + 1}${k === S.n - 1 ? ' (then repaid)' : ''}`, v: x.close }))] }] }),
+  repay: (S) => { const loss = S.buyGL < 0;
+    return { h: 'Repaid: derecognise the bond', what: 'Take the bond off the balance sheet when the obligation is discharged, cancelled or expires. At maturity the carrying amount equals face, so paying face leaves no gain or loss. Repaid early, the gain or loss is the **carrying amount − the cash paid**, and it goes to **profit or loss**.',
+      ex: [`Suppose that at the end of year 1, after the coupon, the market rate has fallen to ${pct(S.buyRate)} and Kopi Co buys all the bonds back at their market price:`,
+        { calc: [{ t: `price: ${f1(S.cpn)} × ${AF(S.buyRate, S.n - 1).toFixed(4)} + ${f1(S.face)} × ${DF(S.buyRate, S.n - 1).toFixed(4)}`, v: S.buy, link: '0.2' }, { op: '−', t: '{l|carrying amount}, end of year 1', v: S.rows[0].close, link: '0.0' }, { op: '=', t: loss ? '{x|loss} on repayment' : 'gain on repayment', v: Math.abs(S.buyGL), link: '0.1' }] },
+        'Against face instead of the carrying amount, the answer would be wrong.'],
+      traps: ['The gain or loss is against the **carrying amount**, not face.', 'It goes to **P&L**, not equity.'],
+      je: ['… end of year 1, only if bought back early', `Dr {l|Bond payable} :: ${f1(S.rows[0].close)}`, loss ? `Dr {x|Loss on repayment} :: ${f1(-S.buyGL)}` : `Cr {i|Gain on repayment} :: ${f1(S.buyGL)}`, `Cr {a|Cash} :: ${f1(S.buy)}`,
+        `… 31 December 20X${S.n}: repaid at maturity`, `Dr {l|Bond payable} :: ${f1(S.face)}`, `Cr {a|Cash} :: ${f1(S.face)}`] }; },
+  whpres: (S) => ({ h: S.qual ? 'The warehouse on the balance sheet' : 'The equipment on the balance sheet', what: S.qual ? 'PPE at cost: everything it took to get it ready, including the capitalised interest. Once it is available for use it is depreciated, so the capitalised interest reaches the P&L as depreciation over the warehouse’s life instead of as finance costs now.' : 'PPE at cost: the purchase price, with no interest in it, because it was ready to use when bought.',
+    ex: S.qual ? [{ calc: [{ t: 'building spend', v: S.spend }, { op: '+', t: 'capitalised interest', v: S.CAP[0] }, { op: '=', t: '{a|warehouse} at cost', v: S.cost }] }, `If its useful life is ${S.life} years, the capitalised interest adds ${f1(S.CAP[0] / S.life)} a year to depreciation.`] : [{ calc: [{ t: '{a|equipment} at cost', v: S.spend }] }],
+    traps: ['Capitalised interest is part of **cost**: it is depreciated, not expensed separately.'] }),
+  plcol: (S) => ({ h: 'Profit or loss', what: '- **{x|interest expense}** (effective interest, less the capitalised part) → finance costs\n- **capitalised interest** → in the asset’s cost, then depreciation\n- **gain or loss on early repayment** → profit or loss\n- **FVTPL liabilities** → fair value changes in P&L; own credit risk → OCI\nThe dashed line is the coupon cash each year, so the gap to the bar is the premium or discount amortised.',
+    ex: ['Year 1:', { calc: [{ t: '{x|interest} (effective)', v: S.INT[0] }, { op: '−', t: `capitalised into the ${S.asset.toLowerCase()}`, v: S.CAP[0] }, { op: '=', t: '{x|interest expense}, year 1', v: S.EXP[0] }] },
+      'Over the life:', { calc: [...S.rows.map((x, k) => ({ op: k ? '+' : '', t: `{x|interest}, year ${k + 1}`, v: x.int })), { op: '=', t: 'total {x|interest}', v: S.totInt }, { op: '=', t: `coupons ${f1(S.n * S.cpn)} ${S.prem ? '− premium' : S.disc ? '+ discount' : ''} ${S.diff ? f1(Math.abs(S.diff)) : ''}`.trim(), v: S.totInt }] }],
+    traps: ['Interest expense is the **effective** interest, not the coupon.', 'Capitalised interest is **not** a finance cost that year; it reaches P&L later as depreciation.'] }),
+  cashcol: (S) => ({ h: 'Statement of cash flows', what: `- **bond proceeds** → financing (net of any issue costs)\n- **coupons paid** → operating or financing, by the entity’s policy\n- **face repaid** → financing\n- **${S.asset.toLowerCase()} spend** → investing\nInterest paid is disclosed in total, whether it was expensed or capitalised.\nThe chart shows why the total interest is what it is: everything paid out less what came in.`,
+    ex: [{ calc: [{ t: `coupons paid: ${S.n} × ${f1(S.cpn)}`, v: S.n * S.cpn }, { op: '+', t: 'face repaid', v: S.face }, { op: '−', t: 'proceeds received', v: S.price }, { op: '=', t: 'total {x|interest} over the life', v: S.totInt }] }],
+    traps: ['Interest paid shows in **total**, including the part capitalised into the asset.', 'Day-1 proceeds are financing, and are shown net of issue costs.'] }),
+};
+const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is and why, and its journal entries. Tap a bar in the charts for any year in full.' };
+
+(function () {
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // {a|ROU asset} → coloured term, **bold**
+  const md = (t) => esc(t).replace(/\{([a-z])\|([^}]+)\}/g, '<span class="el el-$1">$2</span>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\bExample\b/g, '<em>Example</em>'); // the word Example is always italic
+  const tsp = (s) => esc(s).replace(/\{([a-z])\|([^}]+)\}/g, '<tspan class="el-$1">$2</tspan>').replace(/\*\*([^*]+)\*\*/g, '<tspan font-weight="700">$1</tspan>');
+
+  // Text is measured with the real fonts, so lines wrap to their box and entries can be centred.
+  const ctx = document.createElement('canvas').getContext('2d');
+  const FONTS = { 'fl-t': '650 10px Inter', 'fl-s': '400 8.2px Inter', 'fl-je': '500 7.8px "IBM Plex Mono"' };
+  const plain = (s) => s.replace(/\{[a-z]\|([^}]+)\}/g, '$1').replace(/\*\*/g, '');
+  const width = (s, c) => { ctx.font = FONTS[c]; return ctx.measureText(plain(s)).width; };
+  const wrap = (s, c, max) => {
+    const words = s.match(/\{[a-z]\|[^}]+\}\S*|\S+/g) || [];
+    const out = [];
+    let cur = '';
+    words.forEach((w) => { const t = cur ? `${cur} ${w}` : w; if (cur && width(t, c) > max) { out.push(cur); cur = w; } else cur = t; });
+    if (cur) out.push(cur);
+    return out;
+  };
+  const node = (n) => {
+    const cx = n.x + n.w / 2, max = n.w - 14;
+    let o = `<g class="fl-n fl-${n.k}${n.dash ? ' fl-dash' : ''}" data-id="${n.id}" tabindex="0" role="button"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8"/>`;
+    if (n.list) { // left-aligned bullets, centred as a block
+      const items = n.sub.map((s) => wrap(s, 'fl-s', max - 22));
+      const rows = items.reduce((a, l) => a + l.length, 0);
+      let y = n.top ? n.y + 16 : n.y + n.h / 2 - (14 + rows * 11.5) / 2 + 9;
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      y += 5;
+      items.forEach((lines) => lines.forEach((l, i) => { y += 11.5; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      if (n.chartAt) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${n.y + n.chartAt}" y2="${n.y + n.chartAt}"/>`;
+      return o + '</g>';
+    }
+    const subs = (n.sub || []).flatMap((s) => wrap(s, 'fl-s', max));
+    if (n.h > 60) { // big box: top-aligned title and subs, then the entry centred in the space under the rule
+      let y = n.je || n.k === 'chart' ? n.y + 16 : n.y + n.h / 2 - (12 + subs.length * 11) / 2 + 9; // no entry: centre the text
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      if (n.bullets) n.sub.forEach((s) => wrap(s, 'fl-s', max - 22).forEach((l, i) => { y += 11; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      else subs.forEach((s) => { y += 11; o += `<text class="fl-s" x="${cx}" y="${y}" text-anchor="middle">${tsp(s)}</text>`; });
+      if (n.je) {
+        y += 9; o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${y}" y2="${y}"/>`;
+        const ind = (l) => (l.startsWith('Cr') ? 13 : 0);
+        const lw = Math.max(...n.je.filter(Boolean).map((l) => ind(l) + width(l, 'fl-je')));
+        // tags: several entries in one box get a number on the left and a label on the right
+        const numW = n.tags ? 13 : 0, tagW = n.tags ? 8 + Math.max(...n.tags.map((t) => width(t, 'fl-s'))) : 0;
+        const bw = numW + lw + tagW;
+        const bh = n.je.reduce((a, l) => a + (l ? 10.5 : 4), 0);
+        const x0 = cx - bw / 2;
+        const after = (n.after || []).flatMap((s) => wrap(s, 'fl-s', max));
+        const bottom = n.y + n.h - (after.length ? after.length * 11 + 10 : 0);
+        if (after.length) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${bottom}" y2="${bottom}"/>`; // closing lines get their own rule
+        after.forEach((s, i) => { o += `<text class="fl-s" x="${cx}" y="${bottom + (i + 1) * 11 + 1}" text-anchor="middle">${tsp(s)}</text>`; });
+        let ly = y + (bottom - y - bh) / 2 + 8; // baseline of the first line
+        let gi = 0, first = true;
+        n.je.forEach((l) => {
+          if (!l) { ly += 4; first = true; return; }
+          if (n.tags && first) {
+            o += `<circle class="fl-num" cx="${x0 + 4.5}" cy="${ly - 2.8}" r="4.6"/><text class="fl-numt" x="${x0 + 4.5}" y="${ly - 0.4}" text-anchor="middle">${gi + 1}</text>
+              <text class="fl-tag" x="${x0 + numW + lw + 8}" y="${ly}">${esc(n.tags[gi])}</text>`;
+            gi++;
+          }
+          first = false;
+          o += `<text class="fl-je" x="${x0 + numW + ind(l)}" y="${ly}">${tsp(l)}</text>`; ly += 10.5;
+        });
+      }
+    } else {
+      const lines = [...wrap(n.t, 'fl-t', max).map((t) => ({ t, c: 'fl-t', h: 12 })), ...subs.map((t) => ({ t, c: 'fl-s', h: 10.5 }))];
+      let y = n.y + n.h / 2 - lines.reduce((a, l) => a + l.h, 0) / 2 + 8.5;
+      lines.forEach((l) => { o += `<text class="${l.c}" x="${cx}" y="${y}" text-anchor="middle">${tsp(l.t)}</text>`; y += l.h; });
+    }
+    return o + '</g>';
+  };
+  const edge = (e) => `<g class="fl-e ${e.cls || ''}"><path d="${e.d}" marker-end="url(#fa)"/>${e.lab ? `<text x="${e.lx}" y="${e.ly}" text-anchor="${e.anchor || 'start'}">${esc(e.lab)}</text>` : ''}</g>`;
+  const join = (j) => `<g class="fl-j"><circle cx="${j.cx}" cy="${j.cy}" r="11"/><text x="${j.cx}" y="${j.cy + 3.5}" text-anchor="middle">${esc(j.t)}</text></g>`;
+  const draw = (part) => `${part.edges.map(edge).join('')}${(part.joins || []).map(join).join('')}${part.nodes.map(node).join('')}`;
+  let mode = 'premium', start = 'dec';
+  let S = schedule(mode, start), RIGHT = stretch(right(S));
+  const box = (id) => RIGHT.nodes.find((n) => n.id === id);
+  const yrId = (k) => (k ? `yr:${k - 1}` : 'bond1'); // group k of a chart that starts at day 1
+
+  // Mini chart 1: the bond's carrying amount at day 1 and through each year, two bars a year (+ interest, then − coupon),
+  // so the dotted line is a sawtooth that ends on face. The axis starts at $900,000 so the moves show. Tap a group for that year.
+  const balChart = () => {
+    const b = box('bal'), m = S.n + 1, x0 = b.x + 10, x1 = b.x + b.w - 10, gw = (x1 - x0) / m, bw = Math.min(8, (gw - 6) / 3);
+    const yb = b.y + b.h - 16, yt = b.y + 58, lo = 900000, hi = 1120000, sy = (v) => yb - ((v - lo) / (hi - lo)) * (yb - yt);
+    const steps = [[{ v: S.price }], ...S.rows.map((x) => [{ v: x.open + x.int, s: '+' }, { v: x.close, s: '−' }])];
+    let o = `<line class="mc-ax" x1="${x0}" x2="${x1}" y1="${yb}" y2="${yb}"/><line class="mc-rent" x1="${x0}" x2="${x1}" y1="${sy(S.face)}" y2="${sy(S.face)}"/>`;
+    const pts = [];
+    for (let k = 0; k < m; k++) {
+      const id = yrId(k), gx = x0 + k * gw, bars = steps[k], w = bars.length * (bw + 1) - 1, s0 = gx + (gw - w) / 2;
+      let g = `<rect class="mc-hit" x="${gx + 1}" y="${yt - 6}" width="${gw - 2}" height="${yb - yt + 18}" rx="4"/>`;
+      bars.forEach((x, j) => {
+        const bx = s0 + j * (bw + 1);
+        g += `<rect class="mc-lb${x.s === '+' ? ' up' : ''}" x="${bx}" width="${bw}" y="${sy(x.v)}" height="${yb - sy(x.v)}"/>`;
+        if (x.s) g += `<text class="mc-sg" x="${bx + bw / 2}" y="${sy(x.v) - 2}" text-anchor="middle">${x.s}</text>`;
+        pts.push(`${(bx + bw / 2).toFixed(1)},${sy(x.v).toFixed(1)}`);
+      });
+      g += `<text class="mc-lbl m" x="${gx + gw / 2}" y="${yb + 10}" text-anchor="middle">yr ${k}</text>`;
+      o += `<g class="mc-bar${cur === id ? ' sel' : ''}" data-note="${id}">${g}</g>`;
+    }
+    o += `<polyline class="mc-dl" points="${pts.join(' ')}"/>`;
+    return o + key(b.x + 12, b.y + 30, [['mc-lb', `carrying amount: + interest, − coupon`, 'l'], ['dash', `face: ${f1(S.face)}, repaid at the end`, 'm'], ['', 'axis starts at $900,000', 'm']]);
+  };
+  const region = (id) => { const n = box(id); return { x: n.x, y: n.y + n.chartAt, w: n.w, h: n.h - n.chartAt }; };
+  const head = (b, t1, t2) => `<text class="mc-h" x="${b.x + b.w / 2}" y="${b.y + 17}" text-anchor="middle">${t1}</text><text class="mc-h2" x="${b.x + b.w / 2}" y="${b.y + 28}" text-anchor="middle">${t2}</text>`;
+  const key = (kx, ky, rows) => rows.map(([cls, label, lcls], i) => (cls === 'dash'
+    ? `<line class="mc-rent" x1="${kx}" x2="${kx + 8}" y1="${ky + i * 10 - 3}" y2="${ky + i * 10 - 3}"/>`
+    : cls ? `<rect class="${cls}" x="${kx}" y="${ky + i * 10 - 7}" width="8" height="8" rx="1.5"/>` : '') + `<text class="mc-lbl ${lcls}" x="${kx + 12}" y="${ky + i * 10}">${label}</text>`).join('');
+  // Tappable groups across a chart region: group k opens yrId(k) (or yr:k when the chart has no day-1 group).
+  const groups = (b, m, idOf, draw, top) => {
+    const gap = 14, bw = 26, x0 = b.x + (b.w - (m * bw + (m - 1) * gap)) / 2, xe = x0 + m * (bw + gap) - gap;
+    let o = '';
+    for (let k = 0; k < m; k++) {
+      const x = x0 + k * (bw + gap), id = idOf(k);
+      o += `<g class="mc-bar${cur === id ? ' sel' : ''}" data-note="${id}"><rect class="mc-hit" x="${x - 6}" y="${top - 8}" width="${bw + 12}" height="${b.y + b.h - top + 4}" rx="4"/>${draw(k, x, bw)}</g>`;
+    }
+    return { o, x0, xe };
+  };
+
+  // Mini chart 2: interest each year (effective), split into the part capitalised and the part expensed, against the coupon cash.
+  const plChart = () => {
+    const b = region('plcol'), yb = b.y + b.h - 16, top = b.y + 84, max = Math.max(...S.INT, S.cpn) * 1.1, s = (v) => (v / max) * (yb - top);
+    const { o, x0, xe } = groups(b, S.n, (k) => `yr:${k}`, (k, x, bw) => `<rect class="mc-cap" x="${x}" width="${bw}" y="${yb - s(S.CAP[k])}" height="${s(S.CAP[k])}"/><rect class="mc-int" x="${x}" width="${bw}" y="${yb - s(S.INT[k])}" height="${s(S.EXP[k])}"/>
+      <text class="mc-lbl m" x="${x + bw / 2}" y="${yb + 11}" text-anchor="middle">yr ${k + 1}</text>`, top);
+    return head(b, 'Interest each year', S.prem ? 'below the coupon, and falling' : S.disc ? 'above the coupon, and rising' : 'equal to the coupon') + `<line class="mc-ax" x1="${x0 - 6}" x2="${xe + 6}" y1="${yb}" y2="${yb}"/>` + o
+      + `<line class="mc-rent" x1="${x0 - 6}" x2="${xe + 6}" y1="${yb - s(S.cpn)}" y2="${yb - s(S.cpn)}"/>`
+      + key(b.x + 12, b.y + 46, [['mc-cap', S.qual ? `capitalised → ${S.asset.toLowerCase()} (yr 1 only)` : 'capitalised: none (not qualifying)', 'a'], ['mc-int', 'expensed → finance costs', 'x'], ['dash', `coupon cash: ${f1(S.cpn)} every year`, 'm']]);
+  };
+
+  // Mini chart 3: cash in and out at true scale: the proceeds in on day 1, a coupon out each year, and face out at the end.
+  const cashChart = () => {
+    const b = region('cashcol'), top = b.y + 84, yb = b.y + b.h - 22, max = Math.max(S.price, S.face + S.cpn) * 1.05, y0 = top + (yb - top) / 2, s = (v) => (v / max) * ((yb - top) / 2);
+    const { o, x0, xe } = groups(b, S.n + 1, yrId, (k, x, bw) => (k
+      ? `<rect class="mc-int" x="${x}" width="${bw}" y="${y0}" height="${s(S.cpn)}"/>${k === S.n ? `<rect class="mc-lb" x="${x}" width="${bw}" y="${y0 + s(S.cpn)}" height="${s(S.face)}"/>` : ''}`
+      : `<rect class="mc-in" x="${x}" width="${bw}" y="${y0 - s(S.price)}" height="${s(S.price)}"/>`)
+      + `<text class="mc-lbl m" x="${x + bw / 2}" y="${yb + 14}" text-anchor="middle">yr ${k}</text>`, top);
+    return head(b, 'Cash in and out', 'borrow, pay coupons, repay face') + `<line class="mc-ax" x1="${x0 - 6}" x2="${xe + 6}" y1="${y0}" y2="${y0}"/>`
+      + o
+      + key(b.x + 12, b.y + 46, [['mc-in', 'proceeds in → financing', 'a'], ['mc-int', 'coupons out → operating or financing', 'x'], ['mc-lb', 'face repaid → financing', 'l']]);
+  };
+
+  // A year in full, for a tapped bar: the bond roll-forward with the interest sum, the capitalised part, P&L, cash and the entries.
+  const yearNote = (k) => {
+    const x = S.rows[k], last = k === S.n - 1, yr = `20X${k + 1}`;
+    const je = [];
+    let gi = -1;
+    const add = (...lines) => { je.push(...lines); return ++gi; }; // index of the entry box just added
+    const am = x.amort;
+    const g0 = add(`… 31 December ${yr}: interest and coupon`, `Dr {x|Interest expense} :: ${f1(x.int)}`,
+      ...(am > 0 ? [`Dr {l|Bond payable} {n|premium} :: ${f1(am)}`, `Cr {a|Cash} :: ${f1(S.cpn)}`] : am < 0 ? [`Cr {a|Cash} :: ${f1(S.cpn)}`, `Cr {l|Bond payable} {n|discount} :: ${f1(-am)}`] : [`Cr {a|Cash} :: ${f1(S.cpn)}`]));
+    const cashLine = am > 0 ? 2 : 1;
+    const gCap = S.CAP[k] ? add(`… 31 December ${yr}: move the qualifying part`, `Dr {a|${S.assetUC}} :: ${f1(S.CAP[k])}`, `Cr {x|Interest expense} :: ${f1(S.CAP[k])}`) : null;
+    const gRep = last ? add(`… 31 December ${yr}: repay face`, `Dr {l|Bond payable} :: ${f1(S.face)}`, `Cr {a|Cash} :: ${f1(S.face)}`) : null;
+    const rows = [{ t: k ? 'opening (last year end)' : 'opening: the issue price', v: x.open }, { op: '+', t: `{x|interest}: ${f1(x.open)} × ${pct(S.mkt)}${last ? ' (rounded to land on face)' : ''}`, v: x.int, link: `${g0}.0` },
+      { op: '−', t: `coupon: ${f1(S.face)} × ${pct(S.c)}`, v: S.cpn, link: `${g0}.${cashLine}` }, { op: '=', t: last ? 'face, before repayment' : 'year end', v: x.close }];
+    if (last) rows.push({ op: '−', t: 'face repaid', v: S.face, link: `${gRep}.0` }, { op: '=', t: 'year end', v: 0 });
+    const capWhy = S.CAP[k] ? `${S.months} of 12 months fall inside the window, so ${f1(S.CAP[k])} goes into the ${S.asset.toLowerCase()}.` : S.qual ? `The ${S.asset.toLowerCase()} was finished in 20X1, so the window is closed: all the interest is expensed.` : 'The equipment is not a qualifying asset: all the interest is expensed.';
+    return { h: `Year ${k + 1} in full (**${kindWord(S)}**, ${S.qual ? `warehouse ready ${S.ready}` : 'ready-to-use equipment'})`,
+      what: `Interest is always ${pct(S.mkt)} of the opening carrying amount, so it ${S.prem ? 'falls' : S.disc ? 'rises' : 'stays the same'} each year as the bond moves to face. ${capWhy}`,
+      ex: ['**{l|Bond payable}**', { calc: rows },
+        '**Profit or loss**', { calc: [{ t: '{x|interest} (effective)', v: x.int }, { op: '−', t: 'capitalised', v: S.CAP[k], ...(gCap != null ? { link: `${gCap}.1` } : {}) }, { op: '=', t: '{x|interest expense} (finance costs)', v: S.EXP[k] }] },
+        '**Cash flow**', { calc: [{ t: 'coupon → operating or financing', v: S.cpn }, ...(last ? [{ op: '+', t: 'face repaid → financing', v: S.face }, { op: '=', t: 'cash paid', v: S.cpn + S.face }] : [])] }],
+      je };
+  };
+
+  const sec = (s) => `<g class="sec ${s.cls}"><rect x="${s.x}" y="0" width="${s.w}" height="${H}" rx="10"/><text x="${s.x + 12}" y="19">${esc(s.t)}</text></g>`;
+  let cur = '';
+  const render = () => { S = schedule(mode, start); RIGHT = stretch(right(S)); document.getElementById('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:${Math.round(W * 1.34)}px" role="img" aria-label="Financial liability: classify, day 1, each year with borrowing costs, and year end">
+    <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1.2 L10 5 L0 8.8 L2.2 5 Z" class="fl-ah"/></marker></defs>
+    ${SECTIONS.map(sec).join('')}
+    <g transform="translate(${LEFT.at[0]},${LEFT.at[1]}) scale(${LEFT.scale})">${draw(LEFT)}</g>
+    ${draw(RIGHT)}<g class="mc">${balChart()}${plChart()}${cashChart()}</g></svg>`; show(cur); };
+
+  // Journal entries in the note: one green box per entry. A '…' line labels the next entry; a Dr after a Cr starts a new one.
+  const jeHtml = (lines) => {
+    const groups = [];
+    let g = null, label = '';
+    lines.forEach((l) => {
+      if (l.startsWith('…')) { label = l.slice(1).trim(); g = null; return; }
+      if (!g || (l.startsWith('Dr') && g.lines.length && g.lines[g.lines.length - 1].startsWith('Cr'))) { g = { label, lines: [] }; groups.push(g); label = ''; }
+      g.lines.push(l);
+    });
+    const line = (l) => { const [acc, amt] = l.split(' :: '); return `<span class="jl${l.startsWith('Cr') ? ' cr' : ''}"><span>${md(acc)}</span>${amt ? `<span class="amt">${amt}</span>` : ''}</span>`; };
+    return `<div class="jes">${groups.map((x, gi) => `<div class="je" data-g="${gi}">${x.label ? `<span class="jn">${md(x.label)}</span>` : ''}${x.lines.map(line).join('')}</div>`).join('')}</div>`;
+  };
+  // Note text: lines starting "- " become a bulleted list.
+  const blocks = (t) => {
+    const out = [];
+    let ul = null;
+    t.split('\n').forEach((line) => {
+      if (line.startsWith('- ')) { if (!ul) out.push((ul = [])); ul.push(line.slice(2)); } else { ul = null; out.push(line); }
+    });
+    const lines = (p) => p.split(/(?<=[.!?:])\s+(?=[A-Z(])/).map(md).join('<br>'); // one sentence per line
+    // a list of + / − / = steps is a sum: the signs already act as bullets, so no dots
+    const sum = (b) => b.length > 1 && b.slice(1).every((i) => /^[+−=-] /.test(i));
+    return out.map((b) => (Array.isArray(b) ? `<ul${sum(b) ? ' class="ops"' : ''}>${b.map((i) => `<li>${md(i)}</li>`).join('')}</ul>` : `<p>${lines(b)}</p>`)).join('');
+  };
+  // Example box: lines of text and calc tables (one named step per row). Amounts with a link get a dotted curve to their entry.
+  const exHtml = (items) => `<div class="ex"><b><em>Example</em></b>${items.map((it) => (typeof it === 'string' ? `<p>${md(it)}</p>`
+    : `<table class="calc">${it.calc.map((r) => `<tr class="${r.op === '=' ? 'tot' : ''}"><td class="op">${r.op || ''}</td><td>${md(r.t)}</td><td class="amt"${r.link != null ? ` data-link="${r.link}"` : ''}>${r.vt || f1(r.v)}</td></tr>`).join('')}</table>`)).join('')}</div>`;
+  // Dotted curves from an amount in the example to the entry box that uses it (drawn over the note).
+  const drawLinks = () => {
+    note.querySelectorAll('svg.links').forEach((x) => x.remove());
+    const box = note.getBoundingClientRect();
+    let paths = '';
+    note.querySelectorAll('[data-link]').forEach((el) => {
+      const [gi, li] = String(el.dataset.link).split('.'); // 'entry' or 'entry.line'
+      const g = note.querySelector(`.je[data-g="${gi}"]`);
+      if (!g) return;
+      const a = el.getBoundingClientRect(), t = (g.querySelectorAll('.jl')[+li || 0] || g).getBoundingClientRect();
+      const x1 = a.right - box.left + 6, y1 = a.top + a.height / 2 - box.top, x2 = t.left - box.left - 8, y2 = t.top + t.height / 2 - box.top;
+      if (x2 < x1 + 30) return; // entries stacked below the text: no room for a curve
+      const dx = Math.min(140, (x2 - x1) / 2);
+      paths += `<path d="M${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}"/><circle cx="${x2}" cy="${y2}" r="2"/>`;
+    });
+    if (paths) note.insertAdjacentHTML('beforeend', `<svg class="links" width="${box.width}" height="${box.height}">${paths}</svg>`);
+  };
+  window.addEventListener('resize', () => drawLinks());
+  const note = document.getElementById('note');
+  function show(id) {
+    cur = id;
+    document.querySelectorAll('.fl-n').forEach((g) => g.classList.toggle('tapped', g.dataset.id === id));
+    document.querySelectorAll('.mc-bar').forEach((g) => g.classList.toggle('sel', id === g.dataset.note));
+    let n = id && id.startsWith('yr:') ? yearNote(+id.slice(3)) : (id && NOTES[id]) || ALL;
+    if (typeof n === 'function') n = n(S);
+    note.classList.toggle('has-je', !!n.je);
+    note.innerHTML = `<div class="txt"><h3>${md(n.h)}</h3>${blocks(n.what)}${n.ex ? exHtml(n.ex) : ''}${n.why ? `<div class="why"><b>Why</b>${blocks(n.why)}</div>` : ''}${n.traps ? `<div class="traps"><b>Traps</b><ul>${n.traps.map((t) => `<li>${md(t)}</li>`).join('')}</ul></div>` : ''}</div>${n.je ? jeHtml(n.je) : ''}`;
+    drawLinks();
+  }
+  const chart = document.getElementById('chart');
+  chart.addEventListener('click', (e) => {
+    const bar = e.target.closest('[data-note]');
+    if (bar) return show(bar.dataset.note);
+    const n = e.target.closest('.fl-n');
+    if (n) show(n.dataset.id);
+  });
+  chart.addEventListener('keydown', (e) => { const n = e.target.closest('.fl-n'); if (n && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(n.dataset.id); } });
+  // Two switches: the coupon (premium | at face | discount) and what the money is spent on. Everything that depends on them redraws.
+  const modeBar = document.getElementById('mode');
+  const setMode = (m) => { mode = m; modeBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.m === m)); render(); };
+  modeBar.addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (b) setMode(b.dataset.m); });
+  const startBar = document.getElementById('start');
+  const setStart = (v) => { start = v; startBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.s === v)); render(); };
+  startBar.addEventListener('click', (e) => { const b = e.target.closest('[data-s]'); if (b) setStart(b.dataset.s); });
+  startBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.s === start));
+  setMode('premium');
+  if (document.fonts) document.fonts.ready.then(render);
+})();
+</script>
+</body>
+</html>
