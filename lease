@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lease Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<!-- B2.1 Leases: is it a lease, then day 1 and each year for the lessee. Working copy for iterating; the chapter mindmap grows from here.
+     Same look as apps/study (tokens and flow widget copied from apps/study/src). -->
+<style>
+:root {
+  --paper: #f5f6f2;
+  --card: #ffffff;
+  --ink: #1a222b;
+  --muted: #5b6570;
+  --rule: #d9ddd5;
+  --think: #a8661a;
+  --think-bg: #fbf1e3;
+  --el-a: #1f7a44;
+  --el-l: #b3261e;
+  --el-x: #8a5a2b;
+  --el-i: #1d5fb4;
+  --el-e: #6e3ba8;
+  --el-n: #6b7280;
+  --here: #1e9e5a; --here-bg: #e8f5ed; --star: #c48f00; --star-bg: #fdf5d8; --accent: #0e6e74;
+  --pt-map: #2e8b57; --pt-think: #a8661a; --pt-theory: #5b6570; --pt-worked: #c2571a; --pt-check: #4a90d9; --pt-compare: #6f6a12; --pt-types: #1a222b; --pt-quiz: #1f4fa8;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+    --think: #e2a35a; --think-bg: #2a2117;
+    --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+    --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+    --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+  --think: #e2a35a; --think-bg: #2a2117;
+  --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+  --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+  --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+  color-scheme: dark;
+}
+
+
+:root {
+  --font-chart: "Inter", "Public Sans", system-ui, sans-serif;
+  --sec-1: color-mix(in srgb, #f3d36b 24%, var(--card)); --sec-1-ink: #8a6a00;
+  --sec-2: color-mix(in srgb, #8bb6ea 20%, var(--card)); --sec-2-ink: #2f5f9e;
+  --sec-3: color-mix(in srgb, #b9a0e6 20%, var(--card)); --sec-3-ink: #6a47a8;
+  --sec-4: color-mix(in srgb, #f0a868 20%, var(--card)); --sec-4-ink: #a2581a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; } }
+:root[data-theme="dark"] { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--font-body); -webkit-text-size-adjust: 100%; }
+main { max-width: none; margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; line-height: 1.25; margin: 0; }
+p { margin: 0; }
+.eyebrow { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.el { font-weight: 600; }
+.el-r { color: #e3170a; } .el-a { color: var(--el-a); } .el-l { color: var(--el-l); } .el-x { color: var(--el-x); } .el-i { color: var(--el-i); } .el-e { color: var(--el-e); } .el-n { color: var(--el-n); }
+
+/* The chart: three sections side by side in one SVG; scrolls sideways on a narrow screen */
+.fl-box { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 8px; overflow-x: auto; }
+.fl-box svg { display: block; max-width: none; height: auto; font-family: var(--font-chart); font-feature-settings: "tnum", "cv11"; }
+.sec rect { stroke: none; }
+.sec-1 rect { fill: var(--sec-1); } .sec-2 rect { fill: var(--sec-2); } .sec-3 rect { fill: var(--sec-3); } .sec-4 rect { fill: var(--sec-4); }
+.sec text { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sec-1 text { fill: var(--sec-1-ink); } .sec-2 text { fill: var(--sec-2-ink); } .sec-3 text { fill: var(--sec-3-ink); } .sec-4 text { fill: var(--sec-4-ink); }
+.fl-info2 rect, .fl-info3 rect { fill: var(--card); stroke-dasharray: 3 2; stroke-width: 1.2; }
+.fl-info2 rect { stroke: var(--sec-2-ink); } .fl-info2 .fl-t { fill: var(--sec-2-ink); }
+.fl-info3 rect { stroke: var(--sec-3-ink); } .fl-info3 .fl-t { fill: var(--sec-3-ink); }
+.fl-pstep rect { fill: var(--card); stroke: var(--sec-4-ink); stroke-width: 1.4; }
+.xlink { margin-left: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--accent); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.mode { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
+.mode button { font: inherit; color: var(--ink); border: 1px solid var(--rule); background: var(--card); border-radius: 999px; padding: 3px 11px; cursor: pointer; }
+.mode button.on { background: var(--sec-2-ink); border-color: var(--sec-2-ink); color: #fff; }
+.topbar .mode + .mode { margin-left: 8px; }
+.fl-n { cursor: pointer; outline: none; }
+.fl-n rect { stroke-width: 1.1; }
+.fl-n .fl-t { font-size: 10px; font-weight: 650; fill: var(--ink); }
+.fl-n .fl-s { font-size: 8.2px; font-weight: 400; fill: var(--muted); }
+.fl-n .fl-li { fill: var(--ink); }
+.fl-n .fl-num { fill: var(--sec-3-ink); stroke: none; }
+.fl-n .fl-numt { font-size: 6.4px; font-weight: 700; fill: #fff; }
+.fl-n .fl-tag { font-size: 7.8px; font-style: italic; font-weight: 600; fill: var(--sec-3-ink); }
+.fl-n .fl-je { font: 500 7.8px var(--font-mono); fill: var(--ink); }
+.fl-n .fl-hr { stroke: var(--rule); stroke-dasharray: 2 2; }
+.fl-n tspan.el-a { fill: var(--el-a); font-weight: 600; } .fl-n tspan.el-l { fill: var(--el-l); font-weight: 600; }
+.fl-n tspan.el-x { fill: var(--el-x); font-weight: 600; } .fl-n tspan.el-r { fill: #e3170a; font-weight: 700; } .fl-n tspan.el-n { fill: var(--muted); font-weight: 400; }
+.fl-q rect { fill: color-mix(in srgb, var(--accent) 8%, var(--card)); stroke: var(--accent); }
+.fl-no rect { fill: color-mix(in srgb, #d23b32 11%, var(--card)); stroke: #c0392b; }
+.fl-no .fl-t { fill: #b3261e; }
+.fl-yes rect, .fl-gold rect { fill: color-mix(in srgb, #2fa865 13%, var(--card)); stroke: var(--el-a); }
+.fl-gold rect { stroke: var(--star); stroke-width: 2.6; }
+.fl-gold.fl-dash rect { stroke-width: 2; stroke-dasharray: 6 4; }
+.fl-exit rect { fill: color-mix(in srgb, #e05aa0 12%, var(--card)); stroke: #c2417f; }
+.fl-asset rect { fill: color-mix(in srgb, var(--el-a) 12%, var(--card)); stroke: var(--el-a); stroke-width: 1.8; }
+.fl-asset .fl-t { fill: var(--el-a); }
+.fl-liab rect { fill: color-mix(in srgb, var(--el-l) 10%, var(--card)); stroke: var(--el-l); stroke-width: 1.8; }
+.fl-liab .fl-t { fill: var(--el-l); }
+.fl-lstep rect, .fl-astep rect, .fl-chart rect { fill: var(--card); stroke: color-mix(in srgb, var(--ink) 18%, transparent); filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .06)); }
+.fl-lstep rect { stroke: var(--el-l); stroke-width: 1.4; }
+.fl-astep rect { stroke: var(--el-a); stroke-width: 1.4; }
+.fl-n:hover rect { stroke-width: 2; }
+.fl-n.tapped rect { stroke-width: 2.8; }
+.fl-e path { fill: none; stroke: var(--muted); stroke-width: 1.15; }
+.fl-e.dashed path { stroke-dasharray: 4 3; }
+.fl-e text { font-size: 8.2px; fill: var(--muted); }
+.fl-ah { fill: var(--muted); stroke: var(--muted); stroke-width: .6; stroke-linejoin: round; }
+.fl-j circle { fill: var(--card); stroke: var(--muted); }
+.fl-j text { font-size: 8.6px; font-weight: 600; fill: var(--ink); }
+/* mini charts */
+.mc-a { fill: none; stroke: var(--el-a); stroke-width: 2; }
+.mc-l { fill: none; stroke: var(--el-l); stroke-width: 2; }
+.mc-gap { fill: color-mix(in srgb, var(--muted) 16%, transparent); }
+.mc-ax { stroke: var(--rule); }
+.mc-dep { fill: color-mix(in srgb, var(--el-x) 45%, var(--card)); }
+.mc-int { fill: var(--el-x); }
+.mc-rent { stroke: var(--ink); stroke-dasharray: 3 3; stroke-width: 1; }
+.mc-lbl { font-size: 7.6px; font-weight: 600; }
+.mc-lbl.m { font-size: 7px; }
+.mc { pointer-events: none; } /* taps go to the box underneath, except the bars */
+.mc .mc-bar { pointer-events: auto; cursor: pointer; }
+.mc-hit { fill: transparent; }
+.mc-bar:hover .mc-hit { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
+.mc-bar.sel .mc-hit { fill: color-mix(in srgb, var(--ink) 10%, transparent); }
+.mc-bar.sel rect:not(.mc-hit) { stroke: var(--ink); stroke-width: .8; }
+.mc-h2 { font-size: 7.8px; font-weight: 500; fill: var(--muted); }
+.je .jl { display: flex; justify-content: space-between; gap: 18px; }
+.je .amt { font-variant-numeric: tabular-nums; }
+.mc-h { font-size: 8.6px; font-weight: 650; fill: var(--ink); }
+.mc-lb { fill: color-mix(in srgb, var(--el-l) 70%, var(--card)); } .mc-ab { fill: color-mix(in srgb, var(--el-a) 70%, var(--card)); }
+.mc-lb.up { fill: color-mix(in srgb, var(--el-l) 45%, var(--card)); }
+.mc-sg { font-size: 6.5px; font-weight: 700; fill: var(--el-l); }
+.mc-dl, .mc-da { fill: none; stroke-width: 1; stroke-dasharray: 1.5 2; stroke-linecap: round; }
+.mc-dl { stroke: var(--el-l); } .mc-da { stroke: var(--el-a); }
+.mc-prin { fill: color-mix(in srgb, var(--el-l) 40%, var(--card)); }
+.mc-lbl.a { fill: var(--el-a); } .mc-lbl.l { fill: var(--el-l); } .mc-lbl.x { fill: var(--el-x); } .mc-lbl.m { fill: var(--muted); font-weight: 400; }
+/* the note under the chart */
+.note { max-width: 1500px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px; min-height: 4em; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 20px; font-size: .78rem; line-height: 1.5; }
+.note.has-je { grid-template-columns: minmax(0, 1fr) minmax(220px, 340px); }
+@media (max-width: 720px) { .note.has-je { grid-template-columns: minmax(0, 1fr); } }
+.note .txt { display: flex; flex-direction: column; gap: 6px; }
+.note ul { margin: 2px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 2px; }
+.note ul.ops { list-style: none; padding-left: .6em; }
+.note .why p + p, .note .why ul + p { margin-top: 4px; }
+.note h3 { margin: 0; font: 600 .88rem var(--font-display); }
+.note .why { border-left: 3px solid var(--star); padding-left: 10px; }
+.note { position: relative; }
+.note .ex { background: color-mix(in srgb, var(--ink) 5%, var(--card)); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
+.note .ex > b { font-size: .72rem; font-weight: 600; color: var(--muted); }
+table.calc { align-self: flex-start; border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+table.calc td { padding: 1px 0; vertical-align: baseline; }
+table.calc td.op { width: 1.3em; color: var(--muted); font-weight: 600; }
+table.calc td.amt { text-align: right; padding-left: 28px; font-weight: 600; white-space: nowrap; }
+table.calc tr.tot td { border-top: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); padding-top: 2px; }
+svg.links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+svg.links path { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+svg.links circle { fill: var(--muted); }
+.note .traps { border-left: 3px solid #e3170a; padding-left: 10px; }
+.note .traps > b { color: #e3170a; display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.note .why > b { color: var(--star); display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.jes { display: flex; flex-direction: column; gap: 8px; align-self: start; }
+.je { font: 500 .72rem/1.55 var(--font-mono); background: color-mix(in srgb, var(--el-a) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--el-a) 35%, transparent); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; }
+.je .cr { padding-left: 1.6em; }
+.je .jn { font-family: var(--font-body); font-size: .68rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="eyebrow">B2.1 Leases · lessee <a class="xlink" href="lease-lessor.html">lessor, sale and leaseback →</a></div>
+    <div class="mode" id="mode" role="group" aria-label="When the payments are made">Payments made
+      <button data-m="arrears">in arrears (year end)</button><button data-m="advance">in advance (year start)</button></div>
+    <div class="mode" id="start" role="group" aria-label="When the lease starts">Lease starts
+      <button data-s="year">at the start of the financial year</button><button data-s="part">part-way: 1 October (year end 31 December)</button></div>
+  </div>
+  <div class="fl-box" id="chart"></div>
+  <div class="note" id="note" aria-live="polite"></div>
+</main>
+<script>
+// Worked examples behind every number, chart and year note. The switch above the chart picks one.
+// Both are the study app's Kopi Co roaster; only the timing of the payments differs. Whole dollars, as in an exam.
+const EX = {
+  arrears: { what: 'Kopi Co leases a coffee roaster for 4 years: $10,000 a year paid at each year end, rate implicit in the lease 8%, legal fees $1,000.', pay: 10000, rate: 0.08, n: 4, idc: 1000 },
+  advance: { what: 'Kopi Co leases a coffee roaster for 4 years: $10,000 a year paid at the start of each year (the first on day 1), rate implicit in the lease 8%, legal fees $1,000.', pay: 10000, rate: 0.08, n: 4, idc: 1000 },
+};
+const f1 = (n) => `${n < -0.5 ? '−' : ''}$${Math.abs(Math.round(n)).toLocaleString('en-US')}`; // money, whole dollars
+const nb = (s) => s.replace(/ /g, ' '); // keeps spacing in SVG text
+const pct = (r) => `${+(r * 100).toFixed(2)}%`;
+// Lease years run from the start date; the accounts run on financial years (year end 31 December). When the lease starts
+// part-way through a year (1 October), each financial year takes a share of two lease years: 3/12 of one, 9/12 of the other.
+function schedule(mode, start = 'year') {
+  const adv = mode === 'advance';
+  const { pay, rate, n, idc } = EX[mode];
+  const r0 = Math.round;
+  const unpaid = adv ? n - 1 : n; // in advance the first payment is made on day 1
+  const L0 = r0(Array.from({ length: unpaid }, (_, k) => pay / (1 + rate) ** (k + 1)).reduce((a, b) => a + b, 0)); // PV of the payments not yet paid
+  const cost = L0 + (adv ? pay : 0) + idc; // ROU cost: liability + prepaid + initial direct costs
+  // lease years: interest on the balance for that lease year
+  const ly = { opens: [], INT: [], ends: [] };
+  let b = L0;
+  for (let k = 0; k < n; k++) {
+    if (adv && k > 0) b -= pay; // advance: the payment comes off first
+    ly.opens.push(b);
+    let i = r0(b * rate);
+    if (!adv && k === n - 1) i = pay - b; // last year: interest clears the rounding
+    if (adv && k === n - 2) i = pay - b; // advance: the balance must equal the final payment
+    if (adv && k === n - 1) i = 0;
+    ly.INT.push(i);
+    b += i;
+    if (!adv) b -= pay; // arrears: interest first, then the payment
+    ly.ends.push(b);
+  }
+  const DEP = cost / n; // a full lease year
+  // financial years: FY j covers lease time (j − 2 + p, j − 1 + p], where p = share of the first FY after the start
+  const p = start === 'part' ? 0.25 : 1, months = Math.round(12 * p), fyN = n + (p < 1 ? 1 : 0);
+  const fy = [];
+  b = L0;
+  for (let j = 1; j <= fyN; j++) {
+    const lo = j - 2 + p, hi = j - 1 + p, ev = [];
+    for (let k = 1; k <= n; k++) {
+      const ov = Math.min(hi, k) - Math.max(lo, k - 1);
+      if (ov <= 1e-9 || !ly.INT[k - 1]) continue;
+      const atStart = Math.max(lo, k - 1) === k - 1; // the piece at the start of the lease year is rounded; the later piece takes the rest
+      const amt = ov > 1 - 1e-9 ? ly.INT[k - 1] : atStart ? r0(ly.INT[k - 1] * ov) : ly.INT[k - 1] - r0(ly.INT[k - 1] * (1 - ov));
+      ev.push({ kind: 'int', key: Math.max(lo, k - 1), amt, ly: k, base: ly.opens[k - 1], m: Math.round(12 * ov) });
+    }
+    for (let k = 1; k <= n; k++) { // payments: arrears at the end of lease year k; advance at the start (the day-1 one is in the cost)
+      const t = adv ? k - 1 : k;
+      if (adv && k === 1) continue;
+      const inside = adv ? t >= lo - 1e-9 && t < hi - 1e-9 : t > lo + 1e-9 && t <= hi + 1e-9;
+      if (inside) ev.push({ kind: 'pay', key: t - 1e-6, amt: pay, ly: k, intPart: adv ? ly.INT[k - 2] : ly.INT[k - 1] });
+    }
+    ev.sort((x, y) => x.key - y.key);
+    const startBal = b;
+    ev.forEach((e) => { b += e.kind === 'int' ? e.amt : -e.amt; e.bal = b; });
+    const depShare = Math.max(0, Math.min(hi, n) - Math.max(lo, 0));
+    fy.push({ ev, start: startBal, end: b, int: ev.filter((e) => e.kind === 'int').reduce((a, e) => a + e.amt, 0), dep: DEP * depShare, depM: Math.round(12 * depShare) });
+  }
+  const INT = fy.map((f) => f.int), DEPS = fy.map((f) => f.dep), ends = fy.map((f) => f.end);
+  const ROU = [cost];
+  DEPS.forEach((d) => ROU.push(Math.max(0, ROU[ROU.length - 1] - d)));
+  // non-current at the end of financial year 1 = the balance just after the next payment (what is still owed after the next 12 months)
+  const next = (fy[1] && fy[1].ev.find((e) => e.kind === 'pay')) || null;
+  const nc = next ? next.bal : 0;
+  return { adv, mode, start, part: p < 1, p, months, pay, rate, n, fyN, idc, L0, cost, ly, fy, opens: fy.map((f) => f.start), ends, INT, DEP, DEPS, ROU, nc, cur: ends[0] - nc };
+}
+
+// Section 1 is drawn at LEFT.scale, so its type comes out smaller. Boxes: x, y, w, h; arrows: SVG paths ending at the tip.
+const LEFT = {
+  at: [6, 40], scale: 0.86,
+  nodes: [
+    { id: 't1', x: 8, y: 8, w: 160, h: 36, k: 'q', t: 'Test 1: identified asset?', sub: ['specified, no real right to swap it'] },
+    { id: 't2', x: 8, y: 58, w: 160, h: 36, k: 'q', t: 'Test 2: economic benefits?', sub: ['substantially all, whole period'] },
+    { id: 't3', x: 8, y: 108, w: 160, h: 36, k: 'q', t: 'Test 3: right to direct use?', sub: ['how and for what purpose'] },
+    { id: 'svc', x: 186, y: 44, w: 118, h: 52, k: 'no', t: 'Service contract', sub: ['not a lease:', '{x|expense} as incurred'] },
+    { id: 'lease', x: 8, y: 196, w: 160, h: 36, k: 'yes', t: 'It is a lease', sub: ['default: on the balance sheet'] },
+    { id: 'exa', x: 186, y: 132, w: 128, h: 46, k: 'exit', t: 'Exit A: short-term?', sub: ['12 months or less,', 'no purchase option'] },
+    { id: 'ex', x: 186, y: 192, w: 128, h: 44, k: 'gold', dash: true, t: 'Exempt lease', sub: ['if chosen:', '{x|expense} straight-line'] },
+    { id: 'exb', x: 186, y: 250, w: 128, h: 46, k: 'exit', t: 'Exit B: low-value?', sub: ['judged when new', '(about $5,000)'] },
+    { id: 'bs', x: 362, y: 192, w: 124, h: 44, k: 'gold', t: 'On balance sheet', sub: ['from commencement'] },
+  ],
+  joins: [{ id: 'and', cx: 338, cy: 214, t: 'and' }],
+  edges: [
+    { d: 'M88 44 V57', lab: 'yes', lx: 93, ly: 54 },
+    { d: 'M88 94 V107', lab: 'yes', lx: 93, ly: 104 },
+    { d: 'M88 144 V195', lab: 'yes', lx: 93, ly: 172 },
+    { d: 'M168 26 C 210 26, 245 30, 245 43', lab: 'no', lx: 196, ly: 21 },
+    { d: 'M168 76 H185', lab: 'no', lx: 176, ly: 71, anchor: 'middle' },
+    { d: 'M168 126 C 210 126, 245 122, 245 97', lab: 'no', lx: 196, ly: 138 },
+    { d: 'M168 208 C 178 208, 176 155, 185 155' },
+    { d: 'M168 220 C 178 220, 176 273, 185 273', lab: 'either exit', lx: 88, ly: 246, anchor: 'middle' },
+    { d: 'M250 178 V191', lab: 'yes', lx: 256, ly: 188 },
+    { d: 'M250 250 V237', lab: 'yes', lx: 256, ly: 247 },
+    { d: 'M314 155 C 338 155, 338 175, 338 201', lab: 'no', lx: 322, ly: 150 },
+    { d: 'M314 273 C 338 273, 338 253, 338 227', lab: 'no', lx: 322, ly: 285 },
+    { d: 'M350 214 H361' },
+  ],
+};
+
+// Sections 2–4, at full size. Liability lane on top (it is measured first), asset lane below.
+// Big boxes are top-aligned: title, short lines, the journal entry (je) under a dotted rule, then closing lines (after) under their own rule.
+const right = (S) => ({
+  nodes: [
+    { id: 'term', x: 456, y: 28, w: 302, h: 58, k: 'info2', t: 'Lease term', sub: ['non-cancellable period + extensions reasonably certain to be used + periods after a break option reasonably certain not to be used'] },
+    { id: 'll', x: 456, y: 140, w: 92, h: 40, k: 'liab', t: 'Lease liability', sub: ['like a loan'] },
+    { id: 'rou', x: 456, y: 284, w: 92, h: 40, k: 'asset', t: 'ROU asset', sub: ['like owned PPE'] },
+    { id: 'll1', x: 566, y: 100, w: 192, h: 120, k: 'lstep', t: 'PV of payments not yet paid',
+      sub: ['implicit rate, else incremental borrowing rate', S.adv ? '**advance:** 1st payment made today, left out' : '**arrears:** 1st payment at the end of year 1'],
+      je: ['Dr {a|ROU asset}', 'Cr {l|Lease liability}'], after: ['**payments include:**', 'fixed + index-linked + RVG + options'] },
+    { id: 'rou1', x: 566, y: 244, w: 192, h: 120, k: 'astep', t: 'Cost',
+      sub: S.adv ? ['{l|liability} + prepaid (the 1st payment)', '+ direct costs + restoration − incentives'] : ['{l|liability} + prepaid + direct costs', '+ restoration − incentives'],
+      je: ['Dr {a|ROU asset}', 'Cr {l|Lease liability}', 'Cr {a|Cash} {n|prepaid, direct costs}', 'Cr {l|Provision} {n|restoration}'],
+      after: [S.adv ? `{l|${f1(S.L0)}} + ${f1(S.pay)} prepaid + ${f1(S.idc)} = {a|${f1(S.cost)}}` : `{l|${f1(S.L0)}} + ${f1(S.idc)} legal fees = {a|${f1(S.cost)}}`] },
+    { id: 'timing', x: 790, y: 26, w: 206, h: 64, k: 'info3', part: S.part, t: S.adv ? 'Payments in **ADVANCE** (year **START**)' : 'Payments in **ARREARS** (year **END**)',
+      sub: S.part ? [S.adv ? 'payment first, then interest on what is left' : 'interest first, then the payment', `**Starts 1 Oct:** year 1 takes ${S.months}/12; later years mix two lease years`] : S.adv ? ['payment first, then interest on what is left', '**Year-end balance:** includes the interest paid tomorrow']
+        : ['interest first, then the payment', '**Year-end balance:** what’s left after that year’s payment'] },
+    { id: 'lly', x: 790, y: 100, w: 206, h: 120, k: 'lstep', t: 'Unwind like a loan',
+      sub: [S.adv ? '− payment first, then + interest on the rest' : '+ interest (opening × rate), then − payment'],
+      je: S.adv ? ['Dr {l|Lease liability}', 'Cr {a|Cash}', '', 'Dr {x|Interest expense}', 'Cr {l|Lease liability}'] : ['Dr {x|Interest expense}', 'Cr {l|Lease liability}', '', 'Dr {l|Lease liability}', 'Cr {a|Cash}'],
+      tags: S.adv ? ['payment', 'interest'] : ['interest', 'payment'],
+      after: [`example, year 1${S.part ? ` (${S.months} months)` : ''}: interest {x|${f1(S.INT[0])}}`] },
+    { id: 'rouy', x: 790, y: 244, w: 206, h: 120, k: 'astep', t: 'Depreciate straight-line', sub: ['shorter of lease term and useful life', '(useful life if it will be owned)'],
+      je: ['Dr {x|Depreciation expense}', 'Cr {a|Accumulated depreciation}'], after: [S.part ? `**part-year:** × ${S.months}/12 in year 1` : '**+ impairment test**, as for PPE (see B3)'] },
+    // Section 4: three equal columns, full height. Balance sheet | profit or loss | cash flows.
+    { id: 'split', x: 1030, y: 28, w: 188, h: 112, k: 'lstep', t: 'Split the liability', bullets: true, sub: ['**non-current:** still owed after the next payment', '**current:** the rest'],
+      je: [nb(`{n|end of year 1} ${f1(S.ends[0]).padStart(7)}`), nb(`{l|current}     ${f1(S.cur).padStart(7)}`), nb(`{l|non-current} ${f1(S.nc).padStart(7)}`)],
+      after: [S.adv && !S.part ? 'tomorrow’s payment is all current' : '{r|trap:} interest after the year end is not owed yet'] },
+    { id: 'bal', x: 1030, y: 148, w: 188, h: 132, k: 'chart', t: 'Both balances fall to 0' },
+    { id: 'roupres', x: 1030, y: 288, w: 188, h: 76, k: 'astep', t: 'ROU asset on the balance sheet',
+      bullets: true, sub: ['**position:** own line, or inside PPE and disclosed', '**amount:** cost − acc. depreciation − impairment', '**classification:** non-current asset'] },
+    { id: 'plcol', x: 1234, y: 28, w: 188, h: 336, k: 'pstep', t: 'Profit or loss', list: true, top: true, chartAt: 78,
+      sub: ['**{x|depreciation}** → operating expenses', '**{x|interest}** → finance costs', '**exempt leases** → {x|expense} straight-line'] },
+    { id: 'cashcol', x: 1438, y: 28, w: 188, h: 336, k: 'pstep', t: 'Statement of cash flows', list: true, top: true, chartAt: 112,
+      sub: ['**principal repaid** → financing', '**interest paid** → operating or financing (policy)', '**short-term, low-value** → operating', '**day 1** → non-cash, disclosed only'] },
+  ],
+  edges: [
+    { d: 'M425 218 C 440 218, 440 160, 455 160' },
+    { d: 'M425 230 C 440 230, 440 304, 455 304' },
+    { cls: 'dashed', d: 'M662 86 V99' },
+    { d: 'M548 160 H565' },
+    { d: 'M548 304 H565' },
+    { cls: 'dashed', d: 'M662 220 V243', lab: 'the asset starts from it', lx: 667, ly: 235 },
+    { d: 'M758 160 H789' },
+    { d: 'M758 304 H789' },
+    { d: 'M996 160 C 1013 160, 1012 84, 1029 84' },
+    { d: 'M996 304 C 1012 304, 1012 326, 1029 326' },
+  ],
+});
+
+// Everything right of the decision section is stretched sideways by STRETCH (positions, widths and arrows; type keeps its size),
+// so box text has room. Coordinates above are written for the unstretched layout.
+const STRETCH = 1.18, SPLIT_X = 440;
+const SX = (x) => (x <= SPLIT_X ? x : SPLIT_X + (x - SPLIT_X) * STRETCH);
+const stretchPath = (d) => { // x values in M/L/C/S/Q/T pairs and H; y values untouched
+  let cmd = '', i = 0;
+  return d.replace(/[A-Za-z]|-?\d*\.?\d+/g, (t) => {
+    if (/[A-Za-z]/.test(t)) { cmd = t.toUpperCase(); i = 0; return t; }
+    const v = +t, isX = cmd === 'H' || (cmd !== 'V' && i % 2 === 0);
+    i++;
+    return String(+(isX ? SX(v) : v).toFixed(1));
+  });
+};
+const stretch = (part) => ({ ...part,
+  nodes: part.nodes.map((n) => ({ ...n, x: SX(n.x), w: SX(n.x + n.w) - SX(n.x) })),
+  edges: part.edges.map((e) => ({ ...e, d: stretchPath(e.d), lx: e.lx != null ? SX(e.lx) : e.lx })) });
+const W = SX(1640), H = 376;
+const SECTIONS = [
+  { cls: 'sec-1', x: 0, w: 434, t: 'Is it a lease?' },
+  { cls: 'sec-2', x: 440, w: 330, t: 'Day 1 · initial' },
+  { cls: 'sec-3', x: 776, w: 234, t: 'Each year · subsequent' },
+  { cls: 'sec-4', x: 1016, w: 624, t: 'Year end · present' },
+].map((c) => ({ ...c, x: SX(c.x), w: SX(c.x + c.w) - SX(c.x) }));
+
+// What shows under the chart when a box is tapped: what it is, why, and the entries (one line each; '…' starts a note line).
+// A note can be a function of the worked example S, so its numbers follow the arrears / advance switch.
+const NOTES = {
+  t1: { h: 'Test 1: an identified asset', what: 'The asset is specified in the contract (explicitly or implicitly), and the supplier has no substantive right to swap it.',
+    why: 'If the supplier can swap the asset whenever it likes and gains from doing so, you control nothing in particular: you are buying capacity, a service. A swap right only for repairs does not count.' },
+  t2: { h: 'Test 2: substantially all the economic benefits', what: 'You, not the supplier or other users, get substantially all the output and other benefits of the asset, for the whole period of use. A truck shared with other customers fails here.' },
+  t3: { h: 'Test 3: the right to direct the use', what: 'You decide how and for what purpose the asset is used, throughout the period. Whoever decides what the asset does, and when, controls it; who drives or maintains it does not matter.' },
+  svc: { h: 'Service contract', what: 'Fail any one test and there is no lease. There is no asset you control, so nothing goes on the balance sheet: the payments are expensed as the service is received.',
+    je: ['Dr {x|Service expense}', 'Cr {a|Cash}'] },
+  lease: { h: 'It is a lease', traps: ['US GAAP (your FA textbook) still splits lessee leases into finance and operating. Under SFRS(I) 16 the **lessee has one model**: every lease goes on the balance sheet. Only the **lessor** classifies.'], what: 'Three yeses: the contract contains a lease. IFRS 16 has one model for lessees, so by default it goes on the balance sheet; only the two exits can keep it off.' },
+  exa: { h: 'Exit A: short-term', traps: ['A purchase option rules out Exit A, **whatever** the term.', 'The 12 months is the **lease term** (including likely extensions), not the non-cancellable period alone.'], what: 'A lease term of 12 months or less, with **no purchase option**. Chosen per class of asset.',
+    why: 'A few months of payments is not worth capitalising. A purchase option rules it out whatever the term, because you may end up owning the asset.' },
+  exb: { h: 'Exit B: low-value', traps: ['Judge the asset **when new**, not its current value.', 'A car or a building is **never** low-value.'], what: 'The asset is low-value **when new** (about $5,000 or less), judged asset by asset and chosen lease by lease. For example:\n- laptops and tablets\n- phones\n- small office furniture',
+    why: 'Immaterial items are not worth the bookkeeping. Because it is judged new, an old car is never low-value.' },
+  ex: { h: 'Exempt lease', what: 'Still a lease, but the lessee may keep it off the balance sheet and spread the payments evenly as an expense. A relief, not a different kind of lease.',
+    je: ['… each period, straight-line', 'Dr {x|Lease expense}', 'Cr {a|Cash}'] },
+  bs: { h: 'On the balance sheet', traps: ['There is no “operating lease” for a lessee under SFRS(I) 16 (that is US GAAP, or the old IAS 17).'], what: 'No exit applies, so on the commencement date the lessee recognises an {a|ROU asset} (it controls the right to use the asset) and a {l|lease liability} (it owes the payments).',
+    why: 'Leaving both off the balance sheet hid debt; that is why IFRS 16 brought them on.' },
+  term: { h: 'Lease term', traps: ['A break option you will probably **not** use still extends the term.'], what: 'How long you will realistically keep the asset: the non-cancellable period, plus\n- extension periods you are reasonably certain to use\n- periods after a break option you are reasonably certain **not** to use\nThe term drives:\n- how many payments go into the PV\n- whether Exit A (12 months or less) applies\n- the depreciation period (shorter of lease term and useful life)' },
+  rou: { h: 'Right-of-use asset', what: 'The right to use the leased asset for the lease term. It behaves like owned {a|PPE}: cost on day 1, then depreciation and impairment tests.' },
+  ll: { h: 'Lease liability', what: 'The obligation to make the lease payments. It behaves like a loan: PV on day 1, then interest builds it up and each payment pays it down.' },
+  // Notes with a worked example: theory in `what`, the example in `ex` (grey box). An `ex` item is a line of text or
+  // { calc: [{ op, t, v | vt, link }] }: one named step per row; `link` draws a dotted curve to journal entry box number `link`.
+  rou1: (S) => ({ h: 'Day 1: the ROU asset at cost', traps: ['Legal fees go **into the asset**, not to the P&L.', 'In **advance**, the first payment is in the asset (prepaid) but **not** in the liability.', 'Incentives received **reduce** the asset; a restoration provision **adds** to it.'],
+    what: '{a|ROU asset} = everything it took to get the right to use the asset:\n- the {l|lease liability}\n- + prepaid: paid on or before day 1, so not in the liability (in advance, the first payment)\n- + initial direct costs (e.g. legal fees): they would not exist without the lease\n- + restoration costs: an obligation that comes with using the site\n- − incentives received: they reduce what the right cost you',
+    ex: [EX[S.mode].what, { calc: [{ t: '{l|lease liability}', v: S.L0, link: '0.1' }, ...(S.adv ? [{ op: '+', t: 'prepaid: the first payment', v: S.pay, link: '0.2' }] : []), { op: '+', t: 'legal fees', v: S.idc, link: '0.2' }, { op: '=', t: '{a|ROU asset}', v: S.cost, link: '0.0' }] }],
+    je: ['… day 1', `Dr {a|ROU asset} :: ${f1(S.cost)}`, `Cr {l|Lease liability} :: ${f1(S.L0)}`, `Cr {a|Cash} {n|${S.adv ? 'prepaid + fees' : 'legal fees'}} :: ${f1((S.adv ? S.pay : 0) + S.idc)}`, '… only if the site must be restored (none here)', 'Dr {a|ROU asset}', 'Cr {l|Provision for restoration}', '… only if incentives are received (none here)', 'Dr {a|Cash}', 'Cr {a|ROU asset}'] }),
+  ll1: (S) => ({ h: 'Day 1: the lease liability at PV', traps: ['Legal fees (initial direct costs) are **not** in the liability: they go into the ROU asset.', 'In **advance**, the first payment is **not** in the liability: it is paid, not owed.', 'Variable payments **not** tied to an index or rate (e.g. a % of sales) are left out: expense them when they happen.', 'Index-linked payments use the index **at the start**: do not forecast future inflation.', 'A residual value guarantee counts only the amount you **expect to pay**, not the full guaranteed amount.', 'Use the rate implicit in the lease; the incremental borrowing rate only if the implicit rate cannot be readily determined.'],
+    what: 'What you owe, in today’s money: the PV of the payments **not yet paid**, at the rate implicit in the lease (else the incremental borrowing rate). Payments already made are not owed, so in advance the first payment is left out. The payments counted:\n- fixed payments, less incentives receivable\n- payments tied to an index or rate\n- residual value guarantees: if you promise the lessor the asset will be worth at least a set amount when you hand it back, include what you **expect to pay** to top it up\n- a purchase option you are reasonably certain to use\n- termination penalties, if the term assumes you will end early\nNot counted: the legal fees and other initial direct costs. You pay them in cash, you do not owe them to the lessor, so they go into the {a|ROU asset} only.',
+    ex: [EX[S.mode].what, { calc: [{ t: `each payment still to come${S.adv ? ' (the first is paid today)' : ''}`, v: S.pay }, { op: '×', t: `annuity factor, ${S.adv ? S.n - 1 : S.n} years at ${pct(S.rate)}`, vt: (S.L0 / S.pay).toFixed(4) }, { op: '=', t: '{l|lease liability}', v: S.L0, link: '0.1' }] }, `The ${f1(S.idc)} legal fees are not in it: they take the ROU asset to ${f1(S.cost)}.`],
+    je: ['… day 1: recognised in the same entry as the asset', `Dr {a|ROU asset} :: ${f1(S.L0)}`, `Cr {l|Lease liability} :: ${f1(S.L0)}`] }),
+  timing: (S) => { const base = (S.adv
+    ? { h: 'Payments in **advance**', what: 'Each payment is made at the start of the year, the first one on day 1. That first payment is paid, not owed: it stays out of the liability and goes into the ROU cost as prepaid. Each later payment comes off before the year’s interest is charged, so interest is lower than in arrears, and a year-end balance includes the interest that tomorrow’s payment settles.',
+      je: ['… day 1: the first payment', `Dr {a|ROU asset} :: ${f1(S.pay)}`, `Cr {a|Cash} :: ${f1(S.pay)}`, '… end of year 1: interest', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {l|Lease liability} :: ${f1(S.INT[0])}`, '… start of year 2: the payment', `Dr {l|Lease liability} :: ${f1(S.pay)}`, `Cr {a|Cash} :: ${f1(S.pay)}`] }
+    : { h: 'Payments in **arrears**', what: 'Each payment is made at the end of the year. Interest builds up during the year, then the payment clears it plus some principal. On day 1 every payment is still to come, so the liability is the PV of all of them and nothing is prepaid.',
+      je: ['… end of year 1: interest', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {l|Lease liability} :: ${f1(S.INT[0])}`, '… end of year 1: the payment', `Dr {l|Lease liability} :: ${f1(S.pay)}`, `Cr {a|Cash} :: ${f1(S.pay)}`] });
+    if (!S.part) return base;
+    return { ...base, h: `${base.h}, starting part-way through the year`,
+      what: `${base.what}\nThe lease starts on **1 October** but the year end is **31 December**, so the lease years and the financial years do not line up. Every amount in the accounts is time-apportioned:\n- year 1 takes **${S.months}/12** of a lease year’s interest and depreciation\n- each later year takes 9/12 of one lease year plus 3/12 of the next\n- the final year takes the last 9/12\nAt each 31 December the liability includes the interest that has built up since the last payment.`,
+      traps: ['Do **not** charge a full year of interest or depreciation in year 1: only the months since the start.', 'Interest for a lease year is on that lease year’s opening balance; split it between the two financial years it falls in.'],
+      ex: ['The official practice paper, Q17–18 (Ruby): a 5-year office lease from 1 October 20X7, $15,000 a year in arrears (first payment 1 October 20X8), 7.5%, legal costs $3,500; year end 31 December 20X7.',
+        { calc: [{ t: 'payment', v: 15000 }, { op: '×', t: 'annuity factor, 5 years at 7.5%', vt: '4.0459' }, { op: '=', t: '{l|lease liability}', v: 60688 }, { op: '+', t: 'legal costs', v: 3500 }, { op: '=', t: '{a|ROU asset}', v: 64188 }] },
+        'In the year to 31 December 20X7 (3 months):', { calc: [{ t: `{x|interest}: $60,688 × 7.5% × 3/12`, v: 1138 }, { t: `{x|depreciation}: $64,188 ÷ 5 × 3/12`, v: 3209 }] }],
+      je: ['… Ruby, 1 October 20X7: day 1', 'Dr {a|ROU asset} :: $64,188', 'Cr {l|Lease liability} :: $60,688', 'Cr {a|Cash} {n|legal costs} :: $3,500', '… Ruby, 31 December 20X7: 3 months of interest', 'Dr {x|Interest expense} :: $1,138', 'Cr {l|Lease liability} :: $1,138', '… Ruby, 31 December 20X7: 3 months of depreciation', 'Dr {x|Depreciation expense} :: $3,209', 'Cr {a|Accumulated depreciation} :: $3,209'] };
+  },
+  rouy: (S) => ({ h: 'Each year: depreciate the ROU asset', traps: ['Depreciate over the **shorter** of lease term and useful life, unless ownership passes (or a purchase option is reasonably certain): then over **useful life**.', 'Depreciate the **ROU cost** (including legal fees and prepaid), not the liability.'],
+    what: 'Straight-line over the shorter of the lease term and useful life, because you can only use the asset while you hold the lease. If ownership passes, or a purchase option is reasonably certain, use the useful life: you will use it for its whole life, like PPE you bought.\n**Impairment** works as for any other asset (chapter B3): if there is an indicator (the site is closed or sublet at a loss, the asset is no longer used), write the {a|ROU asset} down to its recoverable amount, then depreciate the lower amount over the remaining period.',
+    ex: [{ calc: [{ t: '{a|ROU asset} at cost', v: S.cost }, { op: '÷', t: 'lease term (shorter than useful life)', vt: `${S.n} years` }, { op: '=', t: '{x|depreciation} for a full year', v: S.DEP, link: 0 }] },
+      ...(S.part ? [`The lease starts on 1 October, so the first financial year (to 31 December) takes only ${S.months} months:`, { calc: [{ t: 'a full year', v: S.DEP }, { op: '×', t: `${S.months}/12`, vt: `${S.months}/12` }, { op: '=', t: '{x|depreciation}, year 1', v: S.DEPS[0] }] }] : [])],
+    je: ['… each year end: depreciation', `Dr {x|Depreciation expense} :: ${f1(S.DEP)}`, `Cr {a|Accumulated depreciation: ROU asset} :: ${f1(S.DEP)}`, '… only if impaired (see B3)', 'Dr {x|Impairment loss}', 'Cr {a|Accumulated impairment: ROU asset}'] }),
+  lly: (S) => ({ h: 'Each year: unwind the lease liability', traps: ['Interest is on the **opening** balance (arrears) or on the balance **after** the payment (advance).', 'The payment is **not** an expense: it reduces the liability.'],
+    what: (S.adv ? 'Take off the payment first, then add interest on what is left.' : 'Add interest on the opening balance, then take off the payment.') + '\nLike a loan repaid in instalments: early payments are mostly interest, later ones mostly principal, and the balance reaches 0 with the last payment. Tap a bar in the charts for any year.',
+    ex: S.part
+      ? [`Year 1 runs only ${S.months} months (1 October to 31 December):`, { calc: [{ t: 'day 1', v: S.L0 }, { op: '+', t: `interest: ${f1(S.L0)} × ${pct(S.rate)} × ${S.months}/12`, v: S.INT[0], link: 0 }, { op: '=', t: 'year end (no payment yet)', v: S.ends[0] }] }, 'Tap a bar in the charts to see how later years mix two lease years.']
+      : S.adv
+      ? ['Year 1 (the first payment was made on day 1):', { calc: [{ t: 'opening, after the day-1 payment', v: S.L0 }, { op: '+', t: `interest: ${f1(S.L0)} × ${pct(S.rate)}`, v: S.INT[0], link: 0 }, { op: '=', t: 'year end', v: S.ends[0] }, { op: '−', t: 'payment, start of year 2', v: S.pay, link: 1 }, { op: '=', t: 'balance after the payment', v: S.ends[0] - S.pay }] }]
+      : ['Year 1:', { calc: [{ t: 'opening', v: S.L0 }, { op: '+', t: `interest: ${f1(S.L0)} × ${pct(S.rate)}`, v: S.INT[0], link: 0 }, { op: '−', t: 'payment, end of year 1', v: S.pay, link: 1 }, { op: '=', t: 'closing', v: S.ends[0] }] }],
+    je: S.part ? ['… 31 December, year 1: interest for 3 months', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {l|Lease liability} :: ${f1(S.INT[0])}`]
+      : S.adv ? ['… end of year 1: interest', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {l|Lease liability} :: ${f1(S.INT[0])}`, '… start of year 2: the payment', `Dr {l|Lease liability} :: ${f1(S.pay)}`, `Cr {a|Cash} :: ${f1(S.pay)}`]
+      : ['… end of year 1: interest', `Dr {x|Interest expense} :: ${f1(S.INT[0])}`, `Cr {l|Lease liability} :: ${f1(S.INT[0])}`, '… end of year 1: the payment', `Dr {l|Lease liability} :: ${f1(S.pay)}`, `Cr {a|Cash} :: ${f1(S.pay)}`] }),
+  bal: (S) => ({ h: 'The two balances over the lease', what: `The {a|ROU asset} falls by the same depreciation each year: a straight line. The {l|lease liability} ${S.adv ? 'rises in year 1 as interest builds up (no payment until the start of year 2), then falls' : 'falls slowly at first, because each payment is partly eaten by interest, then faster'}. Both reach 0 at the end.\nThe asset falls faster than the liability, so for much of the lease the liability sits above it: that is the front-loaded expense, and why equity dips during a lease. Tap a pair of bars for that year in full.`,
+    ex: [EX[S.mode].what, { calc: [{ t: '{a|ROU asset}, day 1', v: S.cost }, { t: '{l|lease liability}, day 1', v: S.L0 }, { t: '{a|ROU asset}, end of year 1', v: S.ROU[1] }, { t: '{l|lease liability}, end of year 1', v: S.ends[0] }] }] }),
+  split: (S) => ({ h: 'Current vs non-current', traps: ['Interest that builds up **after** the year end is not owed yet, so it is not current.', 'In **advance** with the payment due the day after the year end, the whole payment is current. If the lease started part-way, the next payment is months away: take off the interest that builds up after the year end.'],
+    what: 'Non-current = what is still owed after next year’s payment; current = the rest of the year-end balance.\n' + (S.adv && !S.part
+      ? 'In advance the payment due tomorrow settles this year’s interest plus some principal, so the whole payment is current.'
+      : 'The next payment includes interest that is not owed yet (it builds up after the year end), so only the rest of it is current. Shortcut: non-current = the balance just after the next payment.'),
+    ex: ['End of year 1:', { calc: S.adv && !S.part
+      ? [{ t: '{l|balance}, end of year 1', v: S.ends[0] }, { op: '−', t: 'current: tomorrow’s payment', v: S.pay }, { op: '=', t: 'non-current', v: S.nc }]
+      : [{ t: '{l|balance}, end of year 1', v: S.ends[0] }, { op: '−', t: `current: next payment ${f1(S.pay)} − interest that builds up after the year end ${f1(S.pay - S.cur)}`, v: S.cur }, { op: '=', t: 'non-current (= balance just after that payment)', v: S.nc }] }] }),
+  cashcol: (S) => ({ h: 'Statement of cash flows', traps: ['Day 1 is **non-cash**: do not show the ROU asset as an investing outflow.', 'Only the **principal** part of a payment is financing; the interest part follows the entity’s policy.'],
+    what: '- **principal repaid** → financing: the liability is debt, so this is like repaying a loan\n- **interest paid** → operating or financing, by the entity’s policy\n- **short-term and low-value lease payments** → operating\n- **day 1** → no cash moves when the ROU asset and liability are recognised, so it is disclosed only',
+    ex: [S.adv ? 'The day-1 payment is all principal (no interest has built up yet). The next payment:' : 'The first payment, at the end of the first lease year:',
+      { calc: [{ t: 'a full lease year’s interest → operating or financing', v: S.ly.INT[0] }, { op: '+', t: 'principal → financing', v: S.pay - S.ly.INT[0] }, { op: '=', t: 'cash paid', v: S.pay }] }, 'The interest part shrinks and the principal part grows each year.'] }),
+  plcol: (S) => ({ h: 'Profit or loss', traps: ['The P&L shows **depreciation + interest**, not the lease payment.', 'The expense is **front-loaded**: higher than the cash in early years.'],
+    what: '- **{x|depreciation}** of the ROU asset → operating expenses\n- **{x|interest}** on the lease liability → finance costs\n- **exempt leases** → {x|lease expense} straight-line\nInterest is charged on the balance owed, which is highest at the start, so the total expense is front-loaded. The dashed line in the chart is the cash actually paid each year (not an average).\nThe old rent expense is now depreciation and interest, both below EBITDA, which is why EBITDA rises under IFRS 16.',
+    ex: [`Year 1${S.part ? ` (${S.months} months)` : ''}:`, { calc: [{ t: '{x|depreciation}', v: S.DEPS[0] }, { op: '+', t: '{x|interest}', v: S.INT[0] }, { op: '=', t: 'expense, year 1', v: S.DEPS[0] + S.INT[0] }, { t: 'compare: cash paid, year 1', v: S.fy[0].ev.filter((e) => e.kind === 'pay').length * S.pay + (S.adv ? S.pay : 0) }] },
+      `Over the whole lease:`, { calc: [{ t: '{x|depreciation}', v: S.DEP * S.n }, { op: '+', t: '{x|interest}', v: S.INT.reduce((a, b) => a + b, 0) }, { op: '=', t: 'total expense', v: S.DEP * S.n + S.INT.reduce((a, b) => a + b, 0) }, { op: '=', t: `cash paid ${f1(S.pay * S.n)} + legal fees ${f1(S.idc)}`, v: S.pay * S.n + S.idc }] }] }),
+  roupres: (S) => ({ h: 'The ROU asset on the balance sheet', traps: ['Accumulated depreciation and accumulated impairment are **contra-asset** accounts: credit balances that reduce the asset. They are **not** liabilities.'],
+    what: '- **position:** on its own line, or inside PPE with the ROU amounts disclosed by class of asset\n- **amount:** carrying amount = cost − accumulated depreciation − accumulated impairment\n- **classification:** a non-current asset that behaves like PPE\nAccumulated depreciation and accumulated impairment are **contra-asset** accounts: they carry a credit balance and sit against the cost, so the cost stays visible while the carrying amount falls.',
+    ex: ['End of year 1:', { calc: [{ t: '{a|ROU asset}, cost', v: S.cost }, { op: '−', t: 'accumulated depreciation (contra-asset)', v: S.DEPS[0] }, { op: '−', t: 'accumulated impairment (contra-asset; none here)', v: 0 }, { op: '=', t: 'carrying amount', v: S.ROU[1] }] }] }),
+};
+const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is and why, and its journal entries. Tap a bar in the charts for any year in full.' };
+
+(function () {
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // {a|ROU asset} → coloured term, **bold**
+  const md = (t) => esc(t).replace(/\{([a-z])\|([^}]+)\}/g, '<span class="el el-$1">$2</span>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\bExample\b/g, '<em>Example</em>'); // the word Example is always italic
+  const tsp = (s) => esc(s).replace(/\{([a-z])\|([^}]+)\}/g, '<tspan class="el-$1">$2</tspan>').replace(/\*\*([^*]+)\*\*/g, '<tspan font-weight="700">$1</tspan>');
+
+  // Text is measured with the real fonts, so lines wrap to their box and entries can be centred.
+  const ctx = document.createElement('canvas').getContext('2d');
+  const FONTS = { 'fl-t': '650 10px Inter', 'fl-s': '400 8.2px Inter', 'fl-je': '500 7.8px "IBM Plex Mono"' };
+  const plain = (s) => s.replace(/\{[a-z]\|([^}]+)\}/g, '$1').replace(/\*\*/g, '');
+  const width = (s, c) => { ctx.font = FONTS[c]; return ctx.measureText(plain(s)).width; };
+  const wrap = (s, c, max) => {
+    const words = s.match(/\{[a-z]\|[^}]+\}\S*|\S+/g) || [];
+    const out = [];
+    let cur = '';
+    words.forEach((w) => { const t = cur ? `${cur} ${w}` : w; if (cur && width(t, c) > max) { out.push(cur); cur = w; } else cur = t; });
+    if (cur) out.push(cur);
+    return out;
+  };
+  const node = (n) => {
+    const cx = n.x + n.w / 2, max = n.w - 14;
+    let o = `<g class="fl-n fl-${n.k}${n.dash ? ' fl-dash' : ''}" data-id="${n.id}" tabindex="0" role="button"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8"/>`;
+    if (n.list) { // left-aligned bullets, centred as a block
+      const items = n.sub.map((s) => wrap(s, 'fl-s', max - 22));
+      const rows = items.reduce((a, l) => a + l.length, 0);
+      let y = n.top ? n.y + 16 : n.y + n.h / 2 - (14 + rows * 11.5) / 2 + 9;
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      y += 5;
+      items.forEach((lines) => lines.forEach((l, i) => { y += 11.5; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      if (n.chartAt) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${n.y + n.chartAt}" y2="${n.y + n.chartAt}"/>`;
+      return o + '</g>';
+    }
+    const subs = (n.sub || []).flatMap((s) => wrap(s, 'fl-s', max));
+    if (n.h > 60) { // big box: top-aligned title and subs, then the entry centred in the space under the rule
+      let y = n.je || n.k === 'chart' ? n.y + 16 : n.y + n.h / 2 - (12 + subs.length * 11) / 2 + 9; // no entry: centre the text
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      if (n.bullets) n.sub.forEach((s) => wrap(s, 'fl-s', max - 22).forEach((l, i) => { y += 11; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      else subs.forEach((s) => { y += 11; o += `<text class="fl-s" x="${cx}" y="${y}" text-anchor="middle">${tsp(s)}</text>`; });
+      if (n.je) {
+        y += 9; o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${y}" y2="${y}"/>`;
+        const ind = (l) => (l.startsWith('Cr') ? 13 : 0);
+        const lw = Math.max(...n.je.filter(Boolean).map((l) => ind(l) + width(l, 'fl-je')));
+        // tags: several entries in one box get a number on the left and a label on the right
+        const numW = n.tags ? 13 : 0, tagW = n.tags ? 8 + Math.max(...n.tags.map((t) => width(t, 'fl-s'))) : 0;
+        const bw = numW + lw + tagW;
+        const bh = n.je.reduce((a, l) => a + (l ? 10.5 : 4), 0);
+        const x0 = cx - bw / 2;
+        const after = (n.after || []).flatMap((s) => wrap(s, 'fl-s', max));
+        const bottom = n.y + n.h - (after.length ? after.length * 11 + 10 : 0);
+        if (after.length) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${bottom}" y2="${bottom}"/>`; // closing lines get their own rule
+        after.forEach((s, i) => { o += `<text class="fl-s" x="${cx}" y="${bottom + (i + 1) * 11 + 1}" text-anchor="middle">${tsp(s)}</text>`; });
+        let ly = y + (bottom - y - bh) / 2 + 8; // baseline of the first line
+        let gi = 0, first = true;
+        n.je.forEach((l) => {
+          if (!l) { ly += 4; first = true; return; }
+          if (n.tags && first) {
+            o += `<circle class="fl-num" cx="${x0 + 4.5}" cy="${ly - 2.8}" r="4.6"/><text class="fl-numt" x="${x0 + 4.5}" y="${ly - 0.4}" text-anchor="middle">${gi + 1}</text>
+              <text class="fl-tag" x="${x0 + numW + lw + 8}" y="${ly}">${esc(n.tags[gi])}</text>`;
+            gi++;
+          }
+          first = false;
+          o += `<text class="fl-je" x="${x0 + numW + ind(l)}" y="${ly}">${tsp(l)}</text>`; ly += 10.5;
+        });
+      }
+    } else {
+      const lines = [...wrap(n.t, 'fl-t', max).map((t) => ({ t, c: 'fl-t', h: 12 })), ...subs.map((t) => ({ t, c: 'fl-s', h: 10.5 }))];
+      let y = n.y + n.h / 2 - lines.reduce((a, l) => a + l.h, 0) / 2 + 8.5;
+      lines.forEach((l) => { o += `<text class="${l.c}" x="${cx}" y="${y}" text-anchor="middle">${tsp(l.t)}</text>`; y += l.h; });
+    }
+    return o + '</g>';
+  };
+  const edge = (e) => `<g class="fl-e ${e.cls || ''}"><path d="${e.d}" marker-end="url(#fa)"/>${e.lab ? `<text x="${e.lx}" y="${e.ly}" text-anchor="${e.anchor || 'start'}">${esc(e.lab)}</text>` : ''}</g>`;
+  const join = (j) => `<g class="fl-j"><circle cx="${j.cx}" cy="${j.cy}" r="11"/><text x="${j.cx}" y="${j.cy + 3.5}" text-anchor="middle">${esc(j.t)}</text></g>`;
+  const draw = (part) => `${part.edges.map(edge).join('')}${(part.joins || []).map(join).join('')}${part.nodes.map(node).join('')}`;
+  let mode = 'arrears', start = 'year';
+  let S = schedule(mode, start), RIGHT = stretch(right(S));
+  const box = (id) => RIGHT.nodes.find((n) => n.id === id);
+
+  // Mini chart 1: the balances at day 1 and through each year. The liability gets two bars a year, one per opposing entry
+  // (arrears: + interest, then − payment; advance: − payment, then + interest), so its dotted line is a sawtooth;
+  // the asset gets one bar a year and a straight dotted line. True scale. Tap a group for that year.
+  const balChart = () => {
+    const b = box('bal'), m = S.fyN + 1, x0 = b.x + 10, x1 = b.x + b.w - 10, gw = (x1 - x0) / m, bw = Math.min(7, (gw - 6) / 3);
+    const yb = b.y + b.h - 16, yt = b.y + 50;
+    // liability steps per point: day 1 is one bar; each year is two (after the first entry, after the second)
+    const steps = [[{ v: S.L0 }], ...S.fy.map((f) => f.ev.map((e) => ({ v: e.bal, s: e.kind === 'int' ? '+' : '−' })))];
+    const top = Math.max(S.cost, ...steps.flat().map((x) => x.v)), sy = (v) => yb - (v / top) * (yb - yt);
+    let o = `<line class="mc-ax" x1="${x0}" x2="${x1}" y1="${yb}" y2="${yb}"/>`;
+    const lpts = [], apts = [];
+    for (let k = 0; k < m; k++) {
+      const id = k ? `yr:${k - 1}` : 'rou1', gx = x0 + k * gw, bars = steps[k];
+      const w = bars.length * (bw + 1) + bw, start = gx + (gw - w) / 2;
+      let g = `<rect class="mc-hit" x="${gx + 1}" y="${yt - 6}" width="${gw - 2}" height="${yb - yt + 18}" rx="4"/>`;
+      bars.forEach((x, j) => {
+        const bx = start + j * (bw + 1);
+        g += `<rect class="mc-lb${x.s === '+' ? ' up' : ''}" x="${bx}" width="${bw}" y="${sy(x.v)}" height="${yb - sy(x.v)}"/>`;
+        if (x.s) g += `<text class="mc-sg" x="${bx + bw / 2}" y="${sy(x.v) - 2}" text-anchor="middle">${x.s}</text>`;
+        lpts.push(`${(bx + bw / 2).toFixed(1)},${sy(x.v).toFixed(1)}`);
+      });
+      const ax = start + bars.length * (bw + 1);
+      g += `<rect class="mc-ab" x="${ax}" width="${bw}" y="${sy(S.ROU[k])}" height="${yb - sy(S.ROU[k])}"/>
+        <text class="mc-lbl m" x="${gx + gw / 2}" y="${yb + 10}" text-anchor="middle">yr ${k}</text>`;
+      apts.push(`${(ax + bw / 2).toFixed(1)},${sy(S.ROU[k]).toFixed(1)}`);
+      o += `<g class="mc-bar${cur === id ? ' sel' : ''}" data-note="${id}">${g}</g>`;
+    }
+    o += `<polyline class="mc-dl" points="${lpts.join(' ')}"/><polyline class="mc-da" points="${apts.join(' ')}"/>`;
+    return o + `<rect class="mc-lb" x="${b.x + 12}" y="${b.y + 23}" width="8" height="8" rx="1.5"/><text class="mc-lbl l" x="${b.x + 24}" y="${b.y + 30}">liability: ${S.adv ? '− payment, then + interest' : '+ interest, then − payment'}</text>
+      <rect class="mc-ab" x="${b.x + 12}" y="${b.y + 33}" width="8" height="8" rx="1.5"/><text class="mc-lbl a" x="${b.x + 24}" y="${b.y + 40}">asset: straight line</text>`;
+  };
+  const region = (id) => { const n = box(id); return { x: n.x, y: n.y + n.chartAt, w: n.w, h: n.h - n.chartAt }; };
+  // Bars are tappable: each year group opens that year in full in the note panel.
+  const bars = (b, draw) => {
+    const m = S.fyN, gap = m > 4 ? 12 : 16, bw = m > 4 ? 18 : 22, x0 = b.x + (b.w - (m * bw + (m - 1) * gap)) / 2, xe = x0 + m * (bw + gap) - gap;
+    let o = '';
+    for (let k = 0; k < m; k++) {
+      const x = x0 + k * (bw + gap);
+      o += `<g class="mc-bar${cur === `yr:${k}` ? ' sel' : ''}" data-note="yr:${k}"><rect class="mc-hit" x="${x - 6}" y="${b.y + 60}" width="${bw + 12}" height="${b.h - 62}" rx="4"/>${draw(k, x, bw)}</g>`;
+    }
+    return { o, x0, xe };
+  };
+  const head = (b, t1, t2) => `<text class="mc-h" x="${b.x + b.w / 2}" y="${b.y + 17}" text-anchor="middle">${t1}</text><text class="mc-h2" x="${b.x + b.w / 2}" y="${b.y + 28}" text-anchor="middle">${t2}</text>`;
+  const cashLine = (x1, x2, y) => `<line class="mc-rent" x1="${x1}" x2="${x2}" y1="${y}" y2="${y}"/>`;
+  const key = (kx, ky, rows) => rows.map(([cls, label, lcls], i) => (cls === 'dash'
+    ? `<line class="mc-rent" x1="${kx}" x2="${kx + 8}" y1="${ky + i * 10 - 3}" y2="${ky + i * 10 - 3}"/>`
+    : `<rect class="${cls}" x="${kx}" y="${ky + i * 10 - 7}" width="8" height="8" rx="1.5"/>`) + `<text class="mc-lbl ${lcls}" x="${kx + 12}" y="${ky + i * 10}">${label}</text>`).join('');
+
+  // Mini chart 2: yearly expense = depreciation + interest, against the cash paid.
+  const plChart = () => {
+    const b = region('plcol'), { DEPS, INT } = S, yb = b.y + b.h - 16, top = b.y + 84, max = Math.max(...DEPS.map((d, k) => d + INT[k]), S.pay) * 1.05, s = (v) => (v / max) * (yb - top);
+    const { o, x0, xe } = bars(b, (k, x, bw) => `<rect class="mc-dep" x="${x}" width="${bw}" y="${yb - s(DEPS[k])}" height="${s(DEPS[k])}"/><rect class="mc-int" x="${x}" width="${bw}" y="${yb - s(DEPS[k]) - s(INT[k])}" height="${s(INT[k])}"/>
+      <text class="mc-lbl m" x="${x + bw / 2}" y="${yb + 11}" text-anchor="middle">yr ${k + 1}</text>`);
+    return head(b, 'Expense each year', 'higher early, lower late') + `<line class="mc-ax" x1="${x0 - 6}" x2="${xe + 6}" y1="${yb}" y2="${yb}"/>` + o
+      + cashLine(x0 - 6, xe + 6, yb - s(S.pay))
+      + key(b.x + 12, b.y + 46, [['mc-dep', S.part ? 'depreciation: the same each full year' : 'depreciation: the same each year', 'x'], ['mc-int', 'interest: falls each year', 'x'], ['dash', `cash paid: ${f1(S.pay)} every year`, 'm']]);
+  };
+
+  // Mini chart 3: each payment split into principal (financing) and interest. In advance the day-1 payment is all principal.
+  const cashChart = () => {
+    const b = region('cashcol'), yb = b.y + b.h - 16, top = b.y + 84, s = (v) => (v / (S.pay * 1.05)) * (yb - top);
+    // cash paid in financial year k and its interest part (advance: the day-1 payment sits in year 1, all principal)
+    const paid = (k) => S.fy[k].ev.filter((e) => e.kind === 'pay').reduce((a, e) => a + e.amt, 0) + (S.adv && !k ? S.pay : 0);
+    const ip = (k) => S.fy[k].ev.filter((e) => e.kind === 'pay').reduce((a, e) => a + e.intPart, 0);
+    const { o, x0, xe } = bars(b, (k, x, bw) => `<rect class="mc-prin" x="${x}" width="${bw}" y="${yb - s(paid(k) - ip(k))}" height="${s(paid(k) - ip(k))}"/><rect class="mc-int" x="${x}" width="${bw}" y="${yb - s(paid(k))}" height="${s(ip(k))}"/>
+      <text class="mc-lbl m" x="${x + bw / 2}" y="${yb + 11}" text-anchor="middle">yr ${k + 1}</text>`);
+    return head(b, `Cash paid each year`, 'split into principal and interest') + `<line class="mc-ax" x1="${x0 - 6}" x2="${xe + 6}" y1="${yb}" y2="${yb}"/>` + o
+      + cashLine(x0 - 6, xe + 6, yb - s(S.pay))
+      + key(b.x + 12, b.y + 46, [['mc-prin', 'principal → financing', 'l'], ['mc-int', 'interest → operating or financing', 'x'], ['dash', `cash paid: ${f1(S.pay)} every year`, 'm']]);
+  };
+
+  // A year in full, for a tapped bar: the liability roll-forward with the interest sum, depreciation, P&L, cash and the entries.
+  const yearNote = (k) => {
+    const { pay, adv, n, rate } = S, f = S.fy[k], r = pct(rate), DEPk = S.DEPS[k];
+    const je = [];
+    const add = (...lines) => { je.push(...lines); return je.filter((l) => l.startsWith('Dr')).length - 1; }; // index of the entry just added
+    if (adv && !k) add('… day 1: the first payment (part of the ROU cost)', `Dr {a|ROU asset} :: ${f1(pay)}`, `Cr {a|Cash} :: ${f1(pay)}`);
+    const rows = [{ t: k ? 'opening (last year end)' : `day 1: PV of the ${adv ? n - 1 : n} payments still to come`, v: f.start }];
+    let cashI = 0, cash = 0;
+    f.ev.forEach((e) => {
+      if (e.kind === 'int') {
+        const g = add(`… interest${e.m < 12 ? `, ${e.m} months` : ''}`, `Dr {x|Interest expense} :: ${f1(e.amt)}`, `Cr {l|Lease liability} :: ${f1(e.amt)}`);
+        rows.push({ op: '+', t: `interest${S.part ? ` (lease year ${e.ly})` : ''}: ${f1(e.base)} × ${r}${e.m < 12 ? ` × ${e.m}/12` : ''}`, v: e.amt, link: g });
+      } else {
+        const g = add(`… payment${adv ? ', start' : ', end'} of lease year ${e.ly}`, `Dr {l|Lease liability} :: ${f1(e.amt)}`, `Cr {a|Cash} :: ${f1(e.amt)}`);
+        rows.push({ op: '−', t: `payment${adv ? ', start' : ', end'} of lease year ${e.ly}`, v: e.amt, link: g });
+        cash += e.amt; cashI += e.intPart;
+      }
+      rows.push({ op: '=', t: 'balance', v: e.bal });
+    });
+    rows[rows.length - 1].t = 'year end'; // the last balance is the year end
+    if (rows.length === 1) rows.push({ op: '=', t: 'year end (nothing happened)', v: f.end });
+    const gDep = add(`… year end: depreciation${f.depM < 12 ? `, ${f.depM} months` : ''}`, `Dr {x|Depreciation expense} :: ${f1(DEPk)}`, `Cr {a|Accumulated depreciation} :: ${f1(DEPk)}`);
+    const intK = S.INT[k];
+    if (adv && !k) cash += pay;
+    return { h: `Year ${k + 1} in full (**${S.mode}**${S.part ? ', starts 1 October' : ''})`,
+      what: `Interest is always the rate × the balance owed during the lease year, so it falls as the liability is paid down; depreciation stays the same every full year.${S.part ? ' The lease starts on 1 October, so this financial year takes its months from the lease years it overlaps.' : ''}${k ? ` Compare year 1: interest ${f1(S.INT[0])}.` : ''}`,
+      ex: ['**{l|Lease liability}**', { calc: rows },
+        '**{a|ROU asset}**', { calc: [{ t: 'carrying amount, start of the year', v: S.ROU[k] }, { op: '−', t: `{x|depreciation}: ${f1(S.cost)} ÷ ${n} years${f.depM < 12 ? ` × ${f.depM}/12` : ''}`, v: DEPk, link: gDep }, { op: '=', t: 'carrying amount, year end', v: S.ROU[k + 1] }] },
+        '**Profit or loss**', { calc: [{ t: '{x|depreciation}', v: DEPk }, { op: '+', t: '{x|interest}', v: intK }, { op: '=', t: 'expense for the year', v: DEPk + intK }] },
+        '**Cash flow**', cash ? { calc: [{ t: 'interest → operating or financing', v: cashI }, { op: '+', t: 'principal → financing', v: cash - cashI }, { op: '=', t: 'cash paid', v: cash }] } : 'No payment falls in this year.'],
+      je };
+  };
+
+  const sec = (s) => `<g class="sec ${s.cls}"><rect x="${s.x}" y="0" width="${s.w}" height="${H}" rx="10"/><text x="${s.x + 12}" y="19">${esc(s.t)}</text></g>`;
+  let cur = '';
+  const render = () => { S = schedule(mode, start); RIGHT = stretch(right(S)); document.getElementById('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:${Math.round(W * 1.34)}px" role="img" aria-label="Lease test, day 1, each year and year end for the lessee">
+    <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1.2 L10 5 L0 8.8 L2.2 5 Z" class="fl-ah"/></marker></defs>
+    ${SECTIONS.map(sec).join('')}
+    <g transform="translate(${LEFT.at[0]},${LEFT.at[1]}) scale(${LEFT.scale})">${draw(LEFT)}</g>
+    ${draw(RIGHT)}<g class="mc">${balChart()}${plChart()}${cashChart()}</g></svg>`; show(cur); };
+
+  // Journal entries in the note: one green box per entry. A '…' line labels the next entry; a Dr after a Cr starts a new one.
+  const jeHtml = (lines) => {
+    const groups = [];
+    let g = null, label = '';
+    lines.forEach((l) => {
+      if (l.startsWith('…')) { label = l.slice(1).trim(); g = null; return; }
+      if (!g || (l.startsWith('Dr') && g.lines.length && g.lines[g.lines.length - 1].startsWith('Cr'))) { g = { label, lines: [] }; groups.push(g); label = ''; }
+      g.lines.push(l);
+    });
+    const line = (l) => { const [acc, amt] = l.split(' :: '); return `<span class="jl${l.startsWith('Cr') ? ' cr' : ''}"><span>${md(acc)}</span>${amt ? `<span class="amt">${amt}</span>` : ''}</span>`; };
+    return `<div class="jes">${groups.map((x, gi) => `<div class="je" data-g="${gi}">${x.label ? `<span class="jn">${md(x.label)}</span>` : ''}${x.lines.map(line).join('')}</div>`).join('')}</div>`;
+  };
+  // Note text: lines starting "- " become a bulleted list.
+  const blocks = (t) => {
+    const out = [];
+    let ul = null;
+    t.split('\n').forEach((line) => {
+      if (line.startsWith('- ')) { if (!ul) out.push((ul = [])); ul.push(line.slice(2)); } else { ul = null; out.push(line); }
+    });
+    const lines = (p) => p.split(/(?<=[.!?:])\s+(?=[A-Z(])/).map(md).join('<br>'); // one sentence per line
+    // a list of + / − / = steps is a sum: the signs already act as bullets, so no dots
+    const sum = (b) => b.length > 1 && b.slice(1).every((i) => /^[+−=-] /.test(i));
+    return out.map((b) => (Array.isArray(b) ? `<ul${sum(b) ? ' class="ops"' : ''}>${b.map((i) => `<li>${md(i)}</li>`).join('')}</ul>` : `<p>${lines(b)}</p>`)).join('');
+  };
+  // Example box: lines of text and calc tables (one named step per row). Amounts with a link get a dotted curve to their entry.
+  const exHtml = (items) => `<div class="ex"><b><em>Example</em></b>${items.map((it) => (typeof it === 'string' ? `<p>${md(it)}</p>`
+    : `<table class="calc">${it.calc.map((r) => `<tr class="${r.op === '=' ? 'tot' : ''}"><td class="op">${r.op || ''}</td><td>${md(r.t)}</td><td class="amt"${r.link != null ? ` data-link="${r.link}"` : ''}>${r.vt || f1(r.v)}</td></tr>`).join('')}</table>`)).join('')}</div>`;
+  // Dotted curves from an amount in the example to the entry box that uses it (drawn over the note).
+  const drawLinks = () => {
+    note.querySelectorAll('svg.links').forEach((x) => x.remove());
+    const box = note.getBoundingClientRect();
+    let paths = '';
+    note.querySelectorAll('[data-link]').forEach((el) => {
+      const [gi, li] = String(el.dataset.link).split('.'); // 'entry' or 'entry.line'
+      const g = note.querySelector(`.je[data-g="${gi}"]`);
+      if (!g) return;
+      const a = el.getBoundingClientRect(), t = (g.querySelectorAll('.jl')[+li || 0] || g).getBoundingClientRect();
+      const x1 = a.right - box.left + 6, y1 = a.top + a.height / 2 - box.top, x2 = t.left - box.left - 8, y2 = t.top + t.height / 2 - box.top;
+      if (x2 < x1 + 30) return; // entries stacked below the text: no room for a curve
+      const dx = Math.min(140, (x2 - x1) / 2);
+      paths += `<path d="M${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}"/><circle cx="${x2}" cy="${y2}" r="2"/>`;
+    });
+    if (paths) note.insertAdjacentHTML('beforeend', `<svg class="links" width="${box.width}" height="${box.height}">${paths}</svg>`);
+  };
+  window.addEventListener('resize', () => drawLinks());
+  const note = document.getElementById('note');
+  function show(id) {
+    cur = id;
+    document.querySelectorAll('.fl-n').forEach((g) => g.classList.toggle('tapped', g.dataset.id === id));
+    document.querySelectorAll('.mc-bar').forEach((g) => g.classList.toggle('sel', id === g.dataset.note));
+    let n = id && id.startsWith('yr:') ? yearNote(+id.slice(3)) : (id && NOTES[id]) || ALL;
+    if (typeof n === 'function') n = n(S);
+    note.classList.toggle('has-je', !!n.je);
+    note.innerHTML = `<div class="txt"><h3>${md(n.h)}</h3>${blocks(n.what)}${n.ex ? exHtml(n.ex) : ''}${n.why ? `<div class="why"><b>Why</b>${blocks(n.why)}</div>` : ''}${n.traps ? `<div class="traps"><b>Traps</b><ul>${n.traps.map((t) => `<li>${md(t)}</li>`).join('')}</ul></div>` : ''}</div>${n.je ? jeHtml(n.je) : ''}`;
+    drawLinks();
+  }
+  const chart = document.getElementById('chart');
+  chart.addEventListener('click', (e) => {
+    const bar = e.target.closest('[data-note]');
+    if (bar) return show(bar.dataset.note);
+    const n = e.target.closest('.fl-n');
+    if (n) show(n.dataset.id);
+  });
+  chart.addEventListener('keydown', (e) => { const n = e.target.closest('.fl-n'); if (n && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(n.dataset.id); } });
+  // Arrears / advance switch: everything that depends on the timing redraws.
+  const modeBar = document.getElementById('mode');
+  const setMode = (m) => { mode = m; modeBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.m === m)); render(); };
+  modeBar.addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (b) setMode(b.dataset.m); });
+  const startBar = document.getElementById('start');
+  const setStart = (v) => { start = v; startBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.s === v)); if (cur.startsWith('yr:') && +cur.slice(3) >= schedule(mode, v).fyN) cur = ''; render(); };
+  startBar.addEventListener('click', (e) => { const b = e.target.closest('[data-s]'); if (b) setStart(b.dataset.s); });
+  startBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.s === start));
+  setMode('arrears');
+  if (document.fonts) document.fonts.ready.then(render);
+})();
+</script>
+</body>
+</html>
