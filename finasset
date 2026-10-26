@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Financial Assets Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<!-- B1.4 Basic financial assets: classify, then four tracks (amortised cost, FVOCI debt, FVTPL, FVOCI equity) side by side through day 1, each year, sale, and year 1 compared.
+     Same look as apps/study (tokens and flow widget copied from apps/study/src). -->
+<style>
+:root {
+  --paper: #f5f6f2;
+  --card: #ffffff;
+  --ink: #1a222b;
+  --muted: #5b6570;
+  --rule: #d9ddd5;
+  --think: #a8661a;
+  --think-bg: #fbf1e3;
+  --el-a: #1f7a44;
+  --el-l: #b3261e;
+  --el-x: #8a5a2b;
+  --el-i: #1d5fb4;
+  --el-e: #6e3ba8;
+  --el-n: #6b7280;
+  --here: #1e9e5a; --here-bg: #e8f5ed; --star: #c48f00; --star-bg: #fdf5d8; --accent: #0e6e74;
+  --pt-map: #2e8b57; --pt-think: #a8661a; --pt-theory: #5b6570; --pt-worked: #c2571a; --pt-check: #4a90d9; --pt-compare: #6f6a12; --pt-types: #1a222b; --pt-quiz: #1f4fa8;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+    --think: #e2a35a; --think-bg: #2a2117;
+    --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+    --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+    --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161b; --card: #1a2027; --ink: #e6e8e3; --muted: #9aa3ad; --rule: #2e3640;
+  --think: #e2a35a; --think-bg: #2a2117;
+  --el-a: #5cc488; --el-l: #f2786d; --el-x: #d29d63; --el-i: #74a9f2; --el-e: #b993ea; --el-n: #9aa3ae;
+  --pt-map: #6fd39a; --pt-think: #e2a35a; --pt-theory: #9aa3ad; --pt-worked: #f08a52; --pt-check: #8cc4f5; --pt-compare: #c9c25a; --pt-types: #e6e8e3; --pt-quiz: #7ea6f2;
+  --here: #4fd08a; --here-bg: #14271c; --star: #f2c94c; --star-bg: #2a2412; --accent: #4fc3cc;
+  color-scheme: dark;
+}
+
+
+:root {
+  --font-chart: "Inter", "Public Sans", system-ui, sans-serif;
+  --sec-1: color-mix(in srgb, #f3d36b 24%, var(--card)); --sec-1-ink: #8a6a00;
+  --sec-2: color-mix(in srgb, #8bb6ea 20%, var(--card)); --sec-2-ink: #2f5f9e;
+  --sec-3: color-mix(in srgb, #b9a0e6 20%, var(--card)); --sec-3-ink: #6a47a8;
+  --sec-4: color-mix(in srgb, #f0a868 20%, var(--card)); --sec-4-ink: #a2581a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; } }
+:root[data-theme="dark"] { --sec-1-ink: #e9c45a; --sec-2-ink: #8fb8f0; --sec-3-ink: #c1a6f0; --sec-4-ink: #f0b27a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--font-body); -webkit-text-size-adjust: 100%; }
+main { max-width: none; margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; line-height: 1.25; margin: 0; }
+p { margin: 0; }
+.eyebrow { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--accent); }
+.el { font-weight: 600; }
+.el-r { color: #e3170a; } .el-a { color: var(--el-a); } .el-l { color: var(--el-l); } .el-x { color: var(--el-x); } .el-i { color: var(--el-i); } .el-e { color: var(--el-e); } .el-n { color: var(--el-n); }
+
+/* The chart: three sections side by side in one SVG; scrolls sideways on a narrow screen */
+.fl-box { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 8px; overflow-x: auto; }
+.fl-box svg { display: block; max-width: none; height: auto; font-family: var(--font-chart); font-feature-settings: "tnum", "cv11"; }
+.sec rect { stroke: none; }
+.sec-1 rect { fill: var(--sec-1); } .sec-2 rect { fill: var(--sec-2); } .sec-3 rect { fill: var(--sec-3); } .sec-4 rect { fill: var(--sec-4); }
+.sec text { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sec-1 text { fill: var(--sec-1-ink); } .sec-2 text { fill: var(--sec-2-ink); } .sec-3 text { fill: var(--sec-3-ink); } .sec-4 text { fill: var(--sec-4-ink); }
+.fl-info2 rect, .fl-info3 rect { fill: var(--card); stroke-dasharray: 3 2; stroke-width: 1.2; }
+.fl-info2 rect { stroke: var(--sec-2-ink); } .fl-info2 .fl-t { fill: var(--sec-2-ink); }
+.fl-info3 rect { stroke: var(--sec-3-ink); } .fl-info3 .fl-t { fill: var(--sec-3-ink); }
+.fl-pstep rect { fill: var(--card); stroke: var(--sec-4-ink); stroke-width: 1.4; }
+.xlink { margin-left: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--accent); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.mode { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
+.mode button { font: inherit; color: var(--ink); border: 1px solid var(--rule); background: var(--card); border-radius: 999px; padding: 3px 11px; cursor: pointer; }
+.mode button.on { background: var(--sec-2-ink); border-color: var(--sec-2-ink); color: #fff; }
+.topbar .mode + .mode { margin-left: 8px; }
+.fl-n { cursor: pointer; outline: none; }
+.fl-n rect { stroke-width: 1.1; }
+.fl-n .fl-t { font-size: 10px; font-weight: 650; fill: var(--ink); }
+.fl-n .fl-s { font-size: 8.2px; font-weight: 400; fill: var(--muted); }
+.fl-n .fl-li { fill: var(--ink); }
+.fl-n .fl-num { fill: var(--sec-3-ink); stroke: none; }
+.fl-n .fl-numt { font-size: 6.4px; font-weight: 700; fill: #fff; }
+.fl-n .fl-tag { font-size: 7.8px; font-style: italic; font-weight: 600; fill: var(--sec-3-ink); }
+.fl-n .fl-je { font: 500 7.8px var(--font-mono); fill: var(--ink); }
+.fl-n .fl-hr { stroke: var(--rule); stroke-dasharray: 2 2; }
+.fl-n tspan.el-a { fill: var(--el-a); font-weight: 600; } .fl-n tspan.el-l { fill: var(--el-l); font-weight: 600; }
+.fl-n tspan.el-x { fill: var(--el-x); font-weight: 600; } .fl-n tspan.el-r { fill: #e3170a; font-weight: 700; } .fl-n tspan.el-n { fill: var(--muted); font-weight: 400; }
+.fl-q rect { fill: color-mix(in srgb, var(--accent) 8%, var(--card)); stroke: var(--accent); }
+.fl-no rect { fill: color-mix(in srgb, #d23b32 11%, var(--card)); stroke: #c0392b; }
+.fl-no .fl-t { fill: #b3261e; }
+.fl-yes rect, .fl-gold rect { fill: color-mix(in srgb, #2fa865 13%, var(--card)); stroke: var(--el-a); }
+.fl-gold rect { stroke: var(--star); stroke-width: 2.6; }
+.fl-gold.fl-dash rect { stroke-width: 2; stroke-dasharray: 6 4; }
+.fl-exit rect { fill: color-mix(in srgb, #e05aa0 12%, var(--card)); stroke: #c2417f; }
+.fl-asset rect { fill: color-mix(in srgb, var(--el-a) 12%, var(--card)); stroke: var(--el-a); stroke-width: 1.8; }
+.fl-asset .fl-t { fill: var(--el-a); }
+.fl-liab rect { fill: color-mix(in srgb, var(--el-l) 10%, var(--card)); stroke: var(--el-l); stroke-width: 1.8; }
+.fl-liab .fl-t { fill: var(--el-l); }
+.fl-lstep rect, .fl-astep rect, .fl-chart rect { fill: var(--card); stroke: color-mix(in srgb, var(--ink) 18%, transparent); filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .06)); }
+.fl-lstep rect { stroke: var(--el-l); stroke-width: 1.4; }
+.fl-astep rect { stroke: var(--el-a); stroke-width: 1.4; }
+.fl-n:hover rect { stroke-width: 2; }
+.fl-n.tapped rect { stroke-width: 2.8; }
+.fl-e path { fill: none; stroke: var(--muted); stroke-width: 1.15; }
+.fl-e.dashed path { stroke-dasharray: 4 3; }
+.fl-e text { font-size: 8.2px; fill: var(--muted); }
+.fl-ah { fill: var(--muted); stroke: var(--muted); stroke-width: .6; stroke-linejoin: round; }
+.fl-j circle { fill: var(--card); stroke: var(--muted); }
+.fl-j text { font-size: 8.6px; font-weight: 600; fill: var(--ink); }
+/* mini charts */
+.mc-a { fill: none; stroke: var(--el-a); stroke-width: 2; }
+.mc-l { fill: none; stroke: var(--el-l); stroke-width: 2; }
+.mc-gap { fill: color-mix(in srgb, var(--muted) 16%, transparent); }
+.mc-ax { stroke: var(--rule); }
+.mc-dep { fill: color-mix(in srgb, var(--el-x) 45%, var(--card)); }
+.mc-int { fill: var(--el-x); }
+.mc-rent { stroke: var(--ink); stroke-dasharray: 3 3; stroke-width: 1; }
+.mc-lbl { font-size: 7.6px; font-weight: 600; }
+.mc-lbl.m { font-size: 7px; }
+.mc { pointer-events: none; } /* taps go to the box underneath, except the bars */
+.mc .mc-bar { pointer-events: auto; cursor: pointer; }
+.mc-hit { fill: transparent; }
+.mc-bar:hover .mc-hit { fill: color-mix(in srgb, var(--ink) 6%, transparent); }
+.mc-bar.sel .mc-hit { fill: color-mix(in srgb, var(--ink) 10%, transparent); }
+.mc-bar.sel rect:not(.mc-hit) { stroke: var(--ink); stroke-width: .8; }
+.mc-h2 { font-size: 7.8px; font-weight: 500; fill: var(--muted); }
+.je .jl { display: flex; justify-content: space-between; gap: 18px; }
+.je .amt { font-variant-numeric: tabular-nums; }
+.mc-h { font-size: 8.6px; font-weight: 650; fill: var(--ink); }
+.mc-lb { fill: color-mix(in srgb, var(--el-l) 70%, var(--card)); } .mc-ab { fill: color-mix(in srgb, var(--el-a) 70%, var(--card)); }
+.mc-lb.up { fill: color-mix(in srgb, var(--el-l) 45%, var(--card)); }
+.mc-sg { font-size: 6.5px; font-weight: 700; fill: var(--el-l); }
+.mc-dl, .mc-da { fill: none; stroke-width: 1; stroke-dasharray: 1.5 2; stroke-linecap: round; }
+.mc-dl { stroke: var(--el-l); } .mc-da { stroke: var(--el-a); }
+.mc-prin { fill: color-mix(in srgb, var(--el-l) 40%, var(--card)); }
+.mc-lbl.a { fill: var(--el-a); } .mc-lbl.l { fill: var(--el-l); } .mc-lbl.x { fill: var(--el-x); } .mc-lbl.m { fill: var(--muted); font-weight: 400; }
+/* the note under the chart */
+.note { max-width: 1500px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px; min-height: 4em; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 20px; font-size: .78rem; line-height: 1.5; }
+.note.has-je { grid-template-columns: minmax(0, 1fr) minmax(220px, 340px); }
+@media (max-width: 720px) { .note.has-je { grid-template-columns: minmax(0, 1fr); } }
+.note .txt { display: flex; flex-direction: column; gap: 6px; }
+.note ul { margin: 2px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 2px; }
+.note ul.ops { list-style: none; padding-left: .6em; }
+.note .why p + p, .note .why ul + p { margin-top: 4px; }
+.note h3 { margin: 0; font: 600 .88rem var(--font-display); }
+.note .why { border-left: 3px solid var(--star); padding-left: 10px; }
+.note { position: relative; }
+.note .ex { background: color-mix(in srgb, var(--ink) 5%, var(--card)); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
+.note .ex > b { font-size: .72rem; font-weight: 600; color: var(--muted); }
+table.calc { align-self: flex-start; border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+table.calc td { padding: 1px 0; vertical-align: baseline; }
+table.calc td.op { width: 1.3em; color: var(--muted); font-weight: 600; }
+table.calc td.amt { text-align: right; padding-left: 28px; font-weight: 600; white-space: nowrap; }
+table.calc tr.tot td { border-top: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); padding-top: 2px; }
+svg.links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+svg.links path { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+svg.links circle { fill: var(--muted); }
+.note .traps { border-left: 3px solid #e3170a; padding-left: 10px; }
+.note .traps > b { color: #e3170a; display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.note .why > b { color: var(--star); display: block; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; }
+.jes { display: flex; flex-direction: column; gap: 8px; align-self: start; }
+.je { font: 500 .72rem/1.55 var(--font-mono); background: color-mix(in srgb, var(--el-a) 7%, var(--card)); border: 1px solid color-mix(in srgb, var(--el-a) 35%, transparent); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; }
+.je .cr { padding-left: 1.6em; }
+.je .jn { font-family: var(--font-body); font-size: .68rem; color: var(--muted); }
+.sec-5 rect { fill: color-mix(in srgb, #6cc3b4 22%, var(--card)); } .sec-5 text { fill: #1f7a6c; }
+.fl-n tspan.el-i { fill: var(--el-i); font-weight: 600; } .fl-n tspan.el-e { fill: var(--el-e); font-weight: 600; }
+/* the four tracks: amortised cost (asset green), FVOCI (OCI purple), FVTPL (P&L blue) */
+.fl-L1 rect, .fl-L2 rect, .fl-L3 rect, .fl-L4 rect { fill: var(--card); stroke-width: 1.4; filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .06)); }
+.fl-L1 rect { stroke: var(--el-a); } .fl-L2 rect, .fl-L4 rect { stroke: var(--el-e); } .fl-L3 rect { stroke: var(--el-i); }
+.fl-L4 rect { stroke-dasharray: 5 3; }
+.fl-H1 rect, .fl-H2 rect, .fl-H3 rect, .fl-H4 rect { stroke-width: 1.8; }
+.fl-H1 rect { fill: color-mix(in srgb, var(--el-a) 12%, var(--card)); stroke: var(--el-a); } .fl-H1 .fl-t { fill: var(--el-a); }
+.fl-H2 rect, .fl-H4 rect { fill: color-mix(in srgb, var(--el-e) 11%, var(--card)); stroke: var(--el-e); } .fl-H2 .fl-t, .fl-H4 .fl-t { fill: var(--el-e); }
+.fl-H4 rect { stroke-dasharray: 5 3; }
+.fl-H3 rect { fill: color-mix(in srgb, var(--el-i) 10%, var(--card)); stroke: var(--el-i); } .fl-H3 .fl-t { fill: var(--el-i); }
+.fl-plain rect { stroke: var(--rule); stroke-dasharray: 3 2; filter: none; } .fl-plain .fl-t { fill: var(--muted); }
+.fl-dim { opacity: .38; }
+.mc-pl { fill: var(--el-i); } .mc-oci { fill: var(--el-e); }
+.mc-lbl.i { fill: var(--el-i); } .mc-lbl.e { fill: var(--el-e); }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="eyebrow">B1.4 Basic financial assets <a class="xlink" href="liabilities-borrowing.html">the mirror: financial liabilities →</a></div>
+    <div class="mode" id="mode" role="group" aria-label="Example">Example
+      <button data-m="bond">a bond (debt): ,327, 6%</button><button data-m="shares">shares (equity): Acorn, practice Q31–34</button></div>
+  </div>
+  <div class="fl-box" id="chart"></div>
+  <div class="note" id="note" aria-live="polite"></div>
+</main>
+<script>
+// Worked examples behind every number (the study app's numbers, apps/study/content/financial-assets.js):
+// - the bond: 3 years, face $100,000, 5% coupon paid yearly, market (effective) rate 6%, so it costs $97,327; fair value $99,000 at the end of year 1;
+//   "on sale": sold at the start of year 2 for $99,000.
+// - the shares: the official practice paper's Acorn case (Q31–34). 250,000 Oak shares at $1.25 + $2,350 brokerage; dividend $5,500;
+//   $1.35 at the year end; 100,000 sold at $1.20 three months later; dividend $3,150; $1.05 at the next year end.
+// The switch picks the example. Tracks the example cannot use are dimmed (shares fail SPPI; a bond cannot be elected into FVOCI equity).
+const f1 = (n) => `${n < -0.5 ? '−' : ''}$${Math.abs(Math.round(n)).toLocaleString('en-US')}`;
+const n0 = (n) => `${n < -0.5 ? '−' : ''}${Math.abs(Math.round(n)).toLocaleString('en-US')}`;
+const nb = (s) => s.replace(/ /g, ' ');
+const BOND = (() => {
+  const face = 100000, c = 0.05, r = 0.06, n = 3, fv1 = 99000, sale = 99000, r0 = Math.round;
+  const cost = r0([1, 2, 3].reduce((a, t) => a + face * c / (1 + r) ** t, 0) + face / (1 + r) ** n);
+  const rows = [];
+  let b = cost;
+  for (let t = 1; t <= n; t++) { const i = t === n ? face + face * c - b : r0(b * r); rows.push({ t, open: b, i, coupon: face * c, close: b + i - face * c }); b += i - face * c; }
+  const ac1 = rows[0].close, i1 = rows[0].i, coupon = face * c;
+  const B = { face, c, r, n, fv1, sale, cost, rows, ac1, i1, coupon, oci1: fv1 - ac1, fvGain: fv1 - cost, gainAC: sale - ac1 };
+  B.tpl1 = coupon + B.fvGain;
+  if (cost !== 97327 || i1 !== 5840 || ac1 !== 98167 || B.oci1 !== 833 || B.tpl1 !== 6673) throw new Error('bond numbers changed');
+  if (i1 + B.gainAC !== B.tpl1) throw new Error('bond: lifetime profit should match across categories');
+  return B;
+})();
+const SH = (() => {
+  const A = { qty: 250000, p0: 1.25, broker: 2350, div1: 5500, p1: 1.35, sold: 100000, pSale: 1.2, div2: 3150, p2: 1.05 }, r0 = Math.round;
+  A.cost = r0(A.qty * A.p0); A.paid = A.cost + A.broker; A.fv1 = r0(A.qty * A.p1);
+  A.gain1 = A.fv1 - A.cost; A.oci1 = A.fv1 - A.paid;
+  A.saleCA = r0(A.sold * A.p1); A.proceeds = r0(A.sold * A.pSale); A.saleLoss = A.saleCA - A.proceeds;
+  A.left = A.qty - A.sold; A.loss2 = r0(A.left * (A.p1 - A.p2)); A.ca2 = r0(A.left * A.p2);
+  A.tpl1 = A.div1 + A.gain1 - A.broker; // FVTPL profit, year 1
+  A.soldCost = r0(A.paid * A.sold / A.qty); A.toRE = A.proceeds - A.soldCost; // FVOCI equity: cumulative OCI on the shares sold, may move to retained earnings
+  if (A.paid !== 314850 || A.gain1 !== 25000 || A.saleLoss !== 15000 || A.loss2 !== 45000) throw new Error('Acorn numbers changed');
+  return A;
+})();
+
+// Lanes, top to bottom. `ok` = which example can use the lane.
+const LANES = [
+  { k: 'L1', t: 'Amortised cost', sub: ['debt only'], ok: ['bond'] },
+  { k: 'L2', t: 'FVOCI (debt)', sub: ['OCI, recycled'], ok: ['bond'] },
+  { k: 'L3', t: 'FVTPL', sub: ['all through P&L'], ok: ['bond', 'shares'] },
+  { k: 'L4', t: 'FVOCI (equity)', sub: ['OCI, never recycled'], ok: ['shares'] },
+];
+const LY = [30, 152, 274, 396], LH = 112; // lane tops and box height
+const NA = { bond: 'n/a for the bond: switch to shares', shares: 'n/a: shares fail the SPPI test' };
+
+// Section 1, drawn at LEFT.scale. Exits sit on the four lanes (lane centres in these units: 53, 195, 337, 479).
+const LEFT = {
+  at: [6, 40], scale: 0.86,
+  nodes: [
+    { id: 'debt', x: 8, y: 8, w: 170, h: 38, k: 'q', t: 'A debt instrument', sub: ['a bond, a loan, a receivable'] },
+    { id: 'sppi', x: 8, y: 76, w: 170, h: 44, k: 'q', t: 'SPPI test', sub: ['cash flows only principal + interest?'] },
+    { id: 'bm', x: 8, y: 152, w: 170, h: 44, k: 'q', t: 'Business model?', sub: ['why the assets are held'] },
+    { id: 'other', x: 8, y: 236, w: 170, h: 46, k: 'no', t: 'Anything else', sub: ['fails SPPI, held to trade,', 'or the fair value option'] },
+    { id: 'shares', x: 8, y: 392, w: 170, h: 38, k: 'q', t: 'Shares (equity)', sub: ['no fixed cash flows: fail SPPI'] },
+    { id: 'elect', x: 8, y: 456, w: 170, h: 46, k: 'exit', t: 'Elect FVOCI?', sub: ['not held for trading;', 'irrevocable, on day 1'] },
+    { id: 'r1', x: 370, y: 33, w: 106, h: 40, k: 'gold', t: 'Amortised cost' },
+    { id: 'r2', x: 370, y: 175, w: 106, h: 40, k: 'gold', t: 'FVOCI (debt)' },
+    { id: 'r3', x: 370, y: 317, w: 106, h: 40, k: 'gold', t: 'FVTPL' },
+    { id: 'r4', x: 370, y: 459, w: 106, h: 40, k: 'gold', t: 'FVOCI (equity)' },
+  ],
+  joins: [{ id: 'or', cx: 344, cy: 337, t: 'or' }],
+  edges: [
+    { d: 'M93 46 V75' },
+    { d: 'M93 120 V151', lab: 'yes', lx: 98, ly: 140 },
+    { d: 'M8 98 C -3 98, -3 259, 7 259', lab: 'no', lx: 3, ly: 140 },
+    { d: 'M178 166 C 300 166, 300 53, 369 53', lab: 'hold to collect', lx: 232, ly: 112 },
+    { d: 'M178 182 C 280 182, 280 195, 369 195', lab: 'collect and sell', lx: 226, ly: 180 },
+    { d: 'M93 196 V235', lab: 'other', lx: 98, ly: 220 },
+    { d: 'M178 259 C 300 259, 300 337, 332 337' },
+    { d: 'M93 430 V455' },
+    { d: 'M178 479 H369', lab: 'yes', lx: 300, ly: 474 },
+    { d: 'M178 470 C 300 470, 300 337, 332 337', lab: 'no', lx: 262, ly: 420 },
+    { d: 'M355 337 H369' },
+  ],
+};
+
+// Sections 2–5. Each lane's boxes follow the switch: the example line, or "n/a" (dimmed) when the example can't use the lane.
+const right = (S) => {
+  const B = BOND, A = SH, bond = S.ex === 'bond', na = (i) => !LANES[i].ok.includes(S.ex);
+  const nodes = [], edges = [];
+  const lane = (i, id, x, w, o) => {
+    const dim = na(i);
+    nodes.push({ id, x, y: LY[i], w, h: LH, k: `${LANES[i].k}${o.plain ? ' fl-plain' : ''}${dim ? ' fl-dim' : ''}`, ...o, after: dim ? [`{n|${NA[S.ex]}}`] : o.after });
+  };
+  LANES.forEach((L, i) => {
+    nodes.push({ id: `h${i + 1}`, x: 456, y: LY[i] + 34, w: 104, h: 44, k: `H${i + 1}${na(i) ? ' fl-dim' : ''}`, t: L.t, sub: L.sub });
+    edges.push({ d: `M${(6 + 476 * 0.86).toFixed(1)} ${LY[i] + 56} H455` }, { d: `M560 ${LY[i] + 56} H575` }, { d: `M772 ${LY[i] + 56} H805` }, { d: `M1032 ${LY[i] + 56} H1047` }, { d: `M1206 ${LY[i] + 56} H1243` }, { d: `M1456 ${LY[i] + 56} H1493` });
+  });
+  // Day 1 · initial
+  lane(0, 'd1', 576, 196, { t: 'Fair value + transaction costs', sub: ['= the price paid, plus costs', 'trade receivable: transaction price'], je: ['Dr {a|Investment in bonds}', 'Cr {a|Cash}'], after: [`example: price ${f1(B.cost)} (no costs here)`] });
+  lane(1, 'd2', 576, 196, { t: 'Fair value + transaction costs', sub: ['exactly as amortised cost'], je: ['Dr {a|Investment in bonds}', 'Cr {a|Cash}'], after: [`example: price ${f1(B.cost)}`] });
+  lane(2, 'd3', 576, 196, { t: 'Fair value; costs to P&L', sub: ['transaction costs are expensed'], je: bond ? ['Dr {a|Investment in bonds}', 'Cr {a|Cash}'] : ['Dr {a|Investment in shares}', 'Dr {x|Brokerage expense}', 'Cr {a|Cash}'],
+    after: [bond ? `example: price ${f1(B.cost)} (no costs here)` : `example: ${f1(A.cost)} + {x|${f1(A.broker)}} expensed`] });
+  lane(3, 'd4', 576, 196, { t: 'Fair value + transaction costs', sub: ['brokerage is capitalised'], je: ['Dr {a|Investment in shares}', 'Cr {a|Cash}'], after: [`example: ${f1(A.cost)} + ${f1(A.broker)} = {a|${f1(A.paid)}}`] });
+  // Each year · measure
+  lane(0, 'y1', 806, 226, { t: 'Effective interest', sub: ['interest = opening × effective rate', 'coupon is cash; the rest builds the asset'], je: ['Dr {a|Cash} {n|coupon}', 'Dr {a|Investment in bonds}', 'Cr {i|Interest income}'], after: [`year 1: ${f1(B.cost)} × 6% = {i|${f1(B.i1)}}; coupon ${f1(B.coupon)}`] });
+  lane(1, 'y2', 806, 226, { t: 'Interest as AC, then to fair value', sub: ['P&L as amortised cost; the rest → OCI'], je: ['Dr {a|Cash}, {a|Investment}', 'Cr {i|Interest income}', '', 'Dr {a|Investment in bonds}', 'Cr {e|OCI: fair value reserve}'], tags: ['interest', 'fair value'],
+    after: [`year 1: {i|${f1(B.i1)}} P&L; ${n0(B.fv1)} − ${n0(B.ac1)} = {e|${f1(B.oci1)}} OCI`] });
+  lane(2, 'y3', 806, 226, { t: 'Every change → P&L', sub: ['fair value changes, interest, dividends'], je: bond ? ['Dr {a|Cash} {n|coupon}', 'Dr {a|Investment in bonds}', 'Cr {i|Investment income}'] : ['Dr {a|Investment in shares}', 'Cr {i|Fair value gain}', '', 'Dr {a|Cash}', 'Cr {i|Dividend income}'], tags: bond ? null : ['fair value', 'dividend'],
+    after: [bond ? `year 1: coupon ${n0(B.coupon)} + FV ${n0(B.fvGain)} = {i|${f1(B.tpl1)}}` : `year 1: 250,000 × $0.10 = {i|${f1(A.gain1)}}`] });
+  lane(3, 'y4', 806, 226, { t: 'Fair value changes → OCI', sub: ['dividends still → P&L'], je: ['Dr {a|Investment in shares}', 'Cr {e|OCI: fair value reserve}', '', 'Dr {a|Cash}', 'Cr {i|Dividend income}'], tags: ['fair value', 'dividend'],
+    after: [`year 1: ${n0(A.fv1)} − ${n0(A.paid)} = {e|${f1(A.oci1)}} OCI`] });
+  // Each year · impairment
+  lane(0, 'e1', 1048, 158, { t: 'Expected credit losses', sub: ['12-month ECL; lifetime if', 'credit risk rises a lot'], je: ['Dr {x|Impairment loss}', 'Cr {a|Loss allowance}'], after: ['exam: where, not the maths'] });
+  lane(1, 'e2', 1048, 158, { t: 'Expected credit losses', sub: ['loss → P&L; allowance', 'held in OCI'], je: ['Dr {x|Impairment loss}', 'Cr {e|OCI}'], after: ['asset stays at fair value'] });
+  lane(2, 'e3', 1048, 158, { t: 'No impairment test', sub: ['fair value already shows it'], plain: true });
+  lane(3, 'e4', 1048, 158, { t: 'No impairment test', sub: ['fair value already shows it'], plain: true });
+  // On sale · derecognise
+  lane(0, 's1', 1244, 212, { t: 'Gain or loss → P&L', sub: ['proceeds − amortised cost'], je: ['Dr {a|Cash}', 'Cr {a|Investment in bonds}', 'Cr {i|Gain on sale}'], after: [`sold for ${n0(B.sale)}: − ${n0(B.ac1)} = {i|${f1(B.gainAC)}}`] });
+  lane(1, 's2', 1244, 212, { t: 'Recycle the OCI reserve', sub: ['the reserve moves to P&L'], je: ['Dr {a|Cash}', 'Cr {a|Investment in bonds}', '', 'Dr {e|OCI: fair value reserve}', 'Cr {i|Gain on sale}'], tags: ['sale', 'recycle'], after: [`{e|${f1(B.oci1)}} → P&L: same profit as AC`] });
+  lane(2, 's3', 1244, 212, { t: 'Proceeds − last fair value → P&L', sub: ['carrying amount = last fair value'], je: bond ? ['Dr {a|Cash}', 'Cr {a|Investment in bonds}'] : ['Dr {a|Cash}', 'Dr {x|Fair value loss}', 'Cr {a|Investment in shares}'],
+    after: [bond ? `${n0(B.sale)} − ${n0(B.fv1)} = 0: all already in P&L` : `${n0(A.proceeds)} − ${n0(A.saleCA)} = {x|−${f1(A.saleLoss)}}`] });
+  lane(3, 's4', 1244, 212, { t: 'No recycling', sub: ['gains and losses stay in OCI', 'reserve may move to retained earnings'], je: ['Dr {a|Cash}', 'Dr {e|OCI: fair value reserve}', 'Cr {a|Investment in shares}'], after: [`${n0(A.proceeds)} − ${n0(A.saleCA)} = {e|−${f1(A.saleLoss)}} in OCI`] });
+  // Year 1 compared: P&L, OCI, carrying amount, drawn as a mini chart in each lane
+  LANES.forEach((L, i) => lane(i, `p${i + 1}`, 1494, 244, { t: 'Year 1: where it lands', chart: true }));
+  return { nodes, edges };
+};
+const W = 1754, H = 520;
+const SECTIONS = [
+  { cls: 'sec-1', x: 0, w: 434, t: 'Classify: which category?' },
+  { cls: 'sec-2', x: 440, w: 344, t: 'Day 1 · initial' },
+  { cls: 'sec-3', x: 790, w: 432, t: 'Each year · measure, then impairment' },
+  { cls: 'sec-5', x: 1228, w: 244, t: 'On sale · derecognise' },
+  { cls: 'sec-4', x: 1478, w: 276, t: 'Year 1 compared' },
+];
+// Year-1 figures per lane for the compare charts and notes.
+const year1 = (ex) => {
+  const B = BOND, A = SH;
+  return ex === 'bond'
+    ? [{ pl: B.i1, oci: 0, ca: B.ac1 }, { pl: B.i1, oci: B.oci1, ca: B.fv1 }, { pl: B.tpl1, oci: 0, ca: B.fv1 }, null]
+    : [null, null, { pl: A.tpl1, oci: 0, ca: A.fv1 }, { pl: A.div1, oci: A.oci1, ca: A.fv1 }];
+};
+
+const BOND_EX = 'A 3-year bond, face $100,000, 5% coupon paid at each year end, bought when the market rate is 6%. Price = PV of the coupons + PV of the face value at 6% = $97,327 (a discount, because the coupon is below the market rate). Fair value at the end of year 1: $99,000.';
+const ACORN_EX = 'Acorn (practice paper Q31–34): on 4 April 20X4 it buys 250,000 Oak shares at $1.25 with a $2,350 brokerage fee. Dividend $5,500. At the year end (31 March 20X5) the price is $1.35. On 30 June 20X5 it sells 100,000 shares at $1.20. Dividend $3,150. On 31 March 20X6 the price is $1.05.';
+const NOTES = {
+  debt: { h: 'A debt instrument', what: 'An asset that gives a contractual right to receive cash: a bond, a loan, a trade receivable. Two tests decide its category: the **SPPI test** (what cash does it pay?) and the **business model** (why is it held?).' },
+  sppi: { h: 'The SPPI test', what: 'Are the contractual cash flows **solely payments of principal and interest** on the principal outstanding? A plain bond or loan passes: it pays interest and returns the principal. An instrument whose cash depends on something else (a share price, a commodity, the issuer’s profits) fails, and goes to FVTPL.',
+    traps: ['Shares **always** fail SPPI: a dividend is not interest and there is no principal to repay.'] },
+  bm: { h: 'The business model', what: 'How the entity manages the assets to generate cash, judged at portfolio level, not by intention for one asset:\n- **hold to collect** the contractual cash flows → amortised cost\n- **hold to collect and sell** → FVOCI (debt)\n- **anything else** (managed on a fair value basis, held for trading) → FVTPL',
+    ex: ['Practice Q4: debt securities held to collect the contractual cash flows, but the company is also willing to sell when the opportunity arises → **collect and sell** → FVOCI.'],
+    traps: ['“Historical cost” is not an SFRS(I) 9 category.', 'Occasional sales do not stop “hold to collect”; selling as part of the model makes it “collect and sell”.'] },
+  other: { h: 'Anything else: FVTPL', what: 'FVTPL is the default for financial assets that fail SPPI or are held in any other business model (trading, managed on a fair value basis). The **fair value option**: debt that would be at amortised cost or FVOCI may be designated at FVTPL on day 1, but only if that removes an accounting mismatch. It is irrevocable.' },
+  shares: { h: 'Shares (equity instruments)', what: 'Shares have no contractual principal or interest, so they fail SPPI. They are at **FVTPL**, unless the entity makes the FVOCI election for shares not held for trading.' },
+  elect: { h: 'The FVOCI election for shares', what: 'For shares **not held for trading**, the entity may elect on day 1 to put fair value changes in OCI instead of P&L. The election is made share by share and is **irrevocable**. Typical use: strategic, long-term holdings whose price swings would otherwise fill the P&L.',
+    traps: ['The election is never automatic: with no election (as in the Acorn case), shares are FVTPL.', 'It cannot be made later, and it cannot be undone.'] },
+  r1: { h: 'Amortised cost', what: 'Debt held to collect its cash flows. It stays at cost, rolled forward with effective interest; fair value changes are ignored.' },
+  r2: { h: 'FVOCI (debt)', what: 'Debt held to collect and sell. The P&L is exactly as at amortised cost; the balance sheet shows fair value, and the difference sits in OCI until the asset is sold, when it is recycled to P&L.' },
+  r3: { h: 'FVTPL', what: 'Everything goes through P&L: transaction costs on day 1, every fair value change, interest and dividends.' },
+  r4: { h: 'FVOCI (equity, elected)', what: 'Elected shares: fair value changes go to OCI and stay there, even on sale (no recycling). Dividends still go to P&L. No impairment test.' },
+  or: { h: 'Three ways into FVTPL', what: 'Debt that fails SPPI or is held in another business model, debt designated under the fair value option, and shares with no FVOCI election.' },
+  h1: { h: 'Amortised cost track', what: 'Day 1 at fair value + transaction costs; each year effective interest and expected credit losses; on sale, the gain or loss to P&L.' },
+  h2: { h: 'FVOCI (debt) track', what: 'Two layers: the P&L sees the amortised cost layer (effective interest, credit losses); the balance sheet adds a fair value layer, held in OCI and recycled on sale.' },
+  h3: { h: 'FVTPL track', what: 'Fair value on day 1 (costs expensed), fair value every year end, and every change in P&L.' },
+  h4: { h: 'FVOCI (equity) track', what: 'Fair value + costs on day 1, fair value changes in OCI each year, dividends in P&L, no recycling on sale.' },
+  d1: (S) => ({ h: 'Day 1: amortised cost', what: 'Initial measurement = fair value + transaction costs (the costs become part of the effective interest). A trade receivable without a significant financing component starts at its transaction price.',
+    ex: S.ex === 'bond' ? [BOND_EX, { calc: [{ t: 'PV of the coupons: $5,000 × 2.67301', v: 13365 }, { op: '+', t: 'PV of the face: $100,000 × 0.83962', v: 83962 }, { op: '=', t: '{a|investment in bonds}', v: BOND.cost, link: 0 }] }] : ['Shares fail SPPI, so they can never be at amortised cost. Switch to the bond.'],
+    je: ['… day 1', `Dr {a|Investment in bonds} :: ${f1(BOND.cost)}`, `Cr {a|Cash} :: ${f1(BOND.cost)}`] }),
+  d2: (S) => ({ h: 'Day 1: FVOCI (debt)', what: 'Exactly as amortised cost: fair value + transaction costs. On day 1 fair value = the price paid, so there is no OCI yet.',
+    ex: S.ex === 'bond' ? [{ calc: [{ t: '{a|investment in bonds}', v: BOND.cost, link: 0 }] }] : ['Shares fail SPPI. Switch to the bond.'],
+    je: ['… day 1', `Dr {a|Investment in bonds} :: ${f1(BOND.cost)}`, `Cr {a|Cash} :: ${f1(BOND.cost)}`] }),
+  d3: (S) => ({ h: 'Day 1: FVTPL', what: 'Initial measurement = fair value. Transaction costs are **expensed** at once: the asset is remeasured to fair value at the next year end anyway, so capitalised costs would only become a loss then.',
+    ex: S.ex === 'bond' ? ['The bond, if it were held to trade: price $97,327, no transaction costs.'] : [ACORN_EX, { calc: [{ t: '{a|investment}: 250,000 × $1.25', v: SH.cost, link: '0.0' }, { op: '+', t: '{x|brokerage}, expensed', v: SH.broker, link: '0.1' }, { op: '=', t: 'cash paid', v: SH.paid, link: '0.2' }] }],
+    traps: ['Capitalising the brokerage on FVTPL shares (practice Q31: the $314,850 option is wrong).'],
+    je: S.ex === 'bond' ? ['… day 1', `Dr {a|Investment in bonds} :: ${f1(BOND.cost)}`, `Cr {a|Cash} :: ${f1(BOND.cost)}`] : ['… 4 April 20X4', `Dr {a|Investment in Oak} :: ${f1(SH.cost)}`, `Dr {x|Brokerage expense (P&L)} :: ${f1(SH.broker)}`, `Cr {a|Cash} :: ${f1(SH.paid)}`] }),
+  d4: (S) => ({ h: 'Day 1: FVOCI (equity)', what: 'Fair value + transaction costs: the brokerage is part of the investment. The election is made now, share by share, and cannot be reversed.',
+    ex: S.ex === 'shares' ? ['If Acorn had elected FVOCI:', { calc: [{ t: '250,000 × $1.25', v: SH.cost }, { op: '+', t: 'brokerage, capitalised', v: SH.broker }, { op: '=', t: '{a|investment in Oak}', v: SH.paid, link: 0 }] }] : ['A bond cannot be elected into FVOCI (equity): the election is for shares only. Switch to shares.'],
+    je: ['… day 1 (if elected)', `Dr {a|Investment in Oak} :: ${f1(SH.paid)}`, `Cr {a|Cash} :: ${f1(SH.paid)}`] }),
+  y1: (S) => ({ h: 'Each year: effective interest', what: 'Interest income = opening carrying amount × effective (market) rate, not the coupon. The coupon is the cash received; the difference builds the carrying amount up towards face value (a discount bond) or down to it (a premium bond). Fair value changes are ignored.',
+    ex: [{ calc: [{ t: 'opening carrying amount', v: BOND.cost }, { op: '+', t: '{i|interest}: $97,327 × 6%', v: BOND.i1, link: '0.2' }, { op: '−', t: 'coupon received: $100,000 × 5%', v: BOND.coupon, link: '0.0' }, { op: '=', t: 'carrying amount, end of year 1', v: BOND.ac1 }] },
+      { calc: BOND.rows.map((r) => ({ t: `year ${r.t}: ${n0(r.open)} × 6% = interest ${n0(r.i)}, closing`, v: r.close })) }],
+    traps: ['Interest at the coupon rate on face value ($5,000) instead of the effective rate on the carrying amount ($5,840).'],
+    je: ['… end of year 1', `Dr {a|Cash} {n|coupon} :: ${f1(BOND.coupon)}`, `Dr {a|Investment in bonds} :: ${f1(BOND.i1 - BOND.coupon)}`, `Cr {i|Interest income} :: ${f1(BOND.i1)}`] }),
+  y2: (S) => ({ h: 'Each year: FVOCI (debt)', what: 'Two layers. Layer 1 is the amortised cost: interest income at the effective rate, exactly as for amortised cost, so the **profit is the same**. Layer 2 tops the carrying amount up (or down) to fair value; that adjustment goes to OCI and builds the fair value reserve.\nNext year’s interest is still worked on **amortised cost**, not on fair value.',
+    ex: [{ calc: [{ t: 'amortised cost, end of year 1', v: BOND.ac1 }, { op: '+', t: '{e|to fair value} (OCI)', v: BOND.oci1, link: 1 }, { op: '=', t: 'fair value, end of year 1', v: BOND.fv1 }] }, { calc: [{ t: '{i|interest} to P&L (as amortised cost)', v: BOND.i1, link: '0.2' }] }],
+    traps: ['Working year-2 interest on fair value ($99,000) instead of amortised cost ($98,167).', 'Sending the fair value change to P&L.'],
+    je: ['… end of year 1: interest', `Dr {a|Cash} :: ${f1(BOND.coupon)}`, `Dr {a|Investment in bonds} :: ${f1(BOND.i1 - BOND.coupon)}`, `Cr {i|Interest income} :: ${f1(BOND.i1)}`, '… end of year 1: to fair value', `Dr {a|Investment in bonds} :: ${f1(BOND.oci1)}`, `Cr {e|OCI: fair value reserve} :: ${f1(BOND.oci1)}`] }),
+  y3: (S) => (S.ex === 'bond'
+    ? { h: 'Each year: FVTPL (the bond)', what: 'The bond is remeasured to fair value at each year end and every change goes to P&L. The coupon received is income too.',
+      ex: [{ calc: [{ t: 'coupon received', v: BOND.coupon, link: '0.0' }, { op: '+', t: 'fair value change: $99,000 − $97,327', v: BOND.fvGain, link: '0.1' }, { op: '=', t: '{i|investment income}, year 1', v: BOND.tpl1, link: '0.2' }] }],
+      je: ['… end of year 1', `Dr {a|Cash} :: ${f1(BOND.coupon)}`, `Dr {a|Investment in bonds} :: ${f1(BOND.fvGain)}`, `Cr {i|Investment income} :: ${f1(BOND.tpl1)}`] }
+    : { h: 'Each year: FVTPL (Acorn)', what: 'Remeasure to fair value at each year end; the whole change goes to P&L. Dividends go to P&L when received.',
+      ex: [{ calc: [{ t: 'fair value: 250,000 × $1.35', v: SH.fv1 }, { op: '−', t: 'carrying amount: 250,000 × $1.25', v: SH.cost }, { op: '=', t: '{i|fair value gain}, 31 March 20X5', v: SH.gain1, link: 0 }] }, { calc: [{ t: '{i|dividend income}, 30 September 20X4', v: SH.div1, link: 1 }] },
+        `Next year end (31 March 20X6), 150,000 shares left: 150,000 × ($1.35 − $1.05) = a ${f1(SH.loss2)} loss in P&L (practice Q34).`],
+      traps: ['Sending an FVTPL gain to OCI (practice Q32).', 'Q34: measure the loss on the 150,000 shares still held, from their last fair value $1.35, not from the $1.20 sale price or the $1.25 cost.'],
+      je: ['… 31 March 20X5', `Dr {a|Investment in Oak} :: ${f1(SH.gain1)}`, `Cr {i|Fair value gain (P&L)} :: ${f1(SH.gain1)}`, '… 30 September 20X4', `Dr {a|Cash} :: ${f1(SH.div1)}`, `Cr {i|Dividend income} :: ${f1(SH.div1)}`, '… 31 March 20X6', `Dr {x|Fair value loss (P&L)} :: ${f1(SH.loss2)}`, `Cr {a|Investment in Oak} :: ${f1(SH.loss2)}`] }),
+  y4: (S) => ({ h: 'Each year: FVOCI (equity)', what: 'Remeasure to fair value at each year end; the change goes to OCI (the fair value reserve). Dividends go to P&L.',
+    ex: S.ex === 'shares' ? ['If Acorn had elected FVOCI:', { calc: [{ t: 'fair value: 250,000 × $1.35', v: SH.fv1 }, { op: '−', t: 'carrying amount (incl. brokerage)', v: SH.paid }, { op: '=', t: '{e|OCI gain}, 31 March 20X5', v: SH.oci1, link: 0 }] }, { calc: [{ t: '{i|dividend income} → P&L', v: SH.div1, link: 1 }] }] : ['Shares only. Switch to shares.'],
+    traps: ['Dividends do **not** go to OCI.', 'The OCI gain is measured from cost **including** the brokerage.'],
+    je: ['… 31 March 20X5', `Dr {a|Investment in Oak} :: ${f1(SH.oci1)}`, `Cr {e|OCI: fair value reserve} :: ${f1(SH.oci1)}`, '… 30 September 20X4', `Dr {a|Cash} :: ${f1(SH.div1)}`, `Cr {i|Dividend income} :: ${f1(SH.div1)}`] }),
+  e1: { h: 'Impairment: expected credit losses (amortised cost)', what: 'A loss allowance for credit losses expected, recognised before any default happens:\n- **stage 1:** 12-month expected credit losses\n- **stage 2–3:** lifetime expected credit losses, once credit risk has risen significantly\nTrade receivables can use lifetime ECL from the start (the simplified approach). The allowance is a contra-asset: carrying amount = gross amount − allowance.',
+    traps: ['Exam depth: know which categories have ECL and the 12-month vs lifetime idea; you are not asked to calculate it.'],
+    je: ['… only if credit losses are expected (none in the example)', 'Dr {x|Impairment loss}', 'Cr {a|Loss allowance}'] },
+  e2: { h: 'Impairment: expected credit losses (FVOCI debt)', what: 'The same ECL model and the same P&L charge as amortised cost. But the asset is already at fair value, so the allowance does not reduce it: the credit goes to OCI instead.',
+    je: ['… only if credit losses are expected (none in the example)', 'Dr {x|Impairment loss}', 'Cr {e|OCI}'] },
+  e3: { h: 'No impairment test (FVTPL)', what: 'The asset is at fair value, and every fall in fair value already goes to P&L, so there is no separate impairment model.' },
+  e4: { h: 'No impairment test (FVOCI equity)', what: 'Shares are at fair value, and falls go to OCI. There is no impairment model for elected equity, and nothing is ever recycled to P&L.',
+    traps: ['A fall in an elected share’s price is **not** an impairment loss in P&L.'] },
+  s1: (S) => ({ h: 'On sale: amortised cost', what: 'Derecognise the asset at its amortised cost; the difference from the proceeds is a gain or loss in P&L.',
+    ex: S.ex === 'bond' ? ['The bond is sold at the start of year 2 for $99,000:', { calc: [{ t: 'proceeds', v: BOND.sale, link: '0.0' }, { op: '−', t: 'amortised cost', v: BOND.ac1, link: '0.1' }, { op: '=', t: '{i|gain on sale}', v: BOND.gainAC, link: '0.2' }] }, `Profit over the bond’s life: interest ${f1(BOND.i1)} + gain ${f1(BOND.gainAC)} = ${f1(BOND.i1 + BOND.gainAC)}, the same in all three debt tracks.`] : ['Shares only reach FVTPL or FVOCI (equity). Switch to the bond.'],
+    je: ['… start of year 2', `Dr {a|Cash} :: ${f1(BOND.sale)}`, `Cr {a|Investment in bonds} :: ${f1(BOND.ac1)}`, `Cr {i|Gain on sale} :: ${f1(BOND.gainAC)}`] }),
+  s2: (S) => ({ h: 'On sale: FVOCI (debt) recycles', what: 'Derecognise the asset at its fair value. The fair value reserve built up in OCI is **reclassified (recycled)** to P&L. So the total profit is exactly the same as under amortised cost.',
+    ex: S.ex === 'bond' ? [{ calc: [{ t: 'proceeds', v: BOND.sale, link: '0.0' }, { op: '−', t: 'carrying amount (fair value)', v: BOND.fv1, link: '0.1' }, { op: '=', t: 'difference at sale', v: 0 }] }, { calc: [{ t: '{e|reserve} recycled to P&L', v: BOND.oci1, link: 1 }] }, 'P&L: interest $5,840 + recycled $833 = $6,673, as amortised cost.'] : ['Switch to the bond.'],
+    traps: ['Leaving the reserve in equity: for **debt** at FVOCI it is recycled.'],
+    je: ['… start of year 2: the sale', `Dr {a|Cash} :: ${f1(BOND.sale)}`, `Cr {a|Investment in bonds} :: ${f1(BOND.fv1)}`, '… recycle the reserve', `Dr {e|OCI: fair value reserve} :: ${f1(BOND.oci1)}`, `Cr {i|Gain on sale (P&L)} :: ${f1(BOND.oci1)}`] }),
+  s3: (S) => (S.ex === 'bond'
+    ? { h: 'On sale: FVTPL (the bond)', what: 'The carrying amount is the last fair value, so only the change since the last year end is a gain or loss. Here the bond is sold at its year-end fair value: nothing more to recognise.',
+      ex: [{ calc: [{ t: 'proceeds', v: BOND.sale }, { op: '−', t: 'last fair value', v: BOND.fv1 }, { op: '=', t: 'gain at sale', v: 0 }] }, 'Profit over its life: $6,673 in year 1, the same total as the other tracks.'],
+      je: ['… start of year 2', `Dr {a|Cash} :: ${f1(BOND.sale)}`, `Cr {a|Investment in bonds} :: ${f1(BOND.fv1)}`] }
+    : { h: 'On sale: FVTPL (Acorn, practice Q33)', what: 'Derecognise the shares sold at their carrying amount, which is the **last fair value** ($1.35), not their cost. The difference from the proceeds goes to P&L.',
+      ex: [{ calc: [{ t: 'proceeds: 100,000 × $1.20', v: SH.proceeds, link: '0.0' }, { op: '−', t: 'carrying amount: 100,000 × $1.35', v: SH.saleCA, link: '0.2' }, { op: '=', t: '{x|fair value loss} (P&L)', v: -SH.saleLoss, link: '0.1' }] }],
+      traps: ['Using the original cost ($1.25) as the carrying amount: that gives the wrong $5,000 loss option.'],
+      je: ['… 30 June 20X5', `Dr {a|Cash} :: ${f1(SH.proceeds)}`, `Dr {x|Fair value loss (P&L)} :: ${f1(SH.saleLoss)}`, `Cr {a|Investment in Oak} :: ${f1(SH.saleCA)}`] }),
+  s4: (S) => ({ h: 'On sale: FVOCI (equity) never recycles', what: 'Remeasure to the sale price (the change goes to OCI), then derecognise. The cumulative gain or loss stays in equity: it is **never** recycled to P&L. The entity may transfer it within equity, from the fair value reserve to retained earnings.',
+    ex: S.ex === 'shares' ? ['If Acorn had elected FVOCI, the sale on 30 June 20X5:', { calc: [{ t: 'proceeds: 100,000 × $1.20', v: SH.proceeds, link: '0.0' }, { op: '−', t: 'carrying amount: 100,000 × $1.35', v: SH.saleCA, link: '0.2' }, { op: '=', t: '{e|loss in OCI}', v: -SH.saleLoss, link: '0.1' }] },
+      { calc: [{ t: 'proceeds', v: SH.proceeds }, { op: '−', t: 'cost incl. brokerage: $314,850 × 100/250', v: SH.soldCost }, { op: '=', t: 'cumulative loss that may move to retained earnings', v: SH.toRE, link: 1 }] }] : ['Shares only. Switch to shares.'],
+    traps: ['Recycling equity FVOCI gains to P&L: only **debt** FVOCI is recycled.'],
+    je: ['… 30 June 20X5', `Dr {a|Cash} :: ${f1(SH.proceeds)}`, `Dr {e|OCI: fair value reserve} :: ${f1(SH.saleLoss)}`, `Cr {a|Investment in Oak} :: ${f1(SH.saleCA)}`, '… optional transfer within equity', `Dr {e|Retained earnings} :: ${f1(-SH.toRE)}`, `Cr {e|Fair value reserve} :: ${f1(-SH.toRE)}`] }),
+};
+const cmpNote = (i) => (S) => {
+  const y = year1(S.ex)[i], L = LANES[i];
+  if (!y) return { h: `Year 1: ${L.t}`, what: NA[S.ex] + '.' };
+  return { h: `Year 1 compared: ${L.t}`, what: S.ex === 'bond'
+    ? 'Same bond, three tracks. Amortised cost and FVOCI give the **same profit**; FVOCI and FVTPL give the **same carrying amount** and the same total comprehensive income. Only the split between P&L and OCI differs.'
+    : 'Same shares, two tracks. Both carry the shares at fair value; FVTPL puts the brokerage and the fair value gain in P&L, FVOCI puts the gain in OCI. Dividends go to P&L in both.',
+    ex: [{ calc: [{ t: 'profit or loss', v: y.pl }, { op: '+', t: 'other comprehensive income', v: y.oci }, { op: '=', t: 'total comprehensive income', v: y.pl + y.oci }] }, { calc: [{ t: 'carrying amount, year end', v: y.ca }] }] };
+};
+[0, 1, 2, 3].forEach((i) => { NOTES[`p${i + 1}`] = cmpNote(i); });
+const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is, why, a worked example and the journal entries. Switch the example between the bond and the Acorn shares above the chart.' };
+
+(function () {
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // {a|ROU asset} → coloured term, **bold**
+  const md = (t) => esc(t).replace(/\{([a-z])\|([^}]+)\}/g, '<span class="el el-$1">$2</span>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\bExample\b/g, '<em>Example</em>'); // the word Example is always italic
+  const tsp = (s) => esc(s).replace(/\{([a-z])\|([^}]+)\}/g, '<tspan class="el-$1">$2</tspan>').replace(/\*\*([^*]+)\*\*/g, '<tspan font-weight="700">$1</tspan>');
+
+  // Text is measured with the real fonts, so lines wrap to their box and entries can be centred.
+  const ctx = document.createElement('canvas').getContext('2d');
+  const FONTS = { 'fl-t': '650 10px Inter', 'fl-s': '400 8.2px Inter', 'fl-je': '500 7.8px "IBM Plex Mono"' };
+  const plain = (s) => s.replace(/\{[a-z]\|([^}]+)\}/g, '$1').replace(/\*\*/g, '');
+  const width = (s, c) => { ctx.font = FONTS[c]; return ctx.measureText(plain(s)).width; };
+  const wrap = (s, c, max) => {
+    const words = s.match(/\{[a-z]\|[^}]+\}\S*|\S+/g) || [];
+    const out = [];
+    let cur = '';
+    words.forEach((w) => { const t = cur ? `${cur} ${w}` : w; if (cur && width(t, c) > max) { out.push(cur); cur = w; } else cur = t; });
+    if (cur) out.push(cur);
+    return out;
+  };
+  const node = (n) => {
+    const cx = n.x + n.w / 2, max = n.w - 14;
+    let o = `<g class="fl-n fl-${n.k}${n.dash ? ' fl-dash' : ''}" data-id="${n.id}" tabindex="0" role="button"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8"/>`;
+    if (n.list) { // left-aligned bullets, centred as a block
+      const items = n.sub.map((s) => wrap(s, 'fl-s', max - 22));
+      const rows = items.reduce((a, l) => a + l.length, 0);
+      let y = n.top ? n.y + 16 : n.y + n.h / 2 - (14 + rows * 11.5) / 2 + 9;
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      y += 5;
+      items.forEach((lines) => lines.forEach((l, i) => { y += 11.5; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      if (n.chartAt) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${n.y + n.chartAt}" y2="${n.y + n.chartAt}"/>`;
+      return o + '</g>';
+    }
+    const subs = (n.sub || []).flatMap((s) => wrap(s, 'fl-s', max));
+    if (n.h > 60) { // big box: top-aligned title and subs, then the entry centred in the space under the rule
+      let y = n.je || n.k === 'chart' || n.chart ? n.y + 16 : n.y + n.h / 2 - (12 + subs.length * 11) / 2 + 9; // no entry: centre the text
+      o += `<text class="fl-t" x="${cx}" y="${y}" text-anchor="middle">${tsp(n.t)}</text>`;
+      if (n.bullets) n.sub.forEach((s) => wrap(s, 'fl-s', max - 22).forEach((l, i) => { y += 11; o += `${i ? '' : `<text class="fl-s" x="${n.x + 12}" y="${y}">•</text>`}<text class="fl-s fl-li" x="${n.x + 21}" y="${y}">${tsp(l)}</text>`; }));
+      else subs.forEach((s) => { y += 11; o += `<text class="fl-s" x="${cx}" y="${y}" text-anchor="middle">${tsp(s)}</text>`; });
+      if (n.je) {
+        y += 9; o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${y}" y2="${y}"/>`;
+        const ind = (l) => (l.startsWith('Cr') ? 13 : 0);
+        const lw = Math.max(...n.je.filter(Boolean).map((l) => ind(l) + width(l, 'fl-je')));
+        // tags: several entries in one box get a number on the left and a label on the right
+        const numW = n.tags ? 13 : 0, tagW = n.tags ? 8 + Math.max(...n.tags.map((t) => width(t, 'fl-s'))) : 0;
+        const bw = numW + lw + tagW;
+        const bh = n.je.reduce((a, l) => a + (l ? 10.5 : 4), 0);
+        const x0 = cx - bw / 2;
+        const after = (n.after || []).flatMap((s) => wrap(s, 'fl-s', max));
+        const bottom = n.y + n.h - (after.length ? after.length * 11 + 10 : 0);
+        if (after.length) o += `<line class="fl-hr" x1="${n.x + 10}" x2="${n.x + n.w - 10}" y1="${bottom}" y2="${bottom}"/>`; // closing lines get their own rule
+        after.forEach((s, i) => { o += `<text class="fl-s" x="${cx}" y="${bottom + (i + 1) * 11 + 1}" text-anchor="middle">${tsp(s)}</text>`; });
+        let ly = y + (bottom - y - bh) / 2 + 8; // baseline of the first line
+        let gi = 0, first = true;
+        n.je.forEach((l) => {
+          if (!l) { ly += 4; first = true; return; }
+          if (n.tags && first) {
+            o += `<circle class="fl-num" cx="${x0 + 4.5}" cy="${ly - 2.8}" r="4.6"/><text class="fl-numt" x="${x0 + 4.5}" y="${ly - 0.4}" text-anchor="middle">${gi + 1}</text>
+              <text class="fl-tag" x="${x0 + numW + lw + 8}" y="${ly}">${esc(n.tags[gi])}</text>`;
+            gi++;
+          }
+          first = false;
+          o += `<text class="fl-je" x="${x0 + numW + ind(l)}" y="${ly}">${tsp(l)}</text>`; ly += 10.5;
+        });
+      }
+    } else {
+      const lines = [...wrap(n.t, 'fl-t', max).map((t) => ({ t, c: 'fl-t', h: 12 })), ...subs.map((t) => ({ t, c: 'fl-s', h: 10.5 }))];
+      let y = n.y + n.h / 2 - lines.reduce((a, l) => a + l.h, 0) / 2 + 8.5;
+      lines.forEach((l) => { o += `<text class="${l.c}" x="${cx}" y="${y}" text-anchor="middle">${tsp(l.t)}</text>`; y += l.h; });
+    }
+    return o + '</g>';
+  };
+  const edge = (e) => `<g class="fl-e ${e.cls || ''}"><path d="${e.d}" marker-end="url(#fa)"/>${e.lab ? `<text x="${e.lx}" y="${e.ly}" text-anchor="${e.anchor || 'start'}">${esc(e.lab)}</text>` : ''}</g>`;
+  const join = (j) => `<g class="fl-j"><circle cx="${j.cx}" cy="${j.cy}" r="11"/><text x="${j.cx}" y="${j.cy + 3.5}" text-anchor="middle">${esc(j.t)}</text></g>`;
+  const draw = (part) => `${part.edges.map(edge).join('')}${(part.joins || []).map(join).join('')}${part.nodes.map(node).join('')}`;
+  let ex = 'bond';
+  let S = { ex }, RIGHT = right(S);
+  const box = (id) => RIGHT.nodes.find((n) => n.id === id);
+  // Year 1 compared: in each lane, a P&L bar and an OCI bar (one scale for all lanes) and the carrying amount.
+  const cmpCharts = () => {
+    const Y = year1(S.ex), mx = Math.max(...Y.filter(Boolean).flatMap((y) => [y.pl, y.oci])) || 1;
+    return Y.map((y, i) => {
+      const b = box(`p${i + 1}`), x0 = b.x + 70, wmax = b.w - 128;
+      if (!y) return `<text class="mc-lbl m" x="${b.x + b.w / 2}" y="${b.y + 62}" text-anchor="middle">${esc(NA[S.ex])}</text>`;
+      const row = (yy, label, v, cls, lcls) => `<text class="mc-lbl m" x="${b.x + 12}" y="${yy + 7}">${label}</text>
+        ${v ? `<rect class="${cls}" x="${x0}" y="${yy}" width="${Math.max(2, (v / mx) * wmax)}" height="9" rx="1.5"/>` : `<line class="mc-ax" x1="${x0}" x2="${x0}" y1="${yy - 1}" y2="${yy + 10}"/>`}
+        <text class="mc-lbl ${lcls}" x="${x0 + Math.max(2, (v / mx) * wmax) + 5}" y="${yy + 7.5}">${n0(v)}</text>`;
+      return row(b.y + 34, 'profit or loss', y.pl, 'mc-pl', 'i') + row(b.y + 52, 'OCI', y.oci, 'mc-oci', 'e')
+        + `<line class="fl-hr" x1="${b.x + 10}" x2="${b.x + b.w - 10}" y1="${b.y + 72}" y2="${b.y + 72}"/>
+        <text class="mc-lbl m" x="${b.x + 12}" y="${b.y + 88}">carrying amount</text><text class="mc-lbl a" x="${x0}" y="${b.y + 88}">${n0(y.ca)}</text>
+        <text class="mc-lbl m" x="${b.x + 12}" y="${b.y + 102}">total comprehensive income</text><text class="mc-lbl x" x="${b.x + b.w - 12}" y="${b.y + 102}" text-anchor="end">${n0(y.pl + y.oci)}</text>`;
+    }).join('');
+  };
+  const sec = (s) => `<g class="sec ${s.cls}"><rect x="${s.x}" y="0" width="${s.w}" height="${H}" rx="10"/><text x="${s.x + 12}" y="19">${esc(s.t)}</text></g>`;
+  let cur = '';
+  const render = () => { S = { ex }; RIGHT = right(S); document.getElementById('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:${Math.round(W * 1.34)}px" role="img" aria-label="Financial assets: classify, then four tracks (amortised cost, FVOCI debt, FVTPL, FVOCI equity) through day 1, each year, sale and year 1 compared">
+    <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1.2 L10 5 L0 8.8 L2.2 5 Z" class="fl-ah"/></marker></defs>
+    ${SECTIONS.map(sec).join('')}
+    <g transform="translate(${LEFT.at[0]},${LEFT.at[1]}) scale(${LEFT.scale})">${draw(LEFT)}</g>
+    ${draw(RIGHT)}<g class="mc">${cmpCharts()}</g></svg>`; show(cur); };
+
+  // Journal entries in the note: one green box per entry. A '…' line labels the next entry; a Dr after a Cr starts a new one.
+  const jeHtml = (lines) => {
+    const groups = [];
+    let g = null, label = '';
+    lines.forEach((l) => {
+      if (l.startsWith('…')) { label = l.slice(1).trim(); g = null; return; }
+      if (!g || (l.startsWith('Dr') && g.lines.length && g.lines[g.lines.length - 1].startsWith('Cr'))) { g = { label, lines: [] }; groups.push(g); label = ''; }
+      g.lines.push(l);
+    });
+    const line = (l) => { const [acc, amt] = l.split(' :: '); return `<span class="jl${l.startsWith('Cr') ? ' cr' : ''}"><span>${md(acc)}</span>${amt ? `<span class="amt">${amt}</span>` : ''}</span>`; };
+    return `<div class="jes">${groups.map((x, gi) => `<div class="je" data-g="${gi}">${x.label ? `<span class="jn">${md(x.label)}</span>` : ''}${x.lines.map(line).join('')}</div>`).join('')}</div>`;
+  };
+  // Note text: lines starting "- " become a bulleted list.
+  const blocks = (t) => {
+    const out = [];
+    let ul = null;
+    t.split('\n').forEach((line) => {
+      if (line.startsWith('- ')) { if (!ul) out.push((ul = [])); ul.push(line.slice(2)); } else { ul = null; out.push(line); }
+    });
+    const lines = (p) => p.split(/(?<=[.!?:])\s+(?=[A-Z(])/).map(md).join('<br>'); // one sentence per line
+    // a list of + / − / = steps is a sum: the signs already act as bullets, so no dots
+    const sum = (b) => b.length > 1 && b.slice(1).every((i) => /^[+−=-] /.test(i));
+    return out.map((b) => (Array.isArray(b) ? `<ul${sum(b) ? ' class="ops"' : ''}>${b.map((i) => `<li>${md(i)}</li>`).join('')}</ul>` : `<p>${lines(b)}</p>`)).join('');
+  };
+  // Example box: lines of text and calc tables (one named step per row). Amounts with a link get a dotted curve to their entry.
+  const exHtml = (items) => `<div class="ex"><b><em>Example</em></b>${items.map((it) => (typeof it === 'string' ? `<p>${md(it)}</p>`
+    : `<table class="calc">${it.calc.map((r) => `<tr class="${r.op === '=' ? 'tot' : ''}"><td class="op">${r.op || ''}</td><td>${md(r.t)}</td><td class="amt"${r.link != null ? ` data-link="${r.link}"` : ''}>${r.vt || f1(r.v)}</td></tr>`).join('')}</table>`)).join('')}</div>`;
+  // Dotted curves from an amount in the example to the entry box that uses it (drawn over the note).
+  const drawLinks = () => {
+    note.querySelectorAll('svg.links').forEach((x) => x.remove());
+    const box = note.getBoundingClientRect();
+    let paths = '';
+    note.querySelectorAll('[data-link]').forEach((el) => {
+      const [gi, li] = String(el.dataset.link).split('.'); // 'entry' or 'entry.line'
+      const g = note.querySelector(`.je[data-g="${gi}"]`);
+      if (!g) return;
+      const a = el.getBoundingClientRect(), t = (g.querySelectorAll('.jl')[+li || 0] || g).getBoundingClientRect();
+      const x1 = a.right - box.left + 6, y1 = a.top + a.height / 2 - box.top, x2 = t.left - box.left - 8, y2 = t.top + t.height / 2 - box.top;
+      if (x2 < x1 + 30) return; // entries stacked below the text: no room for a curve
+      const dx = Math.min(140, (x2 - x1) / 2);
+      paths += `<path d="M${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}"/><circle cx="${x2}" cy="${y2}" r="2"/>`;
+    });
+    if (paths) note.insertAdjacentHTML('beforeend', `<svg class="links" width="${box.width}" height="${box.height}">${paths}</svg>`);
+  };
+  window.addEventListener('resize', () => drawLinks());
+  const note = document.getElementById('note');
+  function show(id) {
+    cur = id;
+    document.querySelectorAll('.fl-n').forEach((g) => g.classList.toggle('tapped', g.dataset.id === id));
+    document.querySelectorAll('.mc-bar').forEach((g) => g.classList.toggle('sel', id === g.dataset.note));
+    let n = id && id.startsWith('yr:') ? yearNote(+id.slice(3)) : (id && NOTES[id]) || ALL;
+    if (typeof n === 'function') n = n(S);
+    note.classList.toggle('has-je', !!n.je);
+    note.innerHTML = `<div class="txt"><h3>${md(n.h)}</h3>${blocks(n.what)}${n.ex ? exHtml(n.ex) : ''}${n.why ? `<div class="why"><b>Why</b>${blocks(n.why)}</div>` : ''}${n.traps ? `<div class="traps"><b>Traps</b><ul>${n.traps.map((t) => `<li>${md(t)}</li>`).join('')}</ul></div>` : ''}</div>${n.je ? jeHtml(n.je) : ''}`;
+    drawLinks();
+  }
+  const chart = document.getElementById('chart');
+  chart.addEventListener('click', (e) => {
+    const bar = e.target.closest('[data-note]');
+    if (bar) return show(bar.dataset.note);
+    const n = e.target.closest('.fl-n');
+    if (n) show(n.dataset.id);
+  });
+  chart.addEventListener('keydown', (e) => { const n = e.target.closest('.fl-n'); if (n && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(n.dataset.id); } });
+  const modeBar = document.getElementById('mode');
+  const setMode = (m) => { ex = m; modeBar.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.m === m)); render(); };
+  modeBar.addEventListener('click', (e) => { const b = e.target.closest('[data-m]'); if (b) setMode(b.dataset.m); });
+  setMode('bond');
+  if (document.fonts) document.fonts.ready.then(render);
+})();
+</script>
+</body>
+</html>
