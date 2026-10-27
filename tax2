@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
-<!-- B2.2 Income tax: two profits, current tax, carrying amount vs tax base, deferred tax each year end, presentation.
-     Same look as apps/study (tokens and flow widget copied from apps/study/src). -->
+<!-- B2.2 Income tax: two worlds (accounting books vs tax world), the gap (joy → DTL, gloom → DTA), what to calculate at each year end, the two bills (entry pairing), presentation.
+     Same look as apps/study (tokens copied from apps/study/src). -->
 <style>
 :root {
   --paper: #f5f6f2;
@@ -189,6 +189,33 @@ svg.links circle { fill: var(--muted); }
 .mc-gp { fill: color-mix(in srgb, var(--el-l) 35%, transparent); } .mc-gp.a { fill: color-mix(in srgb, var(--el-a) 35%, transparent); }
 .mc-cell { fill: var(--card); stroke: var(--rule); }
 .mc-lbl.i { fill: var(--el-i); } .mc-lbl.in { fill: #fff; }
+/* Section 1: the two worlds' bars (slice colour = what tax law does with the item) */
+.w-same { fill: color-mix(in srgb, var(--muted) 24%, var(--card)); stroke: var(--card); stroke-width: .8; }
+.w-temp { fill: color-mix(in srgb, var(--think) 50%, var(--card)); stroke: var(--card); stroke-width: .8; }
+.w-perm { fill: #d23b32; stroke: none; }
+.w-prof { fill: color-mix(in srgb, var(--el-x) 14%, var(--card)); stroke: var(--el-x); stroke-width: .9; }
+.w-none { fill: var(--card); stroke: var(--muted); stroke-dasharray: 2 1.5; stroke-width: .8; }
+.w-brk { stroke: var(--card); stroke-width: 3; }
+.mc-lbl.w-in { fill: var(--ink); }
+.fl-e.w-tmp path { stroke: var(--think); stroke-width: 1.4; } .fl-e.w-prm path { stroke: #c0392b; stroke-width: 1.4; }
+/* Section 3: timeline, steps and the books line */
+.cl-dot { fill: var(--sec-3-ink); }
+.cl-enact { fill: #c0392b; }
+.cl-step { fill: var(--card); stroke-width: 1.2; filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .06)); }
+.cl-step.l { stroke: var(--el-l); } .cl-step.x { stroke: var(--el-x); }
+.cl-books { fill: var(--card); stroke: var(--sec-3-ink); stroke-dasharray: 3 2; stroke-width: 1.2; }
+.cl-bd.x { fill: var(--el-x); } .cl-bd.l { fill: var(--el-l); }
+.cl-bdt { font-size: 7px; font-weight: 700; fill: #fff; }
+.mc-lbl.cl-lab { font-size: 7px; font-style: italic; font-weight: 400; fill: var(--muted); }
+.mc-lbl.cl-calc { font: 500 7.8px var(--font-mono); fill: var(--ink); }
+.mc-lbl.cl-res { font-size: 9px; font-weight: 700; } .mc-lbl.cl-res.l { fill: var(--el-l); } .mc-lbl.cl-res.x { fill: var(--el-x); }
+.mc-lbl.cl-ttl { font-size: 8.2px; font-weight: 400; }
+.fl-n tspan.el-n { font-weight: 400; }
+.pt-h { font-size: 6.4px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; fill: var(--sec-4-ink); }
+.mc-lbl.pt-li { font-size: 8px; font-weight: 500; fill: var(--ink); } .mc-lbl.pt-tot { font-size: 8px; font-weight: 700; fill: var(--ink); }
+.mc-lbl.pt-amt { font: 600 8px var(--font-mono); } .mc-lbl.pt-amt.m { fill: var(--ink); }
+.mc-lbl.pt-tip { font-style: italic; }
+.mc-lbl.cl-tip { font-size: 6.8px; font-weight: 400; fill: var(--muted); }
 </style>
 </head>
 <body>
@@ -204,14 +231,18 @@ svg.links circle { fill: var(--muted); }
 <script>
 // Worked example behind every number, chart and year note: the study app's Lim Trading (apps/study/content/income-tax.js).
 // One machine, cost $120,000: the books depreciate it over 4 years, tax law gives capital allowances over 3 years.
-// Accounting profit $200,000 every year, after a non-deductible entertainment expense of $6,000. Whole dollars.
-// The switch changes only the tax rate: 17% throughout, or cut to 15% from year 3 (enacted during year 2).
-const EX = { cost: 120000, life: 4, caYears: 3, profit: 200000, ent: 6000,
-  what: 'Lim Trading buys a machine for $120,000. The books depreciate it over 4 years ($30,000 a year); tax law gives capital allowances over 3 years ($40,000 a year). Accounting profit is $200,000 every year, after a $6,000 entertainment expense that tax law never allows.' };
+// Accounting profit $200,000 every year: sales $500,000 − salaries $264,000 − depreciation $30,000 − a non-deductible
+// entertainment expense of $6,000. Whole dollars. The switch changes only the tax rate: 17% throughout, or cut to 15%
+// from year 3 (enacted during year 2). The year-end panels quote year 2, the first year with an opening balance.
+const EX = { cost: 120000, life: 4, caYears: 3, profit: 200000, ent: 6000, sales: 500000, sal: 264000,
+  what: 'Lim Trading buys a machine for $120,000. The books depreciate it over 4 years ($30,000 a year); tax law gives capital allowances over 3 years ($40,000 a year). Sales are $500,000 and salaries $264,000 every year, and there is a $6,000 entertainment expense that tax law never allows, so accounting profit is $200,000 every year.' };
 const f1 = (n) => `${n < -0.5 ? '−' : ''}$${Math.abs(Math.round(n)).toLocaleString('en-US')}`; // money, whole dollars
 const n0 = (n) => `${n < -0.5 ? '−' : ''}${Math.abs(Math.round(n)).toLocaleString('en-US')}`;
-const nb = (s) => s.replace(/ /g, '\u00a0'); // keeps spacing in SVG text
+const nb = (s) => s.replace(/ /g, ' '); // keeps spacing in SVG text
 const pc = (r) => `${Math.round(r * 100)}%`;
+// An entry line with its amount right-aligned in the box (mono font: pad on the plain text; a Cr line is indented 13px ≈ 3 chars)
+const jl = (acc, v) => { const p = acc.replace(/\{[a-z]\|([^}]+)\}/g, '$1'), w = acc.startsWith('Cr') ? 31 : 34;
+  return nb(`${acc}${' '.repeat(Math.max(2, w - p.length - n0(v).length))}${n0(v)}`); };
 function schedule(mode) {
   const cut = mode === 'cut';
   const curRate = (k) => (cut && k >= 2 ? 0.15 : 0.17); // current tax: the rate for that year's profit
@@ -225,173 +256,160 @@ function schedule(mode) {
     const cv = EX.cost - dep * (k + 1), td = cv - tb, rc = curRate(k), rd = dtRate(k);
     const taxable = EX.profit + dep - a + EX.ent, current = r0(taxable * rc), dtl = r0(td * rd), move = dtl - open;
     const recon = r0(EX.profit * rc), entFx = r0(EX.ent * rc), total = current + move;
-    const remeasure = open - r0(tdPrev * rd); // the opening difference at the new rate (0 when the rate is unchanged)
-    Y.push({ k, a, cv, tb, td, rc, rd, taxable, current, open, dtl, move, total, recon, entFx, rateFx: total - recon - entFx, remeasure, growth: move + remeasure });
+    const remeasure = open - r0(tdPrev * rd); // (a) the opening gap at the new rate (0 when the rate is unchanged)
+    Y.push({ k, a, cv, tb, td, tdPrev, rc, rd, taxable, current, open, dtl, move, total, recon, entFx, rateFx: total - recon - entFx, remeasure, growth: move + remeasure });
     open = dtl; tdPrev = td;
   }
+  if (EX.sales - EX.sal - dep - EX.ent !== EX.profit || EX.sales - EX.sal - ca !== Y[0].taxable) throw new Error('Lim: the bars do not add up');
   if (!cut && Y.some((y) => y.total !== 35020)) throw new Error('Lim: total tax expense should be 35,020 every year');
-  if (cut && (Y[1].rateFx !== -400 || Y[2].rateFx || Y[3].rateFx)) throw new Error('Lim: rate-cut reconciliation does not tie');
-  const focus = cut ? 1 : 0; // the year the boxes quote
+  if (cut && (Y[1].rateFx !== -400 || Y[1].remeasure !== 200 || Y[1].growth !== 1500 || Y[1].total !== 34620 || Y[2].rateFx || Y[3].rateFx)) throw new Error('Lim: rate-cut numbers do not tie');
+  const focus = 1; // the year-end panels quote year 2
   return { mode, cut, dep, ca, Y, focus, F: Y[focus] };
 }
 
-// Section 1 is drawn at LEFT.scale, so its type comes out smaller. Boxes: x, y, w, h; arrows: SVG paths ending at the tip.
-const LEFT = {
-  at: [6, 40], scale: 0.86,
-  nodes: [
-    { id: 'item', x: 8, y: 8, w: 172, h: 38, k: 'q', t: 'An item in the accounts', sub: ['income or expense, under SFRS(I)'] },
-    { id: 'q1', x: 8, y: 70, w: 172, h: 38, k: 'q', t: 'Does tax law count it?', sub: ['in taxable profit (Income Tax Act)'] },
-    { id: 'same', x: 214, y: 8, w: 150, h: 40, k: 'yes', t: 'Same year, same amount', sub: ['no difference (sales, salaries)'] },
-    { id: 'perm', x: 214, y: 70, w: 150, h: 52, k: 'no', t: 'Permanent difference', sub: ['never counted: a fine,', 'entertainment, exempt dividend'] },
-    { id: 'permx', x: 214, y: 134, w: 150, h: 44, k: 'exit', t: 'No deferred tax', sub: ['only the effective rate moves', '→ the tax reconciliation'] },
-    { id: 'temp', x: 8, y: 190, w: 172, h: 44, k: 'yes', t: 'Temporary difference', sub: ['counted in full, in another year'] },
-    { id: 'two', x: 380, y: 190, w: 100, h: 44, k: 'gold', t: 'Book two taxes', sub: ['current + deferred'] },
-    { id: 'vocab', x: 8, y: 254, w: 346, h: 96, k: 'info1', t: 'The words: what each one describes', list: true,
-      sub: ['**taxable income** → tax law counts it (sales)', '**exempt income** → never counted (one-tier dividend)', '**deductible expense** → tax law subtracts it (salaries)', '**non-deductible expense** → never subtracted (fine, entertainment)', '**capital allowance** → tax law’s depreciation, on its own schedule'] },
-  ],
-  joins: [],
-  edges: [
-    { d: 'M94 46 V69' },
-    { d: 'M180 80 C 197 80, 197 28, 213 28', lab: 'same year', lx: 201, ly: 58 },
-    { d: 'M180 96 H213', lab: 'never', lx: 197, ly: 92, anchor: 'middle' },
-    { d: 'M289 122 V133' },
-    { d: 'M94 108 V189', lab: 'yes, another year', lx: 99, ly: 150 },
-    { d: 'M180 212 H379' },
-  ],
-};
-
-// Sections 2–5, at full size. Top lane: this year's tax. Bottom lane: deferred tax.
+// Boxes: x, y, w, h; arrows: SVG paths ending at the tip. Section 1 and the year-end panel are drawn as charts.
 const right = (S) => {
-  const F = S.F, yr = `year ${S.focus + 1}`;
+  const F = S.F;
   return {
     nodes: [
-      // Section 2: this year · current tax
-      { id: 'lim', x: 456, y: 28, w: 416, h: 58, k: 'info2', t: 'Lim Trading: the running example',
-        sub: ['machine $120,000: books 4 years ($30,000 a year), tax law 3 years ($40,000 a year)',
-          'profit $200,000 a year, after non-deductible entertainment of $6,000', `tax rate: ${S.cut ? '17%, cut to 15% from year 3 (enacted in year 2)' : '17% throughout'}`] },
-      { id: 'tp', x: 456, y: 100, w: 200, h: 134, k: 'xstep', t: 'Taxable profit', sub: ['accounting profit, adjusted to tax law', `example, ${yr}:`],
-        je: [['  profit', EX.profit], ['+ depreciation', S.dep], ['− allowance', F.a], ['+ entertainment', EX.ent], ['= taxable', F.taxable]].map(([t, v]) => nb(`${t.padEnd(16)}${n0(v).padStart(8)}`)),
-        after: [`**year 4:** no allowance left → ${f1(S.Y[3].taxable)}`] },
-      { id: 'ct', x: 672, y: 100, w: 200, h: 134, k: 'lstep', t: 'Current tax: this year’s bill', sub: ['taxable profit × this year’s rate', 'unpaid → current liability'],
-        je: ['Dr {x|Current tax expense}', 'Cr {l|Current tax payable}'], after: [`${yr}: ${f1(F.taxable)} × ${pc(F.rc)} = {x|${f1(F.current)}}`] },
-      { id: 'why', x: 456, y: 246, w: 416, h: 140, k: 'chart', t: 'Why current tax alone misleads' },
-      // Section 3: two values · read the gap
-      { id: 'tb', x: 912, y: 28, w: 300, h: 58, k: 'info5', t: 'Tax base: tax law’s value of the item', bullets: false,
-        sub: ['**asset:** what tax law will still let you deduct', '**liability:** carrying amount − future deductions'] },
-      { id: 'gapc', x: 912, y: 96, w: 300, h: 160, k: 'chart', t: 'Carrying amount vs tax base' },
-      { id: 'grid', x: 912, y: 266, w: 300, h: 120, k: 'chart', t: 'Read the gap' },
-      // Section 4: each year end · measure and book
-      { id: 'rate', x: 1248, y: 28, w: 388, h: 58, k: 'info3', t: S.cut ? 'Which rate? **15%** from the end of year 2' : 'Which rate? **17%**',
-        sub: S.cut ? ['deferred tax: the rate **enacted** for when the gap reverses (15%, enacted in year 2)', 'current tax: this year’s rate (17% in year 2, 15% from year 3) · never discounted']
-          : ['the rate enacted (or substantively enacted) for when the gap reverses', 'never discounted · a rate only proposed is not used'] },
-      { id: 'dtl', x: 1248, y: 96, w: 186, h: 140, k: 'lstep', t: 'DTL: closing balance first', sub: ['taxable gap × enacted rate', 'P&L takes the movement'],
-        je: ['Dr {x|Deferred tax expense}', 'Cr {l|Deferred tax liability}'],
-        after: [`${yr}: ${n0(F.td)} × ${pc(F.rd)} = {l|${f1(F.dtl)}}`, `movement ${f1(F.dtl)} − ${f1(F.open)} = {x|${f1(F.move)}}`] },
-      { id: 'oci', x: 1450, y: 96, w: 186, h: 140, k: 'lstep', t: 'P&L or OCI?', bullets: true,
-        sub: ['**most items** → P&L', '**revaluation** → OCI, with the gain', '**new rate** → remeasure the opening balance'],
-        je: ['Dr {e|Revaluation surplus (OCI)}', 'Cr {l|Deferred tax liability}'], after: ['example: revaluation $50,000 → {l|$8,500}'] },
-      { id: 'dta', x: 1248, y: 250, w: 186, h: 136, k: 'astep', t: 'DTA: only if profit probable', sub: ['deductible gap × enacted rate', 'e.g. warranty provision, TB 0'],
-        je: ['Dr {a|Deferred tax asset}', 'Cr {i|Deferred tax income}'], after: ['example: $20,000 × 17% = {a|$3,400}'] },
-      { id: 'loss', x: 1450, y: 250, w: 186, h: 136, k: 'astep', t: 'Unused tax losses', sub: ['work like a deductible gap', 'DTA only up to probable profit'],
-        je: ['Dr {a|Deferred tax asset}', 'Cr {i|Deferred tax income}'], after: ['example: loss $300,000, probable', '$200,000 → {a|$34,000}; test yearly'] },
+      // Section 1: two worlds (bars drawn by worldChart)
+      { id: 'acc', x: 10, y: 44, w: 210, h: 354, k: 'chart', t: 'Accounting books', sub: ['SFRS(I) → accounting profit'] },
+      { id: 'tax', x: 320, y: 44, w: 210, h: 354, k: 'chart', t: 'Tax world', sub: ['Income Tax Act → taxable profit'] },
+      // Section 2: the gap · joy or gloom
+      { id: 'rule', x: 560, y: 30, w: 364, h: 60, k: 'info5', t: 'Gap = CA − TB = accounting world − tax world',
+        sub: ['net assets in the books − net assets under tax law', '{l|**+ joy**} → what goes up must come down → {l|**DTL**}', '{a|**− gloom**} → every cloud has a silver lining → {a|**DTA**}'] },
+      { id: 'gapc', x: 560, y: 98, w: 364, h: 140, k: 'chart', t: 'Lim’s machine: a joy gap' },
+      { id: 'joy', x: 560, y: 246, w: 177, h: 96, k: 'lstep', t: '+ Joy → DTL', sub: ['books show more net assets', 'tax catches up: taxes it later'],
+        je: ['Dr {x|Deferred tax expense}', 'Cr {l|Deferred tax liability}'], after: ['machine · revaluation (via OCI)'] },
+      { id: 'gloom', x: 747, y: 246, w: 177, h: 96, k: 'astep', t: '− Gloom → DTA', sub: ['books show fewer net assets', 'a voucher: only if profit probable'],
+        je: ['Dr {a|Deferred tax asset}', 'Cr {i|Deferred tax income}'], after: ['warranty provision · tax losses'] },
+      { id: 'flip', x: 560, y: 350, w: 177, h: 48, k: 'info5', t: 'Liability? Flip the sign', sub: ['warranty: CA 10,000, TB 0', 'books 10,000 poorer → gloom'] },
+      { id: 'loss', x: 747, y: 350, w: 177, h: 48, k: 'astep', t: 'Unused tax losses: a voucher', sub: ['DTA only up to probable profit'] },
+      // Section 3: each year end · calculate (drawn by calcChart)
+      { id: 'calc', x: 956, y: 30, w: 442, h: 368, k: 'chart', t: 'Each year end: what to calculate first',
+        sub: [`year 2 · ${S.cut ? '15% enacted during the year, for year 3 onwards' : '17% throughout'}`] },
+      // Section 4: book · two bills
+      { id: 'now', x: 1432, y: 30, w: 268, h: 112, k: 'lstep', t: '{n|book} current tax · bill now', sub: ['from step 1: taxable profit × this year’s rate', 'paid to IRAS next year → payable'],
+        je: [jl('Dr {x|Current tax expense}', F.current), jl('Cr {l|Current tax payable}', F.current)] },
+      { id: 'later', x: 1432, y: 152, w: 268, h: 112, k: 'lstep', t: '{n|book} deferred tax · bill later', sub: ['from step 3: the movement', 'paid when the gap closes → liability'],
+        je: [jl('Dr {x|Deferred tax expense}', F.move), jl('Cr {l|Deferred tax liability}', F.move)] },
+      { id: 'pair', x: 1432, y: 274, w: 268, h: 124, k: 'info2', t: 'Remember the pairing', list: true,
+        sub: ['**first words match:** current ↔ current, deferred ↔ deferred', '**expense** → the P&L side (Dr)', '**second word = when:** payable now, liability later',
+          `**tax expense:** ${n0(F.current)} + ${n0(F.move)} = {x|${n0(F.total)}}`, S.cut ? '= 17% × (200,000 + 6,000) − 400 rate cut' : '= 17% × (200,000 profit + 6,000 entertainment)'] },
       // Section 5: year end · present, three equal columns
-      { id: 'bs', x: 1674, y: 28, w: 188, h: 358, k: 'pstep', t: 'Balance sheet', list: true, top: true, chartAt: 104,
-        sub: ['**deferred tax** → non-current, never discounted', '**offset DTA and DTL** → only with a legal right, same tax authority', '**current tax payable** → current liability'] },
-      { id: 'pl', x: 1878, y: 28, w: 188, h: 358, k: 'pstep', t: 'Profit or loss', list: true, top: true, chartAt: 104,
-        sub: ['**tax expense** → current + deferred', '**tax on OCI items** → in OCI, not P&L', '**components** → disclosed in the notes'] },
-      { id: 'note', x: 2082, y: 28, w: 188, h: 358, k: 'pstep', t: 'Tax note', list: true, top: true, chartAt: 104,
-        sub: ['**reconciliation** → profit × rate to tax expense', '**reconciling items** → permanent items, rate effects only', '**also** → unused losses with no DTA'] },
+      { id: 'bs', x: 1734, y: 30, w: 182, h: 368, k: 'pstep', t: 'Balance sheet', sub: [], list: true, top: true, chartAt: 150 },
+      { id: 'pl', x: 1930, y: 30, w: 182, h: 368, k: 'pstep', t: 'Profit or loss', sub: [], list: true, top: true, chartAt: 150 },
+      { id: 'note', x: 2126, y: 30, w: 182, h: 368, k: 'pstep', t: 'Tax note', sub: [], list: true, top: true, chartAt: 150 },
     ],
     edges: [
-      { d: 'M419 217 C 436 217, 436 167, 455 167' },
-      { d: 'M419 228 C 436 228, 436 316, 455 316' },
-      { d: 'M656 167 H671' },
-      { d: 'M872 316 C 892 316, 892 176, 911 176' },
-      { cls: 'dashed', d: 'M1062 86 V95' },
-      { d: 'M1062 256 V265' },
-      { d: 'M1212 300 C 1230 300, 1230 166, 1247 166', lab: 'taxable', lx: 1216, ly: 222 },
-      { d: 'M1212 352 C 1230 352, 1230 318, 1247 318', lab: 'deductible', lx: 1216, ly: 345 },
-      { cls: 'dashed', d: 'M1341 86 V95' },
-      { d: 'M1434 166 H1449' },
-      { cls: 'dashed', d: 'M1434 318 H1449', lab: 'same test', lx: 1437, ly: 312 },
-      { d: 'M1636 166 C 1655 166, 1655 120, 1673 120' },
-      { d: 'M1636 318 C 1655 318, 1655 150, 1673 150' },
+      { d: 'M530 168 H559' },
+      { d: 'M648 238 V245' },
+      { d: 'M835 238 V245' },
+      { d: 'M924 168 H955' },
+      { d: 'M1398 86 H1431' },
+      { d: 'M1398 330 C 1415 330, 1415 208, 1431 208' },
+      { d: 'M1700 86 C 1717 86, 1717 120, 1733 120' },
+      { d: 'M1700 208 C 1717 208, 1717 150, 1733 150' },
     ],
   };
 };
-const W = 2286, H = 398;
+const W = 2322, H = 410;
 const SECTIONS = [
-  { cls: 'sec-1', x: 0, w: 434, t: 'Two rulebooks, two profits' },
-  { cls: 'sec-2', x: 440, w: 448, t: 'This year · current tax' },
-  { cls: 'sec-5', x: 894, w: 336, t: 'Two values · read the gap' },
-  { cls: 'sec-3', x: 1236, w: 416, t: 'Each year end · measure and book' },
-  { cls: 'sec-4', x: 1658, w: 628, t: 'Year end · present' },
+  { cls: 'sec-1', x: 0, w: 540, t: 'Two worlds, two profits' },
+  { cls: 'sec-5', x: 546, w: 392, t: 'The gap · joy or gloom' },
+  { cls: 'sec-3', x: 944, w: 770, t: 'Each year end · calculate, then book' },
+  { cls: 'sec-4', x: 1720, w: 602, t: 'Year end · present' },
 ];
 
-// What shows under the chart when a box is tapped. A note can be a function of the worked example S.
+// What shows under the chart when a box, slice or step is tapped. A note can be a function of the worked example S.
 const NOTES = {
-  item: { h: 'Two rulebooks, two profits', what: 'Every income and expense item is counted twice. **Accounting profit** follows SFRS(I). **Taxable profit** follows the Income Tax Act, and IRAS taxes it at 17%. The two profits differ because tax law treats some items differently, so the first question for each item is how tax law treats it.' },
-  q1: { h: 'Does tax law count it?', what: 'Three answers are possible:\n- **yes, in the same year and amount:** no difference at all (sales revenue, salaries)\n- **never:** a permanent difference (a fine, non-deductible entertainment expense, exempt dividend income)\n- **yes, but in another year:** a temporary difference (depreciation vs capital allowances, a warranty provision deductible when paid, interest income taxed when received)',
-    traps: ['A provision that is deductible **when paid** is not permanent: it is deducted later, so it is temporary.'] },
-  same: { h: 'Same year, same amount', what: 'Both rulebooks count the item in the same year at the same amount, so it creates no difference between accounting profit and taxable profit. Most sales revenue and most operating expenses (salaries, rent) are like this.' },
-  perm: { h: 'Permanent difference', what: 'One rulebook counts the item and the other **never** does, so the difference never reverses. Examples:\n- a fine or penalty expense: never deductible\n- an entertainment expense that tax law does not allow\n- one-tier dividend income from a Singapore company: never taxable',
-    traps: ['A permanent difference **never** creates deferred tax.'] },
-  permx: { h: 'No deferred tax: only the effective rate moves', what: 'A permanent difference changes this year’s current tax and is then finished. It makes the tax expense differ from profit × 17%, so it appears in the **tax reconciliation** note (Tax note, far right).',
-    ex: ['Lim’s $6,000 non-deductible entertainment expense, every year:', { calc: [{ t: 'profit × 17%: $200,000 × 17%', v: 34000 }, { op: '+', t: 'entertainment × 17%: $6,000 × 17%', v: 1020 }, { op: '=', t: 'tax expense', v: 35020 }] }] },
-  temp: { h: 'Temporary difference', what: 'Both rulebooks count the item in full, but **in different years**. Over the item’s whole life the totals are equal; only the timing differs. Lim’s machine: the books charge $30,000 of depreciation a year for 4 years; tax law gives $40,000 of capital allowance a year for 3 years. Both total $120,000.',
-    traps: ['Calling accelerated capital allowances or a provision a **permanent** difference.'] },
-  two: { h: 'Book two taxes', what: 'A temporary difference needs two pieces of tax:\n- **current tax**: what is owed to IRAS for this year, computed on taxable profit (top lane)\n- **deferred tax**: the tax that this year’s timing difference will add (or save) in the year it reverses (bottom lane)\nTax expense = current tax + deferred tax.' },
-  vocab: { h: 'The words: what each one describes', what: 'Each word describes an **income** item or an **expense** item:\n- **taxable income:** income that tax law includes in taxable profit (sales revenue)\n- **exempt (non-taxable) income:** income tax law never includes (one-tier dividend income)\n- **deductible expense:** an expense tax law lets you subtract (salaries)\n- **non-deductible expense:** an expense tax law never lets you subtract (a fine, entertainment expense that is not allowed)\n- **capital allowance:** tax law does not allow depreciation; it gives its own deduction for plant and machinery instead, often over 3 years\nLater, “taxable” and “deductible” also describe a **gap** on the balance sheet (section 3): a taxable temporary difference creates a DTL, a deductible one a DTA.' },
-  lim: (S) => ({ h: 'Lim Trading: the running example', what: 'One machine, followed from purchase to the end of its life. Profit is the same every year, so the only thing that moves the tax line is the machine’s timing difference (and, with the switch, the rate cut). Tap a bar in any chart for that year in full.',
-    ex: [EX.what, S.cut ? 'Switch on: during year 2 a tax rate of 15% is enacted for year 3 onwards.' : 'Tax rate: 17% throughout.'] }),
-  tp: (S) => { const F = S.F; return { h: 'Taxable profit', what: 'A tax computation starts from accounting profit and adjusts it to tax law:\n- **add back** expenses tax law does not allow this year: depreciation, non-deductible expenses, provisions not yet paid\n- **subtract** what tax law allows that the books did not charge: capital allowances\n- **subtract** income tax law does not tax this year: exempt dividends, interest not yet received',
-    ex: [`Year ${S.focus + 1}:`, { calc: [{ t: 'accounting profit', v: EX.profit }, { op: '+', t: '{x|depreciation expense} (not allowed)', v: S.dep }, { op: '−', t: 'capital allowance (tax law’s deduction instead)', v: F.a }, { op: '+', t: 'non-deductible {x|entertainment expense}', v: EX.ent }, { op: '=', t: 'taxable profit', v: F.taxable }] },
-      'Year 4: no allowance is left, so taxable profit is $236,000.'],
-    traps: ['Current tax is **taxable** profit × rate, not accounting profit × rate.'] }; },
-  ct: (S) => { const F = S.F; return { h: 'Current tax: this year’s bill', what: 'Current tax = taxable profit × this year’s rate. What is still unpaid at the year end is a {l|current tax payable} (a current liability); tax paid in excess is a {a|current tax asset}.',
-    ex: [{ calc: [{ t: 'taxable profit', v: F.taxable }, { op: '×', t: `rate, year ${S.focus + 1}`, vt: pc(F.rc) }, { op: '=', t: '{x|current tax}', v: F.current, link: 0 }] }],
-    traps: ['A new rate enacted for **future** years does not change this year’s current tax.'],
-    je: [`… year ${S.focus + 1}, unpaid at year end`, `Dr {x|Current tax expense} :: ${f1(F.current)}`, `Cr {l|Current tax payable} :: ${f1(F.current)}`] }; },
-  why: (S) => ({ h: 'Why current tax alone misleads', what: 'Lim earns the same profit every year, so the tax expense should be the same every year. With current tax only, it is not: years 1–3 are low and year 4 jumps, because tax law used up the machine’s deductions faster than the books.\nThe books use up the machine’s $120,000 at $30,000 a year; tax law at $40,000 a year. After year 1, tax law has already used $10,000 more of the deductions than the books, so a later year will have $10,000 less to deduct, and its taxable profit will be higher. That extra tax is caused by year 1, so it belongs in year 1: deferred tax records it now.\n**Objective:** account for the current and future tax effects of a transaction in the same period, and in the same place (P&L, OCI or equity), as the transaction.',
-    ex: [{ calc: S.Y.map((y) => ({ t: `year ${y.k + 1}: current ${f1(y.current)} ${y.move >= 0 ? '+' : '−'} deferred ${f1(Math.abs(y.move))}`, v: y.total })) }, 'Tap a pair of bars for that year in full.'],
-    traps: ['Deferred tax does not exist to smooth profit; it puts each tax effect in the year of the event that caused it.'] }),
-  tb: { h: 'Tax base: tax law’s value of the same item', what: 'Every asset and liability has a **carrying amount** (in the books) and a **tax base** (under tax law).\n- **asset:** the amount tax law will still let you deduct when you use or sell it. For a machine: cost − capital allowances already claimed\n- **liability:** carrying amount − any amount tax law will let you deduct when you settle it. A warranty provision deductible when paid: tax base 0\n- **revenue received in advance:** carrying amount − any part not taxed in future (0 if it was taxed when received)\nTemporary difference = carrying amount − tax base.',
-    traps: ['The tax base of a machine is cost − allowances claimed, **not** its cost or its carrying amount.'] },
-  gapc: (S) => ({ h: 'Carrying amount vs tax base', what: 'The books write the machine down by $30,000 a year; tax law by $40,000 a year for three years. The gap opens ($10,000, $20,000, $30,000) and closes in year 4, when tax law has nothing left to give and the books catch up. Each year end, deferred tax = gap × enacted rate. Tap a pair of bars for that year.',
-    ex: [{ calc: S.Y.map((y) => ({ t: `end of year ${y.k + 1}: carrying amount ${n0(y.cv)} − tax base ${n0(y.tb)}`, v: y.td })) }] }),
-  grid: { h: 'Read the gap: taxable or deductible?', what: 'Now “taxable” and “deductible” describe the **gap**, not an income or expense item. Ask what happens when the item leaves the balance sheet:\n- **asset, carrying amount above tax base:** you will recover more than you can deduct, so more tax later: **taxable** → DTL (Lim’s machine)\n- **asset, below:** more deduction than book value: **deductible** → DTA\n- **liability, above:** paying it gives a deduction later: **deductible** → DTA (a warranty provision with tax base 0)\n- **liability, below:** **taxable** → DTL (rare)',
-    traps: ['Liabilities work the other way round from assets.'] },
-  rate: (S) => ({ h: 'Which rate?', what: 'Deferred tax uses the rate **enacted or substantively enacted** by the reporting date for the year the gap reverses. A rate that is only proposed is not used. Deferred tax is never discounted. When a new rate is enacted, the opening balance is remeasured, and the change goes to P&L (or OCI if the item went there). Current tax always uses the rate for this year’s profit.',
-    ex: S.cut ? ['Year 2, rate cut to 15% enacted:', { calc: [{ t: 'opening DTL: $10,000 × 17%', v: 1700 }, { op: '−', t: 'remeasure at 15%: $10,000 × 2%', v: 200 }, { op: '+', t: 'year 2’s new gap at 15%: $10,000 × 15%', v: 1500 }, { op: '=', t: 'closing DTL: $20,000 × 15%', v: 3000 }] }]
-      : ['Switch the rate to “cut to 15%” to see a rate change worked.'],
-    traps: ['Using the old rate after a new one is enacted, or not remeasuring the opening balance.', 'Applying the new future rate to this year’s current tax.'] }),
-  dtl: (S) => { const F = S.F; return { h: 'DTL: closing balance first, then the movement', what: 'The **balance sheet liability approach**: at each year end compute the closing balance (taxable gap × enacted rate), then the deferred tax expense is the movement, closing − opening. A DTL is recognised for (almost) every taxable temporary difference; there is no probability test.',
-    ex: [`Year ${S.focus + 1}:`, { calc: [{ t: `closing DTL: ${n0(F.td)} × ${pc(F.rd)}`, v: F.dtl, link: '0.1' }, { op: '−', t: 'opening DTL', v: F.open }, { op: '=', t: '{x|deferred tax expense}', v: F.move, link: '0.0' }] }],
-    traps: ['The P&L charge is the **movement**, not the closing balance.', 'In year 4 the DTL falls to 0: that release is {i|deferred tax income}.'],
-    je: [`… year ${S.focus + 1}`, `Dr {x|Deferred tax expense} :: ${f1(F.move)}`, `Cr {l|Deferred tax liability} :: ${f1(F.move)}`, '… year 4: the gap closes', `Dr {l|Deferred tax liability} :: ${f1(-S.Y[3].move)}`, `Cr {i|Deferred tax income} :: ${f1(-S.Y[3].move)}`] }; },
-  oci: { h: 'P&L or OCI?', what: 'Deferred tax goes to the same place as the item that created the gap:\n- capital allowances vs depreciation, provisions → P&L\n- a revaluation of property → OCI, with the revaluation gain\nA revaluation raises the carrying amount but not the tax base, so the gap grows by the gain.',
-    ex: [{ calc: [{ t: 'revaluation gain in OCI', v: 50000 }, { op: '×', t: 'tax rate', vt: '17%' }, { op: '=', t: '{l|DTL}, charged to OCI', v: 8500, link: 0 }, { t: '{e|revaluation surplus} left in equity: $50,000 − $8,500', v: 41500 }] }],
-    traps: ['Sending deferred tax on a revaluation to P&L.'],
-    je: ['… the revaluation (gain already booked)', 'Dr {e|Revaluation surplus (OCI)} :: $8,500', 'Cr {l|Deferred tax liability} :: $8,500'] },
-  dta: { h: 'DTA: only if future taxable profit is probable', what: 'A deductible gap will lower future taxable profit. That saving is worth something only if there is future taxable profit to deduct it from, so a DTA is recognised **only to the extent future taxable profit is probable** (taxable gaps reversing at the same time count too). Reassess every year end.',
-    ex: ['A warranty provision of $20,000, deductible when the claims are paid:', { calc: [{ t: '{l|carrying amount}', v: 20000 }, { op: '−', t: 'tax base: $20,000 − $20,000 deductible later', v: 0 }, { op: '=', t: 'deductible gap', v: 20000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{a|DTA}', v: 3400, link: 0 }] }],
-    traps: ['A liability carried **above** its tax base gives a DTA, not a DTL.'],
+  acc: { h: 'Accounting books: accounting profit', what: 'The books follow SFRS(I). Every income and expense item goes in, including depreciation and the entertainment expense. Lim’s **accounting profit** is $200,000, and the tax expense in the P&L is judged against it.\nThe bars are to scale, except sales and salaries, which are cut short (the zigzag) so the small items can be seen.',
+    ex: [{ calc: [{ t: 'sales', v: EX.sales }, { op: '−', t: 'salaries', v: EX.sal }, { op: '−', t: '{x|depreciation expense}', v: 30000 }, { op: '−', t: '{x|entertainment expense}', v: EX.ent }, { op: '=', t: 'accounting profit', v: EX.profit }] }] },
+  tax: { h: 'Tax world: taxable profit', what: 'Tax law (the Income Tax Act) builds its own profit from the same transactions. It keeps sales and salaries, swaps depreciation for its own capital allowance, and never lets the entertainment expense in. IRAS taxes this **taxable profit** at 17%: that is the current tax, the bill for this year.',
+    ex: ['Built from the items:', { calc: [{ t: 'sales', v: EX.sales }, { op: '−', t: 'salaries', v: EX.sal }, { op: '−', t: 'capital allowance', v: 40000 }, { op: '=', t: 'taxable profit', v: 196000 }] },
+      'In a tax computation you start from accounting profit and adjust it:', { calc: [{ t: 'accounting profit', v: EX.profit }, { op: '+', t: 'depreciation (tax law does not allow it)', v: 30000 }, { op: '−', t: 'capital allowance (tax law’s deduction instead)', v: 40000 }, { op: '+', t: 'entertainment (never allowed)', v: EX.ent }, { op: '=', t: 'taxable profit', v: 196000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{x|current tax}', v: 33320 }] }],
+    traps: ['Current tax is **taxable** profit × rate, not accounting profit × rate.'] },
+  sales: { h: 'Taxable income', what: '“Taxable” here describes an **income item**: income that tax law includes in taxable profit. Lim’s sales of $500,000 are in both worlds, in the same year, at the same amount, so they create no difference.' },
+  exempt: { h: 'Exempt (non-taxable) income', what: '“Exempt” describes an **income item** the books include but tax law never taxes, for example a one-tier dividend from a Singapore company. Lim has none.\nIt would sit in the accounts bar only, with no slice in the tax world: a **permanent difference**, like the entertainment expense but on the income side. It makes the tax expense lower than profit × 17%.' },
+  sal: { h: 'Deductible expense', what: '“Deductible” here describes an **expense item**: an expense tax law lets you subtract from taxable profit. Lim’s salaries of $264,000 are deducted in both worlds, in the same year, at the same amount, so they create no difference.' },
+  dep: { h: 'Depreciation vs capital allowance: another year', what: 'The books spread the machine’s $120,000 cost over its 4-year life: $30,000 a year. Tax law does not allow depreciation at all. It gives its own deduction instead, the **capital allowance**: $40,000 a year for 3 years.\nBoth total $120,000; only the years differ. That is a **temporary difference**, and it is the only kind that creates deferred tax.',
+    ex: [{ calc: [{ t: 'years 1–3: tax world deducts $40,000 − $30,000 more each year', v: 10000 }, { t: 'year 4: books deduct $30,000, tax world nothing', v: 30000 }, { t: 'over 4 years: $120,000 in both worlds', v: 120000 }] }],
+    traps: ['Calling depreciation vs capital allowances a **permanent** difference: the totals are equal, only the timing differs.'] },
+  ca: { h: 'Capital allowance', what: 'Tax law’s version of depreciation for plant and machinery. It is a deduction in the **tax world** only; the books never record it. Lim claims $40,000 a year for 3 years, faster than the books’ $30,000 a year over 4 years.' },
+  ent: { h: 'Non-deductible expense: never', what: '“Non-deductible” describes an **expense item** the books charge but tax law never lets you subtract: here an entertainment expense that tax law disallows; also fines and penalties. It has no slice in the tax world.\nThis is a **permanent difference**: it never reverses, so it creates **no deferred tax**. It only makes the tax expense higher than profit × 17%, and the tax note explains that.',
+    ex: [{ calc: [{ t: 'extra current tax every year: $6,000 × 17%', v: 1020 }] }],
+    traps: ['A permanent difference never creates deferred tax.'] },
+
+  rule: { h: 'The gap: joy or gloom', what: 'At each year end, take each item on the balance sheet and compare the two worlds:\n- **carrying amount:** the item’s value in the books\n- **tax base:** the same item’s value under tax law. For an asset, what tax law will still let you deduct\n**Gap = carrying amount (CA) − tax base (TB)**, read as **net assets in the accounting world − net assets in the tax world.**\n- **positive: too much joy in the accounting world.** What goes up must come down: the tax world will catch up and tax that joy later → a {l|deferred tax liability}\n- **negative: too much gloom in the accounting world.** Every cloud has a silver lining: the tax world will catch up and deduct that gloom later → a {a|deferred tax asset}, a tax-saving voucher\nDeferred tax = gap × tax rate.',
+    traps: ['For a **liability**, carrying amount − tax base gives the wrong sign. A bigger liability in the books means fewer net assets: gloom, a DTA.', 'Only temporary differences make a gap. The entertainment expense never does.'] },
+  gapc: (S) => ({ h: 'Lim’s machine: a joy gap', what: 'In years 1–3 the books chip away at the machine more slowly ($30,000 of depreciation a year) than the tax world ($40,000 of capital allowance a year). So the books show more machine left than tax law does: joy.\nThat bites in year 4. Tax law has nothing left to deduct, but the books still charge $30,000. Taxable profit that year is $30,000 higher than accounting profit, and the extra tax is paid then. The DTL records that future tax now, in the years that caused it. Tap a pair of bars for that year.',
+    ex: [{ calc: S.Y.map((y) => ({ t: `end of year ${y.k + 1}: carrying amount ${n0(y.cv)} − tax base ${n0(y.tb)} = ${n0(y.td)} × ${pc(y.rd)}`, v: y.dtl })) }] }),
+  joy: { h: 'Joy → deferred tax liability', what: 'The books show more net assets than the tax world. Later the tax world catches up: taxable profit will be higher than accounting profit, so more tax will be paid. That future tax comes from what happened this year, so it is recorded now as a liability.\nExamples:\n- **Lim’s machine:** capital allowances run ahead of depreciation\n- **a revaluation of property:** the books raise the value, the tax base stays. The DTL goes to OCI, with the revaluation gain\nA DTL is recognised for (almost) every joy gap. There is no probability test.',
+    ex: ['Lim, end of year 1:', { calc: [{ t: 'gap: $90,000 − $80,000', v: 10000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{l|DTL}', v: 1700, link: 0 }] },
+      'A revaluation gain of $50,000:', { calc: [{ t: '$50,000 × 17%, charged to OCI', v: 8500, link: 1 }] }],
+    traps: ['Sending deferred tax on a revaluation to P&L: it follows the gain into OCI.'],
+    je: ['… Lim, year 1', 'Dr {x|Deferred tax expense} :: $1,700', 'Cr {l|Deferred tax liability} :: $1,700', '… the revaluation (gain already booked)', 'Dr {e|Revaluation surplus (OCI)} :: $8,500', 'Cr {l|Deferred tax liability} :: $8,500'] },
+  gloom: { h: 'Gloom → deferred tax asset: a tax-saving voucher', what: 'The books show fewer net assets than the tax world, usually because the books have charged an expense that tax law will only deduct later. When tax law catches up, taxable profit will be lower and less tax will be paid: a tax-saving voucher.\nA voucher is worth something only if there will be taxable profit to use it against. So a DTA is recognised **only to the extent that future taxable profit is probable** (joy gaps reversing at the same time count). Reassess it every year end.',
+    ex: ['A warranty provision of $20,000, deductible when the claims are paid:', { calc: [{ t: 'books: liability $20,000; tax world: none yet → gap', v: -20000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{a|DTA}', v: 3400, link: 0 }] }],
+    traps: ['An increase in a DTA **reduces** the tax expense (deferred tax income).'],
     je: ['… year end', 'Dr {a|Deferred tax asset} :: $3,400', 'Cr {i|Deferred tax income} :: $3,400'] },
-  loss: { h: 'Unused tax losses', what: 'A tax loss carried forward will lower future taxable profit, so it works like a deductible temporary difference. Recognise a DTA only up to the future taxable profit that is probable. Several recent years of losses are strong evidence against, unless there is convincing other evidence (signed contracts, taxable gaps reversing in time). Reassess every year end; the unrecognised part is disclosed.\nSingapore: unused trade losses carry forward indefinitely if the shareholding test is met.',
-    ex: ['Tembusu: unused loss $300,000; probable future taxable profit $200,000:', { calc: [{ t: 'loss covered by probable profit', v: 200000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{a|DTA}', v: 34000, link: 0 }, { t: 'not covered, disclosed only', v: 100000 }] }],
+  flip: { h: 'Liability? Flip the sign', what: 'For an asset, carrying amount − tax base gives the gap with the right sign. For a liability it gives the wrong sign, because a liability takes away from net assets. Ask instead: which world shows more net assets?',
+    ex: ['A warranty provision of $10,000, deductible only when the claims are paid:', { calc: [{ t: 'net assets in the books: the provision', v: -10000 }, { op: '−', t: 'net assets in the tax world: no liability yet (tax base 0)', v: 0 }, { op: '=', t: 'gap: gloom', v: -10000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{a|DTA}', v: 1700 }] }],
+    traps: ['Carrying amount $10,000 − tax base $0 = +$10,000 → “DTL” is the classic slip.'] },
+  loss: { h: 'Unused tax losses: a voucher too', what: 'A tax loss carried forward will reduce future taxable profit. It is gloom with no item on the balance sheet at all: the books show nothing, the tax world holds a deduction waiting to be used.\nRecognise a DTA only up to the future taxable profit that is probable. Several recent years of losses are strong evidence against, unless there is convincing other evidence (signed contracts, joy gaps reversing in time). Reassess every year end. The part not recognised is disclosed in the tax note.\nSingapore: unused trade losses carry forward indefinitely if the shareholding test is met.',
+    ex: ['Tembusu: unused tax loss $300,000; probable future taxable profit $200,000:', { calc: [{ t: 'loss covered by probable profit', v: 200000 }, { op: '×', t: 'rate', vt: '17%' }, { op: '=', t: '{a|DTA}', v: 34000, link: 0 }, { t: 'not covered: no DTA, disclosed only', v: 100000 }] }],
     traps: ['Recognising a DTA on the **whole** loss.', 'Keeping last year’s DTA without reassessing it.'],
     je: ['… year end', 'Dr {a|Deferred tax asset} :: $34,000', 'Cr {i|Deferred tax income} :: $34,000'] },
-  bs: (S) => ({ h: 'Balance sheet', what: '- **deferred tax** → always non-current, never split into current and non-current, never discounted\n- **offset** a DTA against a DTL only with a legal right to offset and the same tax authority\n- **current tax payable** → a current liability; an overpayment is a current tax asset\nThe chart shows Lim’s DTL: it builds while the allowances run ahead, then is released in year 4. Tap a bar for that year.',
+
+  calc: { h: 'Each year end: what to calculate first', what: 'A typical exam question gives taxable profit, the opening and closing gaps, and sometimes a rate change, and asks for the entry or the tax expense. Work in this order:\n- **1. current tax** = taxable profit × this year’s rate\n- **2. closing DTL** = closing gap × the rate enacted for when the gap reverses\n- **3. deferred tax expense** = closing DTL − opening DTL, never the closing balance\n- **4. check** the movement in two parts when the rate changed\n- **5A, 5B. book** the two entries: current tax, then deferred tax\nSteps 1 and 2 do not depend on each other. The opening DTL is simply last year’s closing.',
+    ex: ['Kallang Engineering, 20X2: taxable profit $400,000 at 17%; gap $40,000 at the end of 20X1 (DTL $6,800) and $70,000 at the end of 20X2; 15% enacted during 20X2 for 20X3 onwards.',
+      { calc: [{ t: 'Step 1 · current tax: $400,000 × 17%', v: 68000, link: '0.0' }, { t: 'Step 2 · closing DTL: $70,000 × 15%', v: 10500 }, { t: 'Step 3 · deferred tax expense: $10,500 − $6,800', v: 3700, link: '0.1' }] },
+      { calc: [{ t: '(a) rate cut on the opening gap: $40,000 × 2% (credit)', v: -800 }, { op: '+', t: '(b) new gap at the new rate: $30,000 × 15% (charge)', v: 4500 }, { op: '=', t: 'agrees with ③', v: 3700 }] },
+      { calc: [{ t: 'total tax expense: $68,000 + $3,700', v: 71700 }] }],
+    je: ['… Kallang, 20X2', 'Dr {x|Current tax expense} :: $68,000', 'Dr {x|Deferred tax expense} :: $3,700', 'Cr {l|Current tax payable} :: $68,000', 'Cr {l|Deferred tax liability} :: $3,700'] },
+  'c-open': (S) => ({ h: 'Opening DTL: last year’s closing', what: 'Nothing to calculate: the opening DTL is the closing DTL from last year’s balance sheet. It was measured at the rate enacted then.',
+    ex: [{ calc: [{ t: `end of year 1: gap ${n0(S.Y[0].td)} × 17%`, v: S.F.open }] }] }),
+  'c-cur': (S) => { const F = S.F; return { h: 'Step 1 · Calculate current tax: this year’s rate', what: 'Current tax = taxable profit × the rate for **this** year’s profit. A new rate enacted for future years does not touch it.',
+    ex: [{ calc: [{ t: 'taxable profit', v: F.taxable }, { op: '×', t: 'rate for year 2', vt: pc(F.rc) }, { op: '=', t: '{x|current tax}', v: F.current, link: 0 }] }],
+    traps: ['Applying a newly enacted future rate to this year’s current tax.'],
+    je: ['… year 2', `Dr {x|Current tax expense} :: ${f1(F.current)}`, `Cr {l|Current tax payable} :: ${f1(F.current)}`] }; },
+  'c-close': (S) => { const F = S.F; return { h: 'Step 2 · Calculate the closing DTL: the enacted rate for the reversal', what: 'Measure the balance sheet first. Closing gap = carrying amount − tax base at the year end, times the rate **enacted (or substantively enacted) by the year end for the years when the gap reverses**. A rate only proposed is not used. Deferred tax is never discounted.',
+    ex: [{ calc: [{ t: '{a|carrying amount}: $120,000 − 2 × $30,000', v: F.cv }, { op: '−', t: 'tax base: $120,000 − 2 × $40,000', v: F.tb }, { op: '=', t: 'gap (joy)', v: F.td }, { op: '×', t: S.cut ? 'rate enacted for year 3 onwards' : 'rate', vt: pc(F.rd) }, { op: '=', t: '{l|closing DTL}', v: F.dtl }] }],
+    traps: ['Using the old rate after a new one is enacted.', 'Taking the closing DTL as the expense: the expense is the movement (step 3).'] }; },
+  'c-rate': (S) => { const F = S.F; return S.cut
+    ? { h: '(a) Rate changed? Restate the opening balance', what: 'When a new rate is enacted, the opening DTL is restated at the new rate first. The gap at the start of year 2 was $10,000: at 15% instead of 17% it carries $1,500, not $1,700.\nThe $200 fall is a **credit**: it reduces this year’s deferred tax expense (Dr DTL, Cr Deferred tax expense).',
+      ex: [{ calc: [{ t: 'opening DTL: $10,000 × 17%', v: F.open }, { op: '−', t: 'rate cut on the opening gap: $10,000 × (17% − 15%)', v: F.remeasure }, { op: '=', t: 'opening DTL restated: $10,000 × 15%', v: F.open - F.remeasure }] }],
+      traps: ['Applying the rate change to the **closing** gap ($20,000): (a) uses the **opening** gap.', 'On a DTA the same cut is a **charge**: the voucher is now worth less.'] }
+    : { h: '(a) Rate changed? Not this time', what: 'The rate did not change, so the opening DTL stays at $1,700 and the whole movement comes from the year’s new gap ((b)). Switch the tax rate to “cut to 15%” to see a restatement.' }; },
+  'c-move': (S) => { const F = S.F; return { h: 'Step 3 · Calculate the deferred tax expense: the movement', what: 'Deferred tax expense = closing DTL − opening DTL. The balance sheet is measured first (step 2); the P&L takes only the change. That amount is the deferred tax entry (5B).',
+    ex: [{ calc: [{ t: 'step 2 · closing DTL', v: F.dtl }, { op: '−', t: 'opening DTL (last year’s closing)', v: F.open }, { op: '=', t: '{x|deferred tax expense}', v: F.move }] }],
+    traps: ['Booking the closing balance as the expense.'] }; },
+  'c-check': (S) => { const F = S.F; return { h: 'Step 4 · Check the movement in two parts', what: 'Split the movement into what caused it:\n- (a) the rate effect on the **opening** gap\n- (b) this year’s new gap, at the new rate\nA **charge** adds to the deferred tax expense (Dr Deferred tax expense, Cr DTL). A **credit** reduces it (Dr DTL, Cr Deferred tax expense).\nThis is a check only: you still post **one** entry for the net movement (5B). Posting (a) and (b) separately would give the same net result.\nThe split is not thrown away: the deferred tax caused by a change in tax rates, (a), is **disclosed** in the tax note as a component of the tax expense.' + (S.cut ? '\nThe reconciliation line “effect of rate change” is $400, not $200: it compares everything with 17%, so it also picks up this year’s new $10,000 gap booked at 15% rather than 17% ($200).' : ''),
+    ex: [{ calc: [{ t: `(a) rate effect: $10,000 × ${S.cut ? '2% (credit)' : '0%'}`, v: -F.remeasure }, { op: '+', t: `(b) new gap: $10,000 × ${pc(F.rd)} (charge)`, v: F.growth }, { op: '=', t: 'agrees with step 3', v: F.move }] }],
+    traps: ['Applying the rate change to the **closing** gap: (a) uses the **opening** gap.'] }; },
+
+  now: (S) => { const F = S.F; return { h: '5A · Book current tax: the bill now', what: 'The bill IRAS sends for this year, worked out on the tax world’s profit. It is paid next year, so at the year end it is owed now: a **payable**, a current liability. (If more was paid in advance than is due, the excess is a current tax asset.)',
+    ex: [{ calc: [{ t: 'taxable profit', v: F.taxable }, { op: '×', t: 'rate for year 2', vt: pc(F.rc) }, { op: '=', t: '{x|current tax}', v: F.current, link: 0 }] }],
+    je: ['… year 2, unpaid at the year end', `Dr {x|Current tax expense} :: ${f1(F.current)}`, `Cr {l|Current tax payable} :: ${f1(F.current)}`] }; },
+  later: (S) => { const F = S.F; return { h: '5B · Book deferred tax: the bill later', what: 'The bill the joy gap will bring when it closes. Only the **movement** goes through P&L this year; the balance builds up as a **liability**, paid later, in the years the gap reverses (Lim: year 4).',
+    ex: [{ calc: [{ t: 'closing DTL', v: F.dtl }, { op: '−', t: 'opening DTL', v: F.open }, { op: '=', t: '{x|deferred tax expense}', v: F.move, link: 0 }] }],
+    je: ['… year 2', `Dr {x|Deferred tax expense} :: ${f1(F.move)}`, `Cr {l|Deferred tax liability} :: ${f1(F.move)}`, '… year 4: the gap closes, the DTL is released', `Dr {l|Deferred tax liability} :: ${f1(-S.Y[3].move)}`, `Cr {i|Deferred tax income} :: ${f1(-S.Y[3].move)}`] }; },
+  pair: (S) => { const F = S.F; return { h: 'Remember the pairing', what: 'Each tax is one bill with two sides:\n- **the P&L side (Dr): expense.** What this year’s profit cost in tax\n- **the balance sheet side (Cr): what is owed, and when.** Payable = pay now; liability = pay later\nThe first words always match: current with current, deferred with deferred.\nTogether the two expenses bring the tax expense back in line with accounting profit: 17% × (profit + the entertainment that is never deducted).' + (S.cut ? ' With the rate cut, $400 less.' : ''),
+    ex: [{ calc: [{ t: '{x|current tax expense}', v: F.current, link: '0.0' }, { op: '+', t: '{x|deferred tax expense}', v: F.move, link: '1.0' }, { op: '=', t: 'tax expense, year 2', v: F.total }] },
+      { calc: [{ t: '17% × ($200,000 + $6,000)', v: 35020 }, ...(S.cut ? [{ op: '−', t: 'rate cut on deferred tax: $20,000 × 2%', v: 400 }] : []), { op: '=', t: 'the same tax expense', v: F.total }] }],
+    je: ['… year 2', `Dr {x|Current tax expense} :: ${f1(F.current)}`, `Cr {l|Current tax payable} :: ${f1(F.current)}`, `Dr {x|Deferred tax expense} :: ${f1(F.move)}`, `Cr {l|Deferred tax liability} :: ${f1(F.move)}`] }; },
+
+  bs: (S) => ({ h: 'Balance sheet', what: '- **deferred tax** → always non-current, never discounted\n- **offset** a DTA against a DTL only with a legal right to offset and the same tax authority\n- **current tax payable** → a current liability; an overpayment is a current tax asset\nThe chart shows Lim’s DTL: it builds while the allowances run ahead, then is released in year 4. Tap a bar for that year.',
     ex: [{ calc: S.Y.map((y) => ({ t: `DTL, end of year ${y.k + 1}`, v: y.dtl })) }],
     traps: ['Calling deferred tax current.', 'Netting a DTA from one tax authority against a DTL from another.'] }),
   pl: (S) => ({ h: 'Profit or loss', what: '- **tax expense** = current tax + deferred tax (the movement)\n- **tax on OCI items** goes to OCI, not P&L\nWith deferred tax, Lim’s tax expense follows its profit. The dashed lines mark profit × rate + entertainment × rate: the tax this profit should carry.',
     ex: [{ calc: S.Y.flatMap((y) => [{ t: `year ${y.k + 1}: {x|current tax}`, v: y.current }, { op: y.move >= 0 ? '+' : '−', t: `{x|deferred tax}${y.move < 0 ? ' (released)' : ''}`, v: Math.abs(y.move) }, { op: '=', t: `tax expense, year ${y.k + 1}`, v: y.total }]) }],
     traps: ['Adding a DTA increase to the tax expense: it reduces it.'] }),
-  note: (S) => { const F = S.F; return { h: 'Tax note: the reconciliation and disclosures', what: 'Readers want to know why the tax expense is not profit × rate. The reconciliation starts from profit × rate and adds or subtracts each reason:\n- permanent differences (non-deductible expenses add, exempt income subtracts)\n- the effect of rate changes on deferred tax\n- losses with no DTA\nTemporary differences never appear: they lower current tax and raise deferred tax by the same amount.\nAlso disclosed: the components of the tax expense, tax in OCI and equity, rate changes, unused losses and deductible gaps with no DTA, and the evidence for a DTA when there are recent losses.',
-    ex: [`Year ${S.focus + 1}:`, { calc: [{ t: `profit × rate: ${f1(EX.profit)} × ${pc(F.rc)}`, v: F.recon }, { op: '+', t: `non-deductible entertainment: ${f1(EX.ent)} × ${pc(F.rc)}`, v: F.entFx }, ...(F.rateFx ? [{ op: '−', t: 'rate cut on deferred tax: $20,000 × 2%', v: -F.rateFx }] : []), { op: '=', t: 'tax expense', v: F.total }] }],
+  note: (S) => { const F = S.F; return { h: 'Tax note: the reconciliation and disclosures', what: 'Readers want to know why the tax expense is not profit × rate. The reconciliation starts from profit × rate and adds or subtracts each reason:\n- permanent differences (non-deductible expenses add, exempt income subtracts)\n- the effect of rate changes on deferred tax\n- tax losses with no DTA\nTemporary differences never appear: they lower current tax and raise deferred tax by the same amount.\nAlso disclosed: the components of the tax expense (including deferred tax from a rate change), tax in OCI and equity, unused losses and deductible gaps with no DTA, and the evidence for a DTA when there are recent losses.',
+    ex: ['Year 2:', { calc: [{ t: `profit × rate: ${f1(EX.profit)} × ${pc(F.rc)}`, v: F.recon }, { op: '+', t: `non-deductible entertainment: ${f1(EX.ent)} × ${pc(F.rc)}`, v: F.entFx }, ...(F.rateFx ? [{ op: '−', t: 'rate cut on deferred tax: closing gap $20,000 × 2%', v: -F.rateFx }] : []), { op: '=', t: 'tax expense', v: F.total }] }],
     traps: ['Putting capital allowances (a temporary difference) in the reconciliation.'] }; },
 };
-const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is, why, a worked example and the journal entries. Tap a bar in any chart for that year in full.' };
+const ALL = { h: 'Tap any box, slice or step', what: 'Each one opens here with what it is, why, a worked example and the journal entries. Tap a slice of the bars for what the word means, and a bar in any chart for that year in full.' };
 
 (function () {
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -483,60 +501,132 @@ const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is, why,
   };
   const yrIds = () => S.Y.map((y) => `yr:${y.k}`);
   const fair = (y) => y.recon + y.entFx; // the tax the profit should carry: profit × rate + entertainment × rate
+  const tap = (id, inner) => `<g class="mc-bar${cur === id ? ' sel' : ''}" data-note="${id}">${inner}</g>`;
+  const txt = (x, y, s, cls = 'm', anchor = 'middle') => `<text class="mc-lbl ${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${tsp(s)}</text>`;
 
-  // Section 2: tax expense each year, current tax only vs current + deferred, against what the profit should carry.
-  const whyChart = () => {
-    const b = box('why'), yt = b.y + 58, yb = b.y + b.h - 16, max = 42000, s = (v) => (v / max) * (yb - yt);
-    let o = `<text class="mc-h2" x="${b.x + b.w / 2}" y="${b.y + 28}" text-anchor="middle">same profit every year, so the tax expense should be the same</text>`;
-    o += key(b.x + 14, b.y + 40, [['mc-cur', 'current tax only: low, then a jump in year 4', 'x']]) + key(b.x + 200, b.y + 40, [['mc-tot', 'current + deferred: follows the profit', 'x']]) + key(b.x + 14, b.y + 50, [['dash', 'profit × rate + entertainment × rate', 'm']]);
-    o += `<line class="mc-ax" x1="${b.x + 10}" x2="${b.x + b.w - 10}" y1="${yb}" y2="${yb}"/>`;
-    o += groups(b, yrIds(), yt, yb, (k, gx, gw) => {
-      const y = S.Y[k], bw = 30, x1 = gx + gw / 2 - bw - 2, x2 = gx + gw / 2 + 2;
-      return `<rect class="mc-cur" x="${x1}" width="${bw}" y="${yb - s(y.current)}" height="${s(y.current)}"/><text class="mc-lbl${y.current > fair(y) ? ' x' : ''}" x="${x1 + bw / 2}" y="${y.current > fair(y) ? yb - s(y.current) - 3 : yb - s(y.current) + 11}" text-anchor="middle">${n0(y.current)}</text>
-        <rect class="mc-tot" x="${x2}" width="${bw}" y="${yb - s(y.total)}" height="${s(y.total)}"/><text class="mc-lbl in" x="${x2 + bw / 2}" y="${yb - s(y.total) + 11}" text-anchor="middle">${n0(y.total)}</text>
-        <line class="mc-rent" x1="${x1 - 4}" x2="${x2 + bw + 4}" y1="${yb - s(fair(y))}" y2="${yb - s(fair(y))}"/>
-        <text class="mc-lbl m" x="${gx + gw / 2}" y="${yb + 10}" text-anchor="middle">yr ${k + 1}</text>`;
-    });
+  // Section 1: each world as a bar of income next to a bar of expenses + profit. To scale ($1,000 = 1px), except that
+  // sales and salaries are cut short by the same $220,000 (zigzag) so the small items show.
+  const WY = 376, CUT = 220;
+  const worldChart = () => {
+    const px = (v) => v / 1000;
+    const stack = (x, w, items) => { let y = WY; return items.map((it) => { const h = it.h ?? px(it.v); y -= h; const top = y;
+      const lab = (it.lab || []).map((l, i, a) => txt(x + w / 2, top + h / 2 - (a.length - 1) * 4.6 + i * 9.2 + 2.6, l, 'w-in')).join('');
+      return tap(it.note, `<rect class="${it.cls}" x="${x}" y="${top}" width="${w}" height="${h}"/>${lab}`); }).join(''); };
+    const brk = (x, w) => `<line class="w-brk" x1="${x - 3}" x2="${x + w + 3}" y1="${WY - 5}" y2="${WY - 10}"/>`;
+    const sales = { note: 'sales', h: px(EX.sales) - CUT, cls: 'w-same', lab: ['sales', n0(EX.sales)] };
+    const sal = { note: 'sal', h: px(EX.sal) - CUT, cls: 'w-same', lab: ['salaries', n0(EX.sal)] };
+    const tpf = S.Y[0].taxable;
+    let o = `<g class="w-key">${[['w-same', 'same year, same amount', 'm', 14], ['w-temp', 'another year → temporary → deferred tax', 'x', 134], ['w-perm', 'never → permanent → no deferred tax', 'l', 318]]
+      .map(([c, t, l, x]) => `<rect class="${c}" x="${x}" y="28" width="8" height="8" rx="1.5"/>${txt(x + 12, 35, t, l, 'start')}`).join('')}</g>`;
+    // accounting books: income at 30, expenses + profit at 140 (next to the gutter)
+    o += stack(30, 60, [sales]) + brk(30, 60);
+    o += stack(140, 70, [sal, { note: 'dep', v: 30000, cls: 'w-temp', lab: ['depreciation', '30,000'] }, { note: 'ent', v: EX.ent, cls: 'w-perm' }, { note: 'acc', v: EX.profit, cls: 'w-prof', lab: ['accounting', 'profit', n0(EX.profit)] }]) + brk(140, 70);
+    o += tap('exempt', `<rect class="w-none" x="30" y="${WY - 280 - 15}" width="60" height="11" rx="2"/>${txt(60, WY - 280 - 7, 'exempt: none', 'm')}`);
+    // tax world: expenses + profit at 330 (next to the gutter), income at 450
+    o += stack(330, 70, [sal, { note: 'ca', v: 40000, cls: 'w-temp', lab: ['capital allowance', '40,000'] }, { note: 'tax', v: tpf, cls: 'w-prof', lab: ['taxable', 'profit', n0(tpf)] }]) + brk(330, 70);
+    o += stack(450, 60, [sales]) + brk(450, 60);
+    [[60, 'income'], [175, 'expenses + profit'], [365, 'expenses + profit'], [480, 'income']].forEach(([x, t]) => { o += txt(x, WY + 12, t); });
+    // the gutter: how each slice crosses into the tax world
+    const ySal = WY - 22, yDep = WY - 44 - 15, yCa = WY - 44 - 20, yEnt = WY - 44 - 30 - 3;
+    o += `<g class="fl-e"><path d="M211 ${ySal} H329" marker-end="url(#fa)"/></g>${txt(270, ySal + 11, 'same year, same amount')}`;
+    o += `<g class="fl-e w-tmp"><path d="M211 ${yDep} C 270 ${yDep}, 270 ${yCa}, 329 ${yCa}" marker-end="url(#fa)"/></g>${txt(270, yDep + 11, 'another year', 'x')}${txt(270, yDep + 20, '30,000 vs 40,000', 'm')}`;
+    o += `<g class="fl-e w-prm"><path d="M211 ${yEnt} H256"/></g>${txt(262, yEnt + 3, '✕', 'l')}${txt(270, yEnt + 3, 'never', 'l', 'start')}${txt(214, yEnt - 7, 'entertainment 6,000', 'l', 'start')}`;
+    // the gutter, higher up: the tax world's profit gives this year's bill
+    o += [['taxable profit', 'm'], [`${n0(tpf)} × ${pc(S.Y[0].rc)}`, 'x'], ['= current tax', 'm'], [`{x|**${n0(S.Y[0].current)}**}`, 'x'], ['→ bill now', 'm']].map(([t, c], i) => txt(270, 160 + i * 11, t, c)).join('');
+    o += txt(270, 232, '(the same in years 1–3)', 'm');
     return o;
   };
 
-  // Section 3: the machine's carrying amount and tax base at day 1 and each year end; the gap shaded above the shorter bar.
+  // Section 2: the machine's carrying amount and tax base at day 1 and each year end; the gap shaded above the shorter bar.
   const gapChart = () => {
-    const b = box('gapc'), yt = b.y + 58, yb = b.y + b.h - 26, s = (v) => (v / EX.cost) * (yb - yt);
-    let o = `<text class="mc-h2" x="${b.x + b.w / 2}" y="${b.y + 28}" text-anchor="middle">the gap opens, then closes</text>`;
-    o += key(b.x + 12, b.y + 44, [['mc-ab', 'carrying amount (books)', 'a']]) + key(b.x + 118, b.y + 44, [['mc-tbk', 'tax base (tax law)', 'm']]) + key(b.x + 206, b.y + 44, [['mc-gp', 'gap → DTL', 'l']]);
+    const b = box('gapc'), yt = b.y + 42, yb = b.y + b.h - 26, s = (v) => (v / EX.cost) * (yb - yt);
+    let o = key(b.x + 40, b.y + 31, [['mc-ab', 'carrying amount (books)', 'a']]) + key(b.x + 156, b.y + 31, [['mc-tbk', 'tax base (tax law)', 'm']]) + key(b.x + 254, b.y + 31, [['mc-gp', 'gap = joy → DTL', 'l']]);
     o += `<line class="mc-ax" x1="${b.x + 10}" x2="${b.x + b.w - 10}" y1="${yb}" y2="${yb}"/>`;
     const pts = [{ cv: EX.cost, tb: EX.cost, td: 0, dtl: 0 }, ...S.Y];
-    o += groups(b, ['tb', ...yrIds()], yt, yb + 8, (k, gx, gw) => {
-      const p = pts[k], bw = 14, x1 = gx + gw / 2 - bw - 1, x2 = gx + gw / 2 + 1, hi = Math.max(p.cv, p.tb);
+    o += groups(b, ['gapc', ...yrIds()], yt, yb + 8, (k, gx, gw) => {
+      const p = pts[k], bw = 16, x1 = gx + gw / 2 - bw - 1, x2 = gx + gw / 2 + 1, hi = Math.max(p.cv, p.tb);
       return `${p.cv ? `<rect class="mc-ab" x="${x1}" width="${bw}" y="${yb - s(p.cv)}" height="${s(p.cv)}"/>` : ''}
         ${p.tb ? `<rect class="mc-tbb" x="${x2}" width="${bw}" y="${yb - s(p.tb)}" height="${s(p.tb)}"/>` : ''}
         ${p.td ? `<rect class="mc-gp" x="${x2}" width="${bw}" y="${yb - s(hi)}" height="${s(p.td)}"/><text class="mc-lbl l" x="${gx + gw / 2}" y="${yb - s(hi) - 3}" text-anchor="middle">${n0(p.td)}</text>` : ''}
-        <text class="mc-lbl m" x="${gx + gw / 2}" y="${yb + 10}" text-anchor="middle">yr ${k}</text>
+        <text class="mc-lbl m" x="${gx + gw / 2}" y="${yb + 10}" text-anchor="middle">${k ? `end yr ${k}` : 'day 1'}</text>
         <text class="mc-lbl ${p.dtl ? 'l' : 'm'}" x="${gx + gw / 2}" y="${yb + 20}" text-anchor="middle">${p.dtl ? `DTL ${n0(p.dtl)}` : 'no gap'}</text>`;
     });
     return o;
   };
 
-  // Section 3: the 2×2 grid, each cell with a small pair of bars (carrying amount, tax base) and what the gap creates.
-  const gridChart = () => {
-    const b = box('grid'), c0 = b.x + 62, cw = (b.w - 70) / 2, r0 = b.y + 40, rh = 38;
-    let o = `<text class="mc-lbl m" x="${c0 + cw / 2}" y="${b.y + 32}" text-anchor="middle">carrying amount ABOVE tax base</text><text class="mc-lbl m" x="${c0 + cw * 1.5}" y="${b.y + 32}" text-anchor="middle">carrying amount BELOW tax base</text>`;
-    const cell = (row, col, el, ca, tb, res, ex) => {
-      const x = c0 + col * cw, y = r0 + row * rh, bh = (v) => v * 26, base = y + 32, gEl = res === 'DTL' ? 'l' : 'a';
-      return `<rect class="mc-cell" x="${x + 2}" y="${y}" width="${cw - 4}" height="${rh - 3}" rx="4"/>
-        <rect class="mc-${el}b" x="${x + 8}" width="8" y="${base - bh(ca)}" height="${bh(ca)}"/><rect class="mc-tbb" x="${x + 17}" width="8" y="${base - bh(tb)}" height="${bh(tb)}"/>
-        <rect class="mc-gp${gEl === 'a' ? ' a' : ''}" x="${ca > tb ? x + 17 : x + 8}" width="8" y="${base - bh(Math.max(ca, tb))}" height="${bh(Math.abs(ca - tb))}"/>
-        <text class="mc-lbl ${gEl}" x="${x + 32}" y="${y + 15}">${res === 'DTL' ? 'taxable → DTL' : 'deductible → DTA'}</text>
-        <text class="mc-lbl m" x="${x + 32}" y="${y + 26}">${ex}</text>`;
-    };
-    o += `<text class="mc-lbl a" x="${b.x + 12}" y="${r0 + 21}">Asset</text><text class="mc-lbl l" x="${b.x + 12}" y="${r0 + rh + 21}">Liability</text>`;
-    o += cell(0, 0, 'a', 1, 0.6, 'DTL', 'Lim’s machine') + cell(0, 1, 'a', 0.6, 1, 'DTA', 'slow allowances')
-      + cell(1, 0, 'l', 1, 0.6, 'DTA', 'warranty provision') + cell(1, 1, 'l', 0.6, 1, 'DTL', 'rare');
+  // Section 3: a timeline across year 2 with what is known or calculated at each point (steps 1, 2), the DTL as a waterfall
+  // (opening → restated → closing), then the movement (step 3), its check (step 4) and what goes in the books.
+  const calcChart = () => {
+    const b = box('calc'), F = S.F, TL = b.y + 48, c = [b.x + 70, b.x + 221, b.x + 372], hw = 62;
+    let o = `<g class="fl-e"><path d="M${b.x + 16} ${TL} H${b.x + b.w - 14}" marker-end="url(#fa)"/></g>`;
+    o += `<circle class="cl-dot" cx="${c[0]}" cy="${TL}" r="3.5"/><circle class="cl-dot" cx="${c[2]}" cy="${TL}" r="3.5"/>`;
+    o += txt(c[0], TL + 12, 'start of year 2') + txt(c[1], TL + 12, 'during year 2') + txt(c[2], TL + 12, 'end of year 2');
+    if (S.cut) o += `<path class="cl-enact" d="M${c[1]} ${TL - 4.5} l4.5 4.5 l-4.5 4.5 l-4.5 -4.5 Z"/>${txt(c[1] + 8, TL - 4, '15% enacted', 'l', 'start')}`;
+    // a numbered badge: the order to calculate in
+    const bd = (n, x, y, cls) => `<circle class="cl-bd ${cls}" cx="${x}" cy="${y - 2.7}" r="5.2"/><text class="cl-bdt" x="${x}" y="${y}" text-anchor="middle">${n}</text>`;
+    // each step box: the title, then rows that each say one thing: lab (what it is, italic), calc (the sum, mono), res (the answer), tip
+    // the title is "verb **noun**": the verb plain, the noun bold
+    const stepAt = (id, cx, y, w, h, cls, rows, n) => tap(id, `<rect class="cl-step ${cls}" x="${cx - w / 2}" y="${y}" width="${w}" height="${h}" rx="5"/>${n ? bd(n, cx - w / 2 + 11, y + 13, cls) : ''}`
+      + txt(cx, y + 13, rows[0], `cl-ttl ${cls}`) + rows.slice(1).map(([t, k], i) => txt(cx, y + 26 + i * 10.5, t, k === 'res' ? `cl-res ${cls}` : `cl-${k}`)).join(''));
+    const step = (id, cx, cls, rows, n) => stepAt(id, cx, TL + 19, hw * 2, 80, cls, rows, n);
+    o += step('c-open', c[0], 'l', ['take the **opening DTL**', ['last year’s closing', 'lab'], [`${n0(F.tdPrev)} × 17%`, 'calc'], [`= ${n0(F.open)}`, 'res'], ['given: nothing to work out', 'tip']]);
+    o += step('c-cur', c[1], 'x', ['calculate **current tax**', ['taxable profit × this year’s rate', 'lab'], [`${n0(F.taxable)} × ${pc(F.rc)}`, 'calc'], [`= ${n0(F.current)}`, 'res'], ['→ 5A', 'tip']], 1);
+    o += step('c-close', c[2], 'l', ['calculate **closing DTL**', ['gap = CA − TB', 'lab'], [`${n0(F.cv)} − ${n0(F.tb)} = ${n0(F.td)}`, 'calc'], [S.cut ? '× rate enacted for the reversal' : '× rate for the reversal', 'lab'], [`${n0(F.td)} × ${pc(F.rd)}`, 'calc'], [`= ${n0(F.dtl)}`, 'res']], 2);
+    // the waterfall
+    const wb = b.y + 240, s = (v) => (v / 3400) * 74, bw = 26, mid = F.open - F.remeasure;
+    o += txt(b.x + b.w / 2, b.y + 158, `**the DTL through year 2**`, 'w-in');
+    o += `<line class="mc-ax" x1="${b.x + 14}" x2="${b.x + b.w - 14}" y1="${wb}" y2="${wb}"/>`;
+    const bar = (cx, v, cls, top = v) => `<rect class="${cls}" x="${cx - bw / 2}" y="${wb - s(v)}" width="${bw}" height="${s(v)}"/>${txt(cx, wb - s(top) - 3, n0(v), 'l')}`; // top: where the label sits
+    const lvl = (x1, x2, v) => `<line class="mc-rent" x1="${x1}" x2="${x2}" y1="${wb - s(v)}" y2="${wb - s(v)}"/>`;
+    o += tap('c-open', bar(c[0], F.open, 'mc-lb') + txt(c[0], wb + 10, 'opening', 'm'));
+    o += lvl(c[0] + bw / 2, c[1] - bw / 2, F.open) + lvl(c[1] + bw / 2, c[2] - bw / 2, mid);
+    o += tap('c-rate', bar(c[1], mid, 'mc-lb', S.cut ? F.open : mid) + txt(c[1], wb + 10, S.cut ? 'restated' : 'unchanged', 'm')
+      + txt((c[0] + c[1]) / 2, wb + 10, `{l|**(a)** rate changed? ${S.cut ? 'yes' : 'no'}}`, 'm')
+      + (S.cut ? txt((c[0] + c[1]) / 2, wb + 20, 'opening gap 10,000 × (15% − 17%)', 'm') + txt((c[0] + c[1]) / 2, wb + 30, `= {i|**${n0(F.remeasure)} credit**}`, 'm')
+        : txt((c[0] + c[1]) / 2, wb + 20, 'opening stays 1,700', 'm') + txt((c[0] + c[1]) / 2, wb + 30, '= 0', 'm')));
+    if (S.cut) o += `<rect class="mc-rel" x="${c[1] - bw / 2}" y="${wb - s(F.open)}" width="${bw}" height="${s(F.remeasure)}"/>`;
+    o += tap('c-close', bar(c[2], F.dtl, 'mc-lb') + txt(c[2], wb + 10, 'closing', 'm'));
+    o += `<rect class="mc-def" x="${c[2] - bw / 2}" y="${wb - s(F.dtl)}" width="${bw}" height="${s(F.growth)}"/>`;
+    o += tap('c-move', txt((c[1] + c[2]) / 2, wb + 10, '{x|**(b)** the year’s new gap}', 'm') + txt((c[1] + c[2]) / 2, wb + 20, `10,000 × ${pc(F.rd)}`, 'm') + txt((c[1] + c[2]) / 2, wb + 30, `= {x|**${n0(F.growth)} charge**}`, 'm'));
+    // step 3 the movement and step 4 its check, side by side under the waterfall
+    const y3 = b.y + 280, w3 = (b.w - 34) / 2;
+    o += stepAt('c-move', b.x + 12 + w3 / 2, y3, w3, 70, 'x', ['calculate the **deferred tax expense**', ['the movement: closing − opening', 'lab'], [`${n0(F.dtl)} − ${n0(F.open)}`, 'calc'], [`= ${n0(F.move)}`, 'res'], ['never the closing balance · → 5B', 'tip']], 3);
+    o += stepAt('c-check', b.x + 22 + w3 * 1.5, y3, w3, 70, 'x', ['check **the movement**', ['(a) rate effect + (b) the year’s new gap', 'lab'], [`${S.cut ? `−${n0(F.remeasure)}` : '0'} + ${n0(F.growth)} = ${n0(F.move)} ✓`, 'calc'], ['a check only: still one entry (5B)', 'tip'], [S.cut ? '(a) is disclosed in the tax note' : 'with a rate change, (a) is disclosed in the tax note', 'tip']], 4);
+    // 5A and 5B: badges on the two entry boxes
+    const pill = (id, t) => { const n = box(id); return `<rect class="cl-bd x" x="${n.x + 9}" y="${n.y + 7}" width="17" height="11" rx="5.5"/><text class="cl-bdt" x="${n.x + 17.5}" y="${n.y + 15}" text-anchor="middle">${t}</text>`; };
+    o += pill('now', '5A') + pill('later', '5B');
     return o;
   };
 
   // Section 5: the DTL balance at each year end.
+  // Section 5, top of each column: a statement extract for year 2. Rows: h = heading, li = line item with amount,
+  // tip = the rule that goes with it, tot = a total under a rule.
+  const extract = (id, rows) => {
+    const b = box(id), x1 = b.x + 12, x2 = b.x + b.w - 12;
+    let y = b.y + 30, o = '';
+    rows.forEach(([k, t, v, c = 'x']) => {
+      if (k === 'h') { y += y > b.y + 30 ? 15 : 11; o += `<text class="pt-h" x="${x1}" y="${y}">${esc(t)}</text>`; }
+      if (k === 'li' || k === 'tot') {
+        y += k === 'tot' ? 13 : 11;
+        if (k === 'tot') o += `<line class="mc-ax" x1="${x1}" x2="${x2}" y1="${y - 8.5}" y2="${y - 8.5}"/>`;
+        o += txt(x1, y, t, k === 'tot' ? 'pt-tot' : 'pt-li', 'start') + (v != null ? txt(x2, y, v, `pt-amt ${c}`, 'end') : '');
+      }
+      if (k === 'tip') { y += 9.5; o += txt(x1 + 6, y, t, 'cl-tip pt-tip', 'start'); }
+    });
+    return o;
+  };
+  const presentTop = () => { const F = S.F;
+    return extract('bs', [['h', 'Non-current liabilities'], ['li', '{l|Deferred tax liability}', n0(F.dtl), 'l'], ['tip', 'always non-current · never discounted'],
+      ['h', 'Current liabilities'], ['li', '{l|Current tax payable}', n0(F.current), 'l'], ['tip', 'paid too much? → current tax asset'],
+      ['h', 'Offset a DTA against a DTL?'], ['tip', 'only with a legal right to offset,'], ['tip', 'for the same tax authority']])
+    + extract('pl', [['li', 'Profit before tax', n0(EX.profit), 'm'], ['li', '{x|Tax expense}', `(${n0(F.total)})`], ['tip', `current ${n0(F.current)} + deferred ${n0(F.move)}`],
+      ['tot', 'Profit for the year', n0(EX.profit - F.total), 'm'], ['h', 'Other comprehensive income'], ['li', 'Revaluation gain, net of tax'],
+      ['tip', 'tax on an OCI item stays in OCI:'], ['tip', 'e.g. gain 50,000 − DTL 8,500 = 41,500']])
+    + extract('note', [['h', 'Components of tax expense'], ['li', '{x|Current tax}', n0(F.current)], ['li', '{x|Deferred tax}', n0(F.move)],
+      ['tip', S.cut ? `of which rate change: (${n0(F.remeasure)}) credit` : 'of which rate change: 0'],
+      ['h', 'Also disclosed'], ['tip', 'reconciliation: profit × rate → tax (below)'], ['tip', 'unused losses with no DTA'], ['tip', 'evidence for a DTA after recent losses']]);
+  };
+
   const dtlChart = () => {
     const b = region('bs'), yt = b.y + 56, yb = b.y + b.h - 18, max = 5100 * 1.1, s = (v) => (v / max) * (yb - yt);
     let o = head(b, 'Lim’s DTL at each year end', 'builds, then is released', 18) + key(b.x + 12, b.y + 44, [['mc-lb', 'deferred tax liability', 'l']]);
@@ -563,11 +653,11 @@ const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is, why,
     return o;
   };
 
-  // Section 5: the reconciliation for the focus year, as a small calc.
+  // Section 5: the reconciliation for year 2, as a small calc.
   const reconChart = () => {
     const b = region('note'), F = S.F, x1 = b.x + 14, x2 = b.x + b.w - 14;
     const rows = [[`profit × ${pc(F.rc)}`, F.recon], [`+ entertainment × ${pc(F.rc)}`, F.entFx], ...(F.rateFx ? [['− rate cut on deferred tax', -F.rateFx]] : [['± rate change', 0]]), ['± losses with no DTA', 0]];
-    let y = b.y + 50, o = head(b, `Reconciliation, year ${S.focus + 1}`, 'why tax ≠ profit × rate', 18);
+    let y = b.y + 50, o = head(b, 'Reconciliation, year 2', 'why tax ≠ profit × rate', 18);
     rows.forEach(([t, v]) => { y += 15; o += `<text class="mc-lbl m" x="${x1}" y="${y}">${t}</text><text class="mc-lbl x" x="${x2}" y="${y}" text-anchor="end">${n0(v)}</text>`; });
     y += 6; o += `<line class="mc-ax" x1="${x1}" x2="${x2}" y1="${y}" y2="${y}"/>`; y += 12;
     o += `<text class="mc-lbl x" x="${x1}" y="${y}">= tax expense</text><text class="mc-lbl x" x="${x2}" y="${y}" text-anchor="end">${n0(F.total)}</text>`;
@@ -586,27 +676,25 @@ const ALL = { h: 'Tap any box', what: 'Each box opens here with what it is, why,
       mv >= 0 ? `… year ${k + 1}: deferred tax` : `… year ${k + 1}: the DTL is released`,
       ...(mv >= 0 ? [`Dr {x|Deferred tax expense} :: ${f1(mv)}`, `Cr {l|Deferred tax liability} :: ${f1(mv)}`] : [`Dr {l|Deferred tax liability} :: ${f1(-mv)}`, `Cr {i|Deferred tax income} :: ${f1(-mv)}`])];
     const moveRows = y.remeasure
-      ? [{ t: 'opening DTL', v: y.open }, { op: '−', t: `remeasure the opening gap at ${pc(y.rd)}: ${n0(prev.td)} × 2%`, v: y.remeasure }, { op: '+', t: `the year’s new gap at ${pc(y.rd)}: ${n0(y.td - prev.td)} × ${pc(y.rd)}`, v: y.growth }, { op: '=', t: `closing DTL: ${n0(y.td)} × ${pc(y.rd)}`, v: y.dtl }]
+      ? [{ t: 'opening DTL', v: y.open }, { op: '−', t: `(a) rate cut on the opening gap: ${n0(prev.td)} × 2% (credit)`, v: y.remeasure }, { op: '+', t: `(b) the year’s new gap: ${n0(y.td - prev.td)} × ${pc(y.rd)} (charge)`, v: y.growth }, { op: '=', t: `closing DTL: ${n0(y.td)} × ${pc(y.rd)}`, v: y.dtl }]
       : [{ t: `closing DTL: ${n0(y.td)} × ${pc(y.rd)}`, v: y.dtl }, { op: '−', t: 'opening DTL', v: y.open }, { op: '=', t: mv >= 0 ? '{x|deferred tax expense}' : '{i|deferred tax income} (a release)', v: Math.abs(mv), link: 1 }];
     return { h: `Year ${k + 1} in full${S.cut ? ' (rate cut to 15% from year 3)' : ''}`,
-      what: k < 3 ? `Tax law gives a $40,000 allowance against $30,000 of depreciation, so the gap grows by $10,000 and so does the deferred tax.${y.remeasure ? ' This year a 15% rate is enacted for later years, so the opening DTL is remeasured.' : ''}` : 'Tax law has no allowance left, but the books still charge $30,000 of depreciation: taxable profit is higher, and the DTL built up in years 1–3 is released.',
+      what: k < 3 ? `Tax law gives a $40,000 allowance against $30,000 of depreciation, so the joy gap grows by $10,000 and so does the deferred tax.${y.remeasure ? ' This year a 15% rate is enacted for later years, so the opening DTL is restated first.' : ''}` : 'What goes up must come down: tax law has no allowance left, but the books still charge $30,000 of depreciation. Taxable profit is higher, and the DTL built up in years 1–3 is released.',
       ex: ['**Current tax**', { calc: [{ t: 'accounting profit', v: EX.profit }, { op: '+', t: '{x|depreciation expense}', v: S.dep }, { op: '−', t: 'capital allowance', v: y.a }, { op: '+', t: 'non-deductible {x|entertainment expense}', v: EX.ent }, { op: '=', t: 'taxable profit', v: y.taxable }, { op: '×', t: 'rate for this year', vt: pc(y.rc) }, { op: '=', t: '{x|current tax}', v: y.current, link: 0 }] },
-        '**Carrying amount vs tax base**', { calc: [{ t: '{a|carrying amount}: $120,000 − depreciation to date', v: y.cv }, { op: '−', t: 'tax base: $120,000 − allowances to date', v: y.tb }, { op: '=', t: 'taxable temporary difference', v: y.td }] },
+        '**Carrying amount vs tax base**', { calc: [{ t: '{a|carrying amount}: $120,000 − depreciation to date', v: y.cv }, { op: '−', t: 'tax base: $120,000 − allowances to date', v: y.tb }, { op: '=', t: 'gap (joy)', v: y.td }] },
         '**Deferred tax**', { calc: moveRows },
         ...(y.remeasure ? [{ calc: [{ op: '=', t: '{x|deferred tax expense}: closing − opening', v: mv, link: 1 }] }] : []),
-        '**Profit or loss**', { calc: [{ t: '{x|current tax}', v: y.current }, { op: mv >= 0 ? '+' : '−', t: '{x|deferred tax}', v: Math.abs(mv) }, { op: '=', t: 'tax expense', v: y.total }] },
-        '**Reconciliation**', { calc: [{ t: `profit × ${pc(y.rc)}`, v: y.recon }, { op: '+', t: `entertainment × ${pc(y.rc)}`, v: y.entFx }, ...(y.rateFx ? [{ op: '−', t: 'rate cut on deferred tax', v: -y.rateFx }] : []), { op: '=', t: 'tax expense', v: y.total }] }],
+        '**Profit or loss**', { calc: [{ t: '{x|current tax}', v: y.current }, { op: mv >= 0 ? '+' : '−', t: '{x|deferred tax}', v: Math.abs(mv) }, { op: '=', t: 'tax expense', v: y.total }] }],
       je };
   };
 
   const sec = (s) => `<g class="sec ${s.cls}"><rect x="${s.x}" y="0" width="${s.w}" height="${H}" rx="10"/><text x="${s.x + 12}" y="19">${esc(s.t)}</text></g>`;
   let cur = '';
-  const render = () => { S = schedule(mode); RIGHT = right(S); document.getElementById('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:${Math.round(W * 1.3)}px" role="img" aria-label="Income tax: two profits, current tax, carrying amount vs tax base, deferred tax each year end, and presentation">
+  const render = () => { S = schedule(mode); RIGHT = right(S); document.getElementById('chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:${Math.round(W * 1.3)}px" role="img" aria-label="Income tax: two worlds and two profits, the gap (joy or gloom), what to calculate at each year end, the two bills, and presentation">
     <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1.2 L10 5 L0 8.8 L2.2 5 Z" class="fl-ah"/></marker>
     <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" class="mc-hl"/></pattern></defs>
     ${SECTIONS.map(sec).join('')}
-    <g transform="translate(${LEFT.at[0]},${LEFT.at[1]}) scale(${LEFT.scale})">${draw(LEFT)}</g>
-    ${draw(RIGHT)}<g class="mc">${whyChart()}${gapChart()}${gridChart()}${dtlChart()}${plChart()}${reconChart()}</g></svg>`; show(cur); };
+    ${draw(RIGHT)}<g class="mc">${worldChart()}${gapChart()}${calcChart()}${presentTop()}${dtlChart()}${plChart()}${reconChart()}</g></svg>`; show(cur); };
 
   // Journal entries in the note: one green box per entry. A '…' line labels the next entry; a Dr after a Cr starts a new one.
   const jeHtml = (lines) => {
